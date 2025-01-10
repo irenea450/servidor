@@ -1,0 +1,69 @@
+
+body{
+    background-color: #3D3D3D;
+    color: white;
+}
+
+.contenedor{
+    width: 250px;
+    height: 350px;
+    
+    /* Centro el contenedor de login al medio de la pagina */
+    margin: 10vw auto;
+
+    background-color: #d85300;
+
+    border-radius: 8px;
+
+    
+}
+
+.contenedor #icono-login{
+    margin: 25px 35% 30px;
+}
+
+.contenedor label{
+    margin: 5px;
+    /* background-color: red; */
+}
+
+.contenedor label img{
+    margin: 0px 5px;
+}
+
+.contenedor input{
+    margin: 5% 0px;
+}
+
+.contenedor input::placeholder{
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* -------------------- colocamos label e inputs en linea y aplicamos estilos diferentes ------------------- */
+.inputs{
+    margin: 20px 0px;
+    display: flex;
+}
+.inputs input{
+    background-color: transparent;
+    color: white;
+    border: none;
+
+    border-bottom: solid white 1px;
+}
+.inputs input:focus{
+    background-color: white;
+    color: black;
+}
+
+#enviar{
+    width: 90%;
+    height: 30px;
+
+    margin: 5% 5% 0px 5%;
+    
+    
+    border: solid #3D3D3D 2px;
+    border-radius: 8px;
+
+}

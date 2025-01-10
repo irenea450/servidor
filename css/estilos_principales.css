@@ -1,0 +1,140 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0px;
+}
+
+
+header{
+    width: 100vw;
+    height: 10vh;
+}
+
+header ul{
+    width: auto;
+    height: fit-content;
+    padding: 0px;
+
+    list-style: none;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+header li{
+    width: auto;
+    height: auto;
+
+    padding: 20px 30px;
+
+    font-weight: bold;
+    font-size: large;
+}
+
+header img{
+    width: auto;
+    height: 50px;
+}
+/* En el logo se quita padding para que ajuste tamaño al menu  */
+header ul li:first-child:not(.categorias li:first-child){ /*menos en el submenu */
+    padding: 0px;
+}
+/* Para el carrito se cambia el tamaño dle padding y al pasar por encima se cambia el fondo */
+header ul li:last-child{
+    padding: 5px 10px ;
+}
+header ul li:last-child:hover:not(.categorias li:last-child){
+    background-color: #d85300;
+}
+
+header li:nth-child(2){
+    /* Espacio entre logo y opciones del menu */
+    flex-grow: 1;
+}
+
+/* ?Enlaces del header */
+header a{
+    text-decoration: none;
+    color: black;
+}
+
+header a:hover{
+    /* Al posicionarse sobre el menu se cambiara el color de la letra */
+    color: #d85300;
+}
+
+/* --------------------------------- Submenu -------------------------------- */
+.categorias{
+    background-color: #d85300;
+    display:none; /*! Inicialmente oculto */
+    position: absolute;
+}
+.categorias ul{
+    background-color: red;
+}
+.categorias li{
+    background-color: #d85300 ;
+    color: white;
+
+    width: auto;
+    height: auto;
+
+    padding: 15px 20px;
+    border: solid 3px #d85300;
+
+    font-weight: bold;
+    
+}
+.categorias li a{
+    color: white;
+}
+/*? Posicionarnos osbre cada li se cambia el color */
+.categorias li:hover{
+    background-color: white;
+    /* Borde que resalte */
+    border: solid 3px #d85300;
+}
+.categorias li:hover a{
+    color: #d85300;
+}
+/* Ajustamos el tamaño del ultimo li de categorias, porque coge las caracteristicas dle menu principal */
+.categorias li:last-child{
+    padding: 15px 20px;
+}
+
+/**Mostrar submenu cuando el raton se posiciones sobre categorias en el menu principal */
+ul > li:hover ul.categorias{
+    display:block;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                      Contenedor de imagenes aleatorias                     */
+/* -------------------------------------------------------------------------- */
+.contenedor-imagenes{
+    content: " ";
+    width: 100vw;
+    height: 85vh;
+
+    background-color: #3D3D3D;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                   Footer                                   */
+/* -------------------------------------------------------------------------- */
+
+footer{
+    width: 100vw;
+    height: 5vh;
+
+    background-color: #d85300;
+    color: white;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
