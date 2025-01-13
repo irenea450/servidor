@@ -3,7 +3,9 @@
     margin: 0px;
 }
 
-
+/* -------------------------------------------------------------------------- */
+/*                                  Cabecera                                  */
+/* -------------------------------------------------------------------------- */
 header{
     width: 100vw;
     height: 10vh;
@@ -41,7 +43,7 @@ header img{
 header ul li:first-child:not(.categorias li:first-child){ /*menos en el submenu */
     padding: 0px;
 }
-/* Para el carrito se cambia el tamaño dle padding y al pasar por encima se cambia el fondo */
+/** Para el carrito se cambia el tamaño dle padding y al pasar por encima se cambia el fondo */
 header ul li:last-child{
     padding: 5px 10px ;
 }
