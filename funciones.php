@@ -66,5 +66,22 @@
         echo "Referencia: " . $linea['ref'] . " - Cantidad: " . $linea['cantidad'] . "<br>";
     } */
 
-    
+    function desmontar3($info){
+        $resultado = []; // Inicializamos un array vacío para almacenar la matriz final.
+
+        // Dividir el elemento actual en otro array utilizando la coma (,) como separador.
+        $partes = explode(',', $info);
+
+        // Asegurarnos de que el elemento dividido tenga exactamente dos valores (id y token).
+        if (count($partes) === 2) {
+            // Agregar el par ref-cantidad al resultado, convirtiéndolos a enteros.
+            $resultado[] = [
+                'id' => intval($partes[0]),     // Convertir la primera parte (id) a entero.
+                'token' => $partes[1]
+            ];
+        }
+        
+        // Retornar la matriz procesada.
+        return $resultado;
+    }
 ?>
