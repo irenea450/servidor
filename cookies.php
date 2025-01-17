@@ -1,5 +1,6 @@
 <?php
 require "funciones.php";
+
 //?- una vez realizada la compra la cookie "carrito" debera ser destruida
 //?- al arrancar la aplicacion se ha de comprobar si $_COOKIE["carrito"] esta inicializada en caso afirmativo 
 //?- la enviaremos a la funcion desmontar1() y desmontar2() donde se transformara en una matriz
@@ -131,25 +132,17 @@ require "funciones.php";
                 //?- inicializar las variables de session necesarias
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
-
-                echo "<h1>sigues logueado campeon</h1>";//! -- valores de prueba BORRAR
             }
         } else {
-            //! -- llamariamos a la funcion login y despues generariamos el token e iniciariamos las cookies (session_token) BORRAR
-                        echo "estas en el ELSE y vas al login <br><br>";    //! -- valores de prueba BORRAR
-                        $email = "marcos@gmail.com";    //! -- valores de prueba BORRAR
-                        $_SESSION["id"] = "1";    //! -- valores de prueba BORRAR
-                        echo $_SESSION['id'];   //! -- valores de prueba BORRAR
-                        echo "<br><br>";      //! -- valores de prueba BORRAR
-                        $id = $_SESSION['id'];      //! -- valores de prueba BORRAR
-                        echo "el login me devuelve: email = $email y id = $id <br><br>"; //! -- valores de prueba BORRAR
-
             // llamamos a la funcion login() la cual inicia las variables de sesion (copiar lineas 61-66) y nos devuelve un boolean
             //$control = login();//?- guardamos el resultado de la funcion login()
 
-            //do{//?- si el resultado de la funcion login() es false se le redirige al login
+            //if(!$control){
+                //do{//?- si el resultado de la funcion login() es false se le redirige al login
                 //$control = login();//?- o a una funcion especifica
             //}while(!$control);
+            //}
+            
 
             $control = true;  //! -- valores de prueba BORRAR
 
