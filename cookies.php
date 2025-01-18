@@ -1,12 +1,17 @@
 <?php
 require "funciones.php";
 
-//?- una vez realizada la compra la cookie "carrito" debera ser destruida
-//?- al arrancar la aplicacion se ha de comprobar si $_COOKIE["carrito"] esta inicializada en caso afirmativo 
-//?- la enviaremos a la funcion desmontar1() y desmontar2() donde se transformara en una matriz
-//?- Cada vez que añadamos un producto al carrito este se añadira a la mtriz y se sobreescribira la cookie
+//!comprobar si poniendo session_start(); al principio del script vale para todas las funciones , en su defecto ponerlo al principio de cada funcion cookieSesion()
+// Inicia una sesión para el usuario 
+session_start();
+
 
     //todo - FUNCION PARA CREAR O ACTUALIZAR $_COOKIE["carrito"]
+    //?- una vez realizada la compra la cookie "carrito" debera ser destruida
+    //?- al arrancar la aplicacion se ha de comprobar si $_COOKIE["carrito"] esta inicializada en caso afirmativo 
+    //?- la enviaremos a la funcion desmontar1() y desmontar2() donde se transformara en una matriz
+    //?- Cada vez que añadamos un producto al carrito este se añadira a la mtriz y se sobreescribira la cookie
+
     function cookieCarrito($matriz){
         //inicializamos variable con la duracion de la cookie
         $time = time() + (7 * 24 * 60 * 60);
@@ -67,8 +72,10 @@ require "funciones.php";
 
 
 
-    //todo - FUNCION PARA CREAR O ACTUALIZAR $_COOKIE["session_token"]
-    function cookieSesion(){
+    //todo - FUNCIONES PARA CREAR O ACTUALIZAR $_COOKIE["session_token"]
+    //?-  cookieSesion1() debera ser llamada al principio del codigo para comprobar si hay alguna sesion guardada
+
+    function cookieSesion1(){
         // La cookie esta formada por un string que contiene el id y el token separado por una coma ("id,token")
         /**El token generado en el código utiliza el formato hexadecimal porque se obtiene con la función bin2hex(random_bytes(32)). 
             Esto convierte los bytes generados por random_bytes (valores binarios) en una cadena de texto hexadecimal legible.
@@ -80,9 +87,6 @@ require "funciones.php";
 
         Ejemplo de Token:
         Si imprimes el token generado, podría verse así: e3c4f7d9a2b3c1d5e6f7a8b9c0d1e2f3c4f5b6a7c8d9e0f1b2c3a4d5e6f7a8b9 */
-
-        // Inicia una sesión para el usuario
-        session_start();
 
         //Parámetros de conexión a la base de datos
         $cadena_conexion = "mysql:dbname=irjama;host=127.0.0.1";
@@ -133,37 +137,67 @@ require "funciones.php";
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
             }
-        } else {
-            // llamamos a la funcion login() la cual inicia las variables de sesion (copiar lineas 61-66) y nos devuelve un boolean
-            //$control = login();//?- guardamos el resultado de la funcion login()
-
-            //if(!$control){
-                //do{//?- si el resultado de la funcion login() es false se le redirige al login
-                //$control = login();//?- o a una funcion especifica
-            //}while(!$control);
-            //}
-            
-
-            $control = true;  //! -- valores de prueba BORRAR
-
-            if($control){
-                // Genera un nuevo token único y seguro
-                $session_token = bin2hex(random_bytes(32));
-
-                // update en la bdd con el token correspondiente
-                $preparada2 = $db ->prepare("UPDATE cliente SET token = ? WHERE id = ?");
-                $preparada2 -> execute(array($session_token, $_SESSION["id"])); //?- Cambiar $id por $_SESSION['id']
-
-
-                //concatenamos el id con el token separados por una coma para inicializar la cookie
-                $token = $_SESSION["id"] . "," . $session_token;  //?- Cambiar $id por $_SESSION['id']
-
-                // Configura la cookie para almacenar el token
-                // - Nombre de la cookie: 'session_token'
-                // - Valor: el token generado ($token)
-                // - Tiempo de expiración: ahora + 7 días
-                setcookie("session_token", $token, time() + $cookie_duration);
-            }
-        }
+        } 
     }
+
+    //?-  cookieSesion2() debera ser llamada en el login para crear el token , guardarlo y crear la cookie $_COOKIE["session_token"]
+    //?-  dentro de cookieSesion2() se pueden inicializar las variables de sesion necesarias ya que tiene creada la conexion a la base de datos
+
+    function cookieSesion2(){
+        //Parámetros de conexión a la base de datos
+        $cadena_conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuarioConex = "root";
+        $claveConex = "";
+        //para que en caso de error me devuelva un FALSE , ponerlo siempre
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+
+        //Crear una instancia de la clase PDO para la conexión con la base de datos
+        //El modo de error está configurado como ERRMODE_SILENT, lo que significa que no lanzará excepciones
+        $db = new PDO($cadena_conexion, $usuarioConex, $claveConex, $errmode);
+        //echo "conexion realizada con exito<br>";
+
+        // Define la duración de la cookie en segundos (7 días)
+        $cookie_duration = 7 * 24 * 60 * 60; 
+
+        // Genera un nuevo token único y seguro
+        $session_token = bin2hex(random_bytes(32));
+
+        // update en la bdd con el token correspondiente
+        $preparada2 = $db ->prepare("UPDATE cliente SET token = ? WHERE id = ?");
+        $preparada2 -> execute(array($session_token, $_SESSION["id"])); //?- Cambiar $id por $_SESSION['id']
+
+
+        //concatenamos el id con el token separados por una coma para inicializar la cookie
+        $token = $_SESSION["id"] . "," . $session_token;  //?- Cambiar $id por $_SESSION['id']
+
+        // Configura la cookie para almacenar el token
+        // - Nombre de la cookie: 'session_token'
+        // - Valor: el token generado ($token)
+        // - Tiempo de expiración: ahora + 7 días
+        setcookie("session_token", $token, time() + $cookie_duration);
+    }
+
+    /**OPCION B APROVECHANDO LA CONEXION DE LOGIN() A LA BASE DE DATOS, HACER QUE COOKIESESION2() DEVUELVA EL TOKEN
+    Y EN LOGIN() SE REALIZE EL UPDATE DEL TOKEN
+
+     *function cookieSesion2(){
+
+        // Define la duración de la cookie en segundos (7 días)
+        $cookie_duration = 7 * 24 * 60 * 60; 
+
+        // Genera un nuevo token único y seguro
+        $session_token = bin2hex(random_bytes(32));
+
+        //concatenamos el id con el token separados por una coma para inicializar la cookie
+        $token = $_SESSION["id"] . "," . $session_token;  //?- Cambiar $id por $_SESSION['id']
+
+        // Configura la cookie para almacenar el token
+        // - Nombre de la cookie: 'session_token'
+        // - Valor: el token generado ($token)
+        // - Tiempo de expiración: ahora + 7 días
+        setcookie("session_token", $token, time() + $cookie_duration);
+
+        return $session_token;
+    }
+     */
 ?>
