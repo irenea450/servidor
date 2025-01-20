@@ -1,6 +1,6 @@
 <?php
     session_start();
-
+    //! Quitar
     // Si ya hay una sesión iniciada, redirigir al logout
 /*     if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
         header("Location: logout.php"); // Cambia "logout.php" por la URL de tu logout
