@@ -2,6 +2,9 @@
 body{
     background-color: #3D3D3D;
     color: white;
+
+    display: flex;
+    align-items: center;
 }
 
 .contenedor{
@@ -39,6 +42,12 @@ body{
     color: rgba(255, 255, 255, 0.6);
 }
 
+/* Contenedor log out aviso de sesion iniciada */
+.contenedor h1{
+    font-size: medium;
+    text-align: center;
+}
+
 /* -------------------- colocamos label e inputs en linea y aplicamos estilos diferentes ------------------- */
 .inputs{
     margin: 20px 0px;
@@ -55,15 +64,50 @@ body{
     background-color: white;
     color: black;
 }
-
+/*? Boton enviar (formulario login y log out) */
 #enviar{
     width: 90%;
     height: 30px;
 
-    margin: 5% 5% 0px 5%;
+    margin: 0px 5% 10px 5%;
     
     
     border: solid #3D3D3D 2px;
     border-radius: 8px;
 
 }
+
+/* -------------------------- Contenedor de errores ------------------------- */
+.erroresContenedor{
+    width: auto;
+    height: 30px;
+    background-color: transparent;
+
+    text-align: center;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Log Out                                  */
+/* -------------------------------------------------------------------------- */
+
+#logoutForm{
+    margin: 10vw auto;
+}
+/* Contenedor de fecla de volver al inicio */
+.volverInicio{
+    width: auto;
+    height: auto;
+
+    position: fixed;
+    top: 10%;
+    left: 5%;
+}
+/* Boton de fecha atrás se quitan los estilos y ajusta tamaño al contenedor */
+.flechaVolver{
+    width: auto;
+    height: auto;
+
+    background-color: transparent;
+    border: none;
+}
+

@@ -1,3 +1,13 @@
+<?php
+    session_start();
+
+    // Si ya hay una sesión iniciada, redirigir al logout
+/*     if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
+        header("Location: logout.php"); // Cambia "logout.php" por la URL de tu logout
+        exit();
+    } */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +21,7 @@
         <ul>
             <li><img src="/img/LOGO 2.png"></li>
             <li></li>
-            <li><a href="index.html">Inicio</a></li>
+            <li><a href="index.php">Inicio</a></li>
             <li><a href="#">Categorias</a>
                 <ul class="categorias">
                     <!-- Poner los enlaces que corresponden -->

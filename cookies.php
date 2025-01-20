@@ -76,6 +76,7 @@ session_start();
     //?-  cookieSesion1() debera ser llamada al principio del codigo para comprobar si hay alguna sesion guardada
 
     function cookieSesion1(){
+        echo '<script> alert("entrado en cookie"); </script>';
         // La cookie esta formada por un string que contiene el id y el token separado por una coma ("id,token")
         /**El token generado en el código utiliza el formato hexadecimal porque se obtiene con la función bin2hex(random_bytes(32)). 
             Esto convierte los bytes generados por random_bytes (valores binarios) en una cadena de texto hexadecimal legible.
@@ -143,7 +144,8 @@ session_start();
     //?-  cookieSesion2() debera ser llamada en el login para crear el token , guardarlo y crear la cookie $_COOKIE["session_token"]
     //?-  dentro de cookieSesion2() se pueden inicializar las variables de sesion necesarias ya que tiene creada la conexion a la base de datos
 
-    function cookieSesion2(){
+    //* Pasa como parametro el id
+    function cookieSesion2($id){
         //Parámetros de conexión a la base de datos
         $cadena_conexion = "mysql:dbname=irjama;host=127.0.0.1";
         $usuarioConex = "root";
@@ -164,11 +166,13 @@ session_start();
 
         // update en la bdd con el token correspondiente
         $preparada2 = $db ->prepare("UPDATE cliente SET token = ? WHERE id = ?");
-        $preparada2 -> execute(array($session_token, $_SESSION["id"])); //?- Cambiar $id por $_SESSION['id']
+        //* cambio de id
+        $preparada2 -> execute(array($session_token, $id)); //?- Cambiar $id por $_SESSION['id']
 
 
         //concatenamos el id con el token separados por una coma para inicializar la cookie
-        $token = $_SESSION["id"] . "," . $session_token;  //?- Cambiar $id por $_SESSION['id']
+        //* Cambio de id
+        $token = $id . "," . $session_token;  //?- Cambiar $id por $_SESSION['id']
 
         // Configura la cookie para almacenar el token
         // - Nombre de la cookie: 'session_token'
