@@ -1,0 +1,64 @@
+/* Estilos del archivo de carrito,  */
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+/* ---------------------- Contenedor principal del main --------------------- */
+main .carrito{
+    width: 100vw;
+    height: 100vw;
+
+    background-color: red;
+
+    /*! Poner grid y ordenar columnas
+    grid-template-columns: ; */
+}
+
+/* -------------- contenedor de productos guardados en el carrito -------------- */
+#productos-carrito{
+    grid-area: productos;
+    width: auto;
+    height: auto;
+
+    background-color: blue;
+    table-layout: auto;
+}
+
+/* --------------------------- tabla de productos --------------------------- */
+table{
+    width: auto;
+    width: auto;
+
+}
+/*? se distribuye el tamaño de las filas */
+#productos-carrito th, #productos-carrito td {
+    padding: 5px;
+    background-color: blanchedalmond;
+}
+
+/* Segunda fila del nombre dle producto va a tener un tamaño minimo */
+#productos-carrito th:nth-child(2),
+#productos-carrito td:nth-child(2) {
+    background-color: aquamarine;
+    min-width: 600px;
+}
+
+#productos-carrito td:nth-child(3),
+#productos-carrito td:nth-child(4){
+    text-align: center;
+    background-color: red;
+
+    padding: auto 10px;
+}
+
+
+
+/* ---------- Contenedor de las direcciones de envio y facturación ---------- */
+#direcciones{
+    grid-area: direcciones;
+    width: auto;
+    height: auto;
+
+    background-color: blueviolet;
+}
