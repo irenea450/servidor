@@ -4,15 +4,28 @@
     margin: 0px;
     padding: 0px;
 }
+
+/* ---------------------------- Header con logoi ---------------------------- */
+header ul{
+    height: auto;
+    background-color:#d85300 ;
+}
+
 /* ---------------------- Contenedor principal del main --------------------- */
-main .carrito{
-    width: 100vw;
-    height: 100vw;
+
+main#carrito{
+    width: 100%;
+    height: auto;
+    min-height: 90vh;
 
     background-color: red;
 
-    /*! Poner grid y ordenar columnas
-    grid-template-columns: ; */
+    /*! Poner grid y ordenar columnas */
+    display: grid;
+    grid-template-areas: "productos direcciones";
+    grid-template-columns: 1fr 1fr;
+    /* grid-template-rows: 90vh; */
+
 }
 
 /* -------------- contenedor de productos guardados en el carrito -------------- */
