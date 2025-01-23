@@ -22,11 +22,10 @@ if (isset($_COOKIE['session_token'])) {
     //? Si hay cookie -> verificamos si es válida y redirigimos a logout
     cookieSesion1(); // Función para validar la cookie
 
-    if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
-        //? Si la sesión de la cookie ya está activa se redirige al logout
-        header("Location: /php/logout.php");
-        exit();
-    }
+if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
+    //? Si la sesión de la cookie ya está activa se redirige al logout
+    header("Location: /php/logout.php");
+}
 }   
 
 
@@ -55,12 +54,23 @@ if (isset($_COOKIE['session_token'])) {
             //* Variable de sesión se guarda con el nombre del id
             $_SESSION["usuario"] = $comprobarDatos; // Guardar el email del usuario
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario y guardarlo en sesión
-        
+            $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
             cookieSesion2($_SESSION["id"]);
 
-            //? Una vez el login es correcto se dirige al index.php (pagina de inicio)
-            header("Location: ../index.php");        
+            //? Una vez el login es correcto va a redidirgir por defecto al index
+            //? si llega redirigido de otra pagina se va a volver a esa pagina
+            if (isset($_POST['redirigido']) && $_POST['redirigido'] === 'carrito.php') {
+                $redirectUrl = 'carrito.php';
+            } else {
+                //? si no está redirigido por defecto va a index
+                $redirectUrl = '../index.php';
+            }
+            //* Cambia la la pantalla con el url de index o redirigido
+            header("Location: " . $redirectUrl);
+
+            /* //? Una vez el login es correcto se dirige al index.php (pagina de inicio)
+            header("Location: ../index.php");   */      
         }
     }
 
@@ -141,7 +151,9 @@ if (isset($_COOKIE['session_token'])) {
         </div>
         <!-- Formualario de inicio de sesión -->
         <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST" >
-        
+            <!-- Campo oculto para poder hacer la redirección -->
+        <input type="hidden" name="redirigido" value="<?php echo htmlspecialchars($_GET['redirigido'] ?? ''); ?>">
+
             <div class="inputs">
                 <label for="email"><img src="/img/usuario.png"></label>
                 <input id="email" name="email" placeholder="email" type="text" value="<?php if(isset($usuario)) echo $usuario ?>" >

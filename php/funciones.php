@@ -139,7 +139,7 @@ function obtenerDirecciones($id){
     return $resultado; 
 }
 /* ------------------- Obtener saldo y puntos del usuario ------------------- */
-
+//TODO: función que obtiene el saldo y puntos que tiene el usuario logueado
 function obtenerSaldo($id){
     //? Consulta que extrae los datos del usuario
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
@@ -162,6 +162,31 @@ function obtenerSaldo($id){
     if ($resultado) {
         $saldo = $resultado['saldo'];
         $puntos = $resultado['puntos'];
+    }
+    return $resultado; 
+}
+//* preubas irene
+function sacarIdImagen($categoria){
+    //? Consulta que extrae los id de los productos para mostrarlos segun su categoria
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+
+    // Consulta para obtener el nombre del usuario con el ID
+    $consulta = "SELECT id  FROM productos WHERE categodia = :categodia";
+    $ejecuto = $bd->prepare($consulta);
+
+    // Ejecutar la consulta pasando solo el parámetro id
+    $ejecuto->execute(['categodia' => $categoria]);
+
+    // Obtener el resultado de la consulta
+    $resultado = $ejecuto->fetch();
+
+    if ($resultado) {
+        $idProducto = $resultado['idProducto'];
     }
     return $resultado; 
 }
