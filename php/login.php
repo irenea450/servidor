@@ -1,4 +1,4 @@
-
+<!-- opcion de registro / isset del metodo post -->
 <?php
 //scripts que vamos a necesitar
 require 'cookies.php';
@@ -51,9 +51,9 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             //* Inicio de sesion 
             session_start();
 
-            //* Variable de sesión se guarda con el nombre del id
+            //! VARIABLES DE SESIÓN AL HACER LOGIN
             $_SESSION["usuario"] = $comprobarDatos; // Guardar el email del usuario
-            $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario y guardarlo en sesión
+            $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
             $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
             cookieSesion2($_SESSION["id"]);
@@ -68,9 +68,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             }
             //* Cambia la la pantalla con el url de index o redirigido
             header("Location: " . $redirectUrl);
-
-            /* //? Una vez el login es correcto se dirige al index.php (pagina de inicio)
-            header("Location: ../index.php");   */      
+    
         }
     }
 

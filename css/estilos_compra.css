@@ -130,3 +130,37 @@ table{
 .precioTotal h4{
     margin-top: 15px;
 }
+
+/*? Botón de Tramitar pedido */
+.botonTramitar{
+    width: 100%;
+    height: auto;
+    background-color: #d85300;
+    color: white;
+    border: solid 1px #d85300;
+    border-radius: 20px;
+    padding: 10px 20px;
+
+    margin: 30vh 0px 0px 0px;
+}
+
+/*? Contenedor de errores de saldo */
+.contenedorErrorSaldo{
+    width: 100%;
+    height: auto;
+    color: red;
+    font-weight: bolder;
+    margin: 15px 0px 0px 0px;
+}
+
+#botonRecargar{
+    width: 100%;
+    height: auto;
+    background-color: red;
+    color: white;
+    border: solid 1px red;
+    border-radius: 20px;
+    padding: 10px 20px;
+
+    /* margin: 35vh 0px 0px 0px; */
+}
