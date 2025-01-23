@@ -8,12 +8,12 @@
 /* -------------------------------------------------------------------------- */
 header{
     width: 100%;
-    height: 10vh;
+    height: auto;
 }
 
 header ul{
     width: auto;
-    height: fit-content;
+    height: auto;
     padding: 0px;
 
     list-style: none;
@@ -118,7 +118,7 @@ ul > li:hover ul.categorias{
 /* -------------------------------------------------------------------------- */
 .contenedor-imagenes{
     content: " ";
-    width: 100vw;
+    width: 100%;
     height: 85vh;
 
     background-color: #3D3D3D;

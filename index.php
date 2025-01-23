@@ -33,8 +33,8 @@
                 </ul>
             </li>
             <li><a href="#">Contacto</a></li>
-            <li><a href="login.php">Registrarse</a></li>
-            <li><img src="/img/icono_carrito.png"></li>
+            <li><a href="/php/login.php">Registrarse</a></li>
+            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>
     </header>
 

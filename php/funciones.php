@@ -84,4 +84,85 @@
         // Retornar la matriz procesada.
         return $resultado;
     }
+
+/* ---------------- Función para saber el nombre del usuario ---------------- */
+//TODO Función para obtener el nombre del usuario con base en el ID almacenado en la sesión
+function obtenerNombreUsuario($id) {
+    // Aquí debes conectar a tu base de datos y obtener el nombre del usuario con el ID
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+    
+    // Consulta para obtener el nombre del usuario con el ID
+    $consulta = "SELECT nombre FROM cliente WHERE id = :id";
+    $stmt = $bd->prepare($consulta);
+
+    // Ejecutar la consulta pasando solo el parámetro id
+    $stmt->execute(['id' => $id]);
+
+    // Obtener el resultado de la consulta
+    $resultado = $stmt->fetch();
+
+    // Devolver el nombre del usuario si se encuentra, o "Usuario desconocido" si no
+    return $resultado ? $resultado['nombre'] : "Usuario desconocido";
+
+}
+
+/* ---------- Función para obtener datos de facturación del usuario --------- */
+//TODO: Función que va a sacar los datos de facturación el usaurio que este logueado mediante el id
+function obtenerDirecciones($id){
+    //? Consulta que extrae los datos del usuario
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+
+    // Consulta para obtener el nombre del usuario con el ID
+    $consulta = "SELECT direccionEnvio , direccionFacturacion FROM cliente WHERE id = :id";
+    $ejecuto = $bd->prepare($consulta);
+
+    // Ejecutar la consulta pasando solo el parámetro id
+    $ejecuto->execute(['id' => $id]);
+
+    // Obtener el resultado de la consulta
+    $resultado = $ejecuto->fetch();
+
+    if ($resultado) {
+        $direccionEnvio = $resultado['direccionEnvio'];
+        $direccionFacturacion = $resultado['direccionFacturacion'];
+    }
+    return $resultado; 
+}
+/* ------------------- Obtener saldo y puntos del usuario ------------------- */
+
+function obtenerSaldo($id){
+    //? Consulta que extrae los datos del usuario
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+
+    // Consulta para obtener el nombre del usuario con el ID
+    $consulta = "SELECT saldo , puntos FROM cliente WHERE id = :id";
+    $ejecuto = $bd->prepare($consulta);
+
+    // Ejecutar la consulta pasando solo el parámetro id
+    $ejecuto->execute(['id' => $id]);
+
+    // Obtener el resultado de la consulta
+    $resultado = $ejecuto->fetch();
+
+    if ($resultado) {
+        $saldo = $resultado['saldo'];
+        $puntos = $resultado['puntos'];
+    }
+    return $resultado; 
+}
 ?>

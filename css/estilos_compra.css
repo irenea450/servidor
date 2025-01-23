@@ -10,6 +10,12 @@ header ul{
     height: auto;
     background-color:#d85300 ;
 }
+header ul li a{
+    color: white;
+}
+header ul li a:hover{
+    color: black;
+}
 
 /* ---------------------- Contenedor principal del main --------------------- */
 
@@ -17,8 +23,6 @@ main#carrito{
     width: 100%;
     height: auto;
     min-height: 90vh;
-
-    background-color: red;
 
     /*! Poner grid y ordenar columnas */
     display: grid;
@@ -34,8 +38,11 @@ main#carrito{
     width: auto;
     height: auto;
 
-    background-color: blue;
+    background-color: #eff1f3;
+
     table-layout: auto;
+
+    padding: 5px;
 }
 
 /* --------------------------- tabla de productos --------------------------- */
@@ -43,35 +50,83 @@ table{
     width: auto;
     width: auto;
 
+    border-collapse: collapse; /* quitar borde doble */
 }
 /*? se distribuye el tamaño de las filas */
 #productos-carrito th, #productos-carrito td {
     padding: 5px;
-    background-color: blanchedalmond;
+    border: solid 1px white;
 }
 
 /* Segunda fila del nombre dle producto va a tener un tamaño minimo */
 #productos-carrito th:nth-child(2),
 #productos-carrito td:nth-child(2) {
-    background-color: aquamarine;
     min-width: 600px;
+    border-left: none; /* une con la foto */
 }
 
+/* Borramos linea que une con la foto */
+#productos-carrito th:nth-child(1),
+#productos-carrito td:nth-child(1) {
+    border-right: none; /* une con la foto */
+}
+
+/* columnas precio y cantidad poner en medio el contendio */
 #productos-carrito td:nth-child(3),
 #productos-carrito td:nth-child(4){
     text-align: center;
-    background-color: red;
+    background-color: transparent;
+
 
     padding: auto 10px;
 }
+/* minimo tamaño para las columnas de precio y cantidad */
+#productos-carrito th:nth-child(3),
+#productos-carrito th:nth-child(4),
+#productos-carrito td:nth-child(3),
+#productos-carrito td:nth-child(4){
+    min-width: 70px;
+}
 
+/* ------------------- imagen del prodducto en el carrito ------------------- */
+#imagenProductoCarrito{
+    width: 120px;
+    height: auto;
+}
 
 
 /* ---------- Contenedor de las direcciones de envio y facturación ---------- */
-#direcciones{
+#infoEnvio{
     grid-area: direcciones;
     width: auto;
     height: auto;
 
-    background-color: blueviolet;
+    padding: 0px 20px 0px 20px;
+
+}
+/*? Estilos de los titulos de direcciones */
+#infoEnvio .dir-envio,
+#infoEnvio .dir-facturacion{
+    margin: 5px 0px 10px 0px;
+    border-left: solid 3px #d85300;
+    padding-left: 5px;
+}
+
+/* ? Saldo y puntos */
+.saldo{
+    margin-top: 15px;
+    border-top: dashed 1px #d85300;
+}
+.saldo h4{
+    margin-top: 10px;
+}
+
+/*? Precio total contenedor */
+
+.precioTotal{
+    margin-top: 20px;
+    border-top: dashed 1px #d85300;
+}
+.precioTotal h4{
+    margin-top: 15px;
 }

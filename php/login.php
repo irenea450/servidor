@@ -24,7 +24,7 @@ if (isset($_COOKIE['session_token'])) {
 
     if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
         //? Si la sesión de la cookie ya está activa se redirige al logout
-        header("Location: logout.php");
+        header("Location: /php/logout.php");
         exit();
     }
 }   
@@ -60,7 +60,7 @@ if (isset($_COOKIE['session_token'])) {
             cookieSesion2($_SESSION["id"]);
 
             //? Una vez el login es correcto se dirige al index.php (pagina de inicio)
-            header("Location:index.php");
+            header("Location: ../index.php");        
         }
     }
 
