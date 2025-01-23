@@ -14,38 +14,68 @@ if (session_status() == PHP_SESSION_NONE) {
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
-     * ? Con los datos introducitos se va a .............................
+     * ? Con los datos introducitos se va a addCliente() donde se realizara el insert
      * ?   */
     if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_POST['clave']) && !empty($_POST['nombre']) && !empty($_POST['apellidos']) && !empty($_POST['direccion']) && !empty($_POST['telefono']) && !empty($_POST['sexo']) && !empty($_POST['fechaNacimiento'])){
-
-        echo $_POST['email'];
-        echo $_POST['clave'];
-        echo $_POST['nombre'];
-        echo $_POST['apellidos'];
-        echo $_POST['direccion'];
-        echo $_POST['telefono'];
-        echo $_POST['sexo'];
-        echo $_POST['fechaNacimiento'];
-
+        addCliente();
     }else{
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_registro"] = TRUE;
     }
 
-$clave = "";
-$nombre = "";
-$apellidos = "";
-$email = "";
-$direccion = "";
-$direccionEnvio = "";
-$direccionFacturacion = "";
-$telefono = "";
-$fechaNacimiento = "";
-$sexo = "";
-$tipo = "normal";
+    //?- conectamos con la base de datos y procedemos a realizar el insert del nuevo cliente 
+    function addCliente(){
+        //conexion con la base de datos
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuario_bd = "root";
+        $clave_bd = "";
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
 
+        //introduzco los valores de $_POST en variables para simplificar comillas en la query
+        $clave = $_POST['clave'];
+        $nombre = $_POST['nombre'];
+        $apellidos = $_POST['apellidos'];
+        $email = $_POST['email'];
+        $direccionEnvio = $_POST['direccion'];
+        $direccionFacturacion = $_POST['direccion'];
+        $tlf = $_POST['telefono'];
+        $fechaNacimiento = $_POST['fechaNacimiento'];
+        $sexo = $_POST['sexo'];
+        $tipo = "normal";
 
+        //* La preparada da error y optamos por una query
+        /* $preparada1 = $db ->prepare("INSERT INTO cliente (clave, nombre, apellidos, email, direccionEnvio, direccionFacturacion, tlf, fechaNacimiento, sexo, tipo) 
+                                    VALUES ('?', '?', '?', '?', '?', '?', '?', '?', '?', '?')");
+        $array = array($_POST['clave'], $_POST['nombre'], $_POST['apellidos'], $_POST['email'], $_POST['direccion'], $_POST['direccion'], $_POST['telefono'], $_POST['fechaNacimiento'], $_POST['sexo'], $tipo); */
+        
+        $ins1 =  "INSERT INTO cliente (clave, nombre, apellidos, email, direccionEnvio, direccionFacturacion, tlf, fechaNacimiento, sexo, tipo) 
+                                    VALUES ('$clave', '$nombre', '$apellidos', '$email', '$direccionEnvio', '$direccionFacturacion', '$tlf', '$fechaNacimiento', '$sexo', '$tipo')";
+        $resul = $db->query($ins1);
 
+        //?- si resul es true, es decir el insert a sido correcto 
+        //?- -sacamos el id del nuevo cliente
+        //?- -inicializamos las variables de sesion
+        //?- -redirigimos al index
+        //?- -en caso de fallo lanzara un mensaje de aviso
+        if($resul){
+            //preparada para sacar el id del nuevo cliente
+            $preparada1 = $db ->prepare("SELECT id FROM cliente WHERE email = ? AND clave = ?");
+            $preparada1->execute(array($email, $clave));
+
+            $usu = $preparada1->fetch();
+
+            //inicio variables de sesion
+            $_SESSION["id"] = $usu["id"];
+            $_SESSION["usuario"] = $email;
+            $_SESSION["logeado"] = true;
+
+            //redirigimos al index para empezar a comprar
+            header("Location: ../index.php");
+        }else{
+            echo "<h1>Fallo en el registro pruebe mas tarde</h1>";
+        }
+}
 
 ?>
 
@@ -65,7 +95,6 @@ $tipo = "normal";
         <!-- Contenedor donde se van a mostrar los errores -->
         <div class="erroresContenedor">
         <?php
-            //!rectificar la parte del error
             //?En caso de que no esten todos los campos rellenos manda mensaje de error 
             if(isset($_SESSION["error_registro"])){
                 //* En javascript se inserta el mensaje de error
