@@ -21,13 +21,24 @@ $datosUsuario = obtenerDirecciones($_SESSION["id"]);
 $datosSaldo = obtenerSaldo($_SESSION["id"]);
 
 //? las variables que van a guardar los datos extraidos en las consultas anteriores
-//? se incluyen estas variables más abajo para que sean visibles
+//? se incluyen estas variables más abajo para que sean visibles en el html
 $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
 $saldo = $datosSaldo['saldo'];
 $puntos = $datosSaldo['puntos'];
 
+$precioTotal = 100;
 
+/* ---------------------------- Proceder al pago ---------------------------- */
+//? Si se pulsa el botón de tramitar, se va a didigir a la pagina de pago.php 
+//? siempre y cuando el saldo sea mayor al precio total del pedido
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo > $precioTotal) {
+    //* si se ha enviado el formulario de tramitar y el saldo es mayor al precio total, el usuario se va a dirigiar pago
+    header("Location: pago.php");
+}if($saldo < $precioTotal){
+    //* Inicializa variable de error de saldo cuando el precio total del pedido sea mayor al saldo del usuario logueado
+    $_SESSION["error_saldo"] = TRUE;
+}
 
 
 
@@ -101,8 +112,50 @@ $puntos = $datosSaldo['puntos'];
                 <h4>Puntos <?php echo $puntos ?>
             </div>
             <div class="precioTotal">
-                <h4>Precio Total <!-- Poner precio total aquí --> €</h4>
+                <h4>Precio Total <?php echo $precioTotal ?><!-- Poner precio total aquí --> €</h4>
             </div>
+            
+            <!-- aqui mostrara los errores al tramitar el pedido -->
+            <div class="contenedorErrorSaldo">
+                <?php
+                    //?En caso de que tengamos un error de saldo( se da en caso de que el precio total del pedido sea mayor al saldo disponible)
+                    if(isset($_SESSION["error_saldo"]) && $_SESSION["error_saldo"] = TRUE){
+                        //* En javascript se inserta el mensaje de error
+                        echo '
+                        <script>
+                            // Seleccionar elementos correctamente
+                            let mensaje = "Saldo insuficiente";
+                            let contenedor = document.querySelector(".contenedorErrorSaldo");
+
+                            // Mostrar mensaja en el contenedor en caso de error
+                            contenedor.innerHTML = mensaje;
+
+                            // Crear el botón
+                            let botonRecarga = document.createElement("button"); // Se usa "createElement" en lugar de "create"
+                            botonRecarga.textContent = "Recargar Saldo"; // Texto del botón
+                            botonRecarga.id = "botonRecargar";
+
+                            // Agregar evento al botón para redirigir a otro script (ejemplo: recarga.php)
+                            botonRecarga.addEventListener("click", function() {
+                                window.location.href = "recargar.php"; // Cambia "recarga.php" por la URL del script al que quieres ir
+                            });
+
+                            // Agregar el botón al contenedor
+                            contenedor.appendChild(botonRecarga);
+                        </script>';
+                        //? Una vez se muestre el error se elimina
+                        unset($_SESSION["error_saldo"]); 
+                    }
+                ?>
+            </div>
+            
+            <!-- Formulario para tramitar pedido -->
+            <form id="tramitar" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario para comenzar proceso de pago-->
+            <button type="submit" name="tramitar" class="botonTramitar" >
+                TRAMITAR PEDIDO
+            </button>
+        </form>
         </section>
     </main>
 

@@ -33,7 +33,7 @@ session_start();
                     <li><a href="#">Libros</a></li>
                 </ul>
             </li>
-            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Área Personal</a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>
