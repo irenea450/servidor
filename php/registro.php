@@ -1,5 +1,37 @@
 <?php
 
+//scripts que vamos a necesitar
+require 'cookies.php';
+
+/**
+ *? comprueba si no hay una sesión activa y si no la hay la inicia
+ *? session_status -> devuelve el estado actual de la sesión  */
+if (session_status() == PHP_SESSION_NONE) {
+    //? si se cumple la condición de no activa se iniciar la sesión
+    session_start();
+}
+
+
+/**
+     * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
+     * ? Con los datos introducitos se va a .............................
+     * ?   */
+    if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_POST['clave']) && !empty($_POST['nombre']) && !empty($_POST['apellidos']) && !empty($_POST['direccion']) && !empty($_POST['telefono']) && !empty($_POST['sexo']) && !empty($_POST['fechaNacimiento'])){
+
+        echo $_POST['email'];
+        echo $_POST['clave'];
+        echo $_POST['nombre'];
+        echo $_POST['apellidos'];
+        echo $_POST['direccion'];
+        echo $_POST['telefono'];
+        echo $_POST['sexo'];
+        echo $_POST['fechaNacimiento'];
+
+    }else{
+        //? En caso de no esten todos los campos rellenos se activa la variable de error 
+        $_SESSION["error_registro"] = TRUE;
+    }
+
 $clave = "";
 $nombre = "";
 $apellidos = "";
@@ -33,20 +65,21 @@ $tipo = "normal";
         <!-- Contenedor donde se van a mostrar los errores -->
         <div class="erroresContenedor">
         <?php
-            //?En caso de que la contarseña o el usuario no coincidan manda mensaje de error
-            if(isset($_SESSION["error_login"])){
+            //!rectificar la parte del error
+            //?En caso de que no esten todos los campos rellenos manda mensaje de error 
+            if(isset($_SESSION["error_registro"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>
                     // Seleccionar elementos correctamente
-                    let mensaje = "Revise usuario y contraseña";
+                    let mensaje = "¡¡Debe rellenar todos los campos!!";
                     let contenedor = document.querySelector(".erroresContenedor");
 
                     // Mostrar mensaja en el contenedor en caso de error
                     contenedor.innerHTML = mensaje;
                 </script>';
                 // Eliminar el error después de mostrarlo
-                unset($_SESSION["error_login"]); 
+                unset($_SESSION["error_registro"]); 
             }
                 
         ?>
