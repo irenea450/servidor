@@ -1,11 +1,12 @@
 <?php
-    session_start();
-    //! Quitar
-    // Si ya hay una sesión iniciada, redirigir al logout
-/*     if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
-        header("Location: logout.php"); // Cambia "logout.php" por la URL de tu logout
-        exit();
-    } */
+/* require "php/funciones.php";
+session_start();
+
+    $categoria = "servos";
+    $idImagen =sacarIdImagen($categoria);
+
+    $idProductoImagen = $idImagen['idProducto'];
+ */
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +40,7 @@
     </header>
 
     <main class="contenedor-imagenes">
-        
+        <img src="/categorias/<?php $categoria?>/<?php $idProductoImagen?>/1">
     </main>
 
     <footer>

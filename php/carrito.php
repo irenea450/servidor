@@ -3,10 +3,16 @@ require "funciones.php";
 //*Inicia sesión
 session_start();
 
+//? Si no esta inicaida la variable de sesión logeado, será necesario loguearse
+if (!isset($_SESSION["logueado"]) || $_SESSION["logueado"] === FALSE) {
+    //* Usando GET se va a redirigir al login
+    header("Location: login.php?redirigido=carrito.php");
+}
+
 /**
  * ?Voy a extraer los datos del usuario que está logueado para mostrar los datos de la compra
  * ? uso variables para luego mostralo en el html */
-//~Variable de nombre del usuario
+//*Variable de nombre del usuario
 $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
 
 //? Para sacar los datos de facturación y envio se llama a la función pasando el id del usuario
