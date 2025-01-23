@@ -111,3 +111,51 @@ body{
     border: none;
 }
 
+
+/*todo ------------ REGISTRO --------------*/
+.contenedor2{
+    width: 300px;
+    height: auto; 
+    padding: 10px; 
+    /* Centro el contenedor de login al medio de la pagina */
+    margin: 10vw auto;
+    background-color: #d85300;
+    border-radius: 8px;
+}
+
+.contenedor2 input::placeholder , textarea::placeholder{
+    color: white;
+}
+
+.inputs2{
+    margin: 20px 0px;
+    display: flex;
+    justify-content: space-between;
+}
+.inputs2 input, textarea{
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-bottom: solid white 1px;
+}
+.inputs2 textarea{
+    width: 55%;
+}
+.labelRegistro{
+    margin-right: 100px;
+}
+.selectRegistro{
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-bottom: solid white 1px;
+    width: 50%;
+}
+.selectRegistro option{
+    color: black;
+}
+
+.inputs2 input:focus{
+    background-color: white;
+    color: black;
+}
