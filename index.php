@@ -1,12 +1,22 @@
 <?php
-/* require "php/funciones.php";
+require "php/funciones.php";
 session_start();
 
-    $categoria = "servos";
-    $idImagen =sacarIdImagen($categoria);
+/** 
+ * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
+ * ? Aparecerá su nombre arriba con un enlace a su area personal */
+$nombreUsuario = ""; // Por defecto, vacío
 
-    $idProductoImagen = $idImagen['idProducto'];
- */
+if (isset($_SESSION["id"])) {
+    // Si la sesión está iniciada, obtenemos el nombre del usuario
+    $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
+} else {
+    // Si la sesión no está iniciada, dejamos "Área Personal" o vacío
+    $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +43,7 @@ session_start();
                     <li><a href="#">Libros</a></li>
                 </ul>
             </li>
-            <li><a href="#">Área Personal</a></li>
+            <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>

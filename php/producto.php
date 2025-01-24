@@ -5,9 +5,9 @@
 <section style="background-position:center; background-size:cover;">
     <?php
         //*Datos necesarios para hacer la conexion a la base de datos
-        $conexion = "mysql:dbname=irjama;host:localhost";
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
         $usuario = "root";
-        $contraseña = "root";
+        $contraseña = "";
         try {
             //Hago la conexion a la base de datos
             $db= new PDO($conexion, $usuario, $contraseña);
@@ -249,7 +249,7 @@
         <ul>
             <li><img src="/img/LOGO 2.png"></li>
             <li></li>
-            <li><a href="index.php">Inicio</a></li>
+            <li><a href="../index.php">Inicio</a></li>
             <li><a href="categorias.php">Categorias</a>
                 <ul class="categorias">
                     <!-- Poner los enlaces que corresponden -->
