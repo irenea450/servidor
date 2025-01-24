@@ -1,6 +1,7 @@
 // al pinchar ver mas o en producto..;
 //Mandamos a traves del metodo get en el href que categoria y producto se ha seleccionado, redirigir a --producto.php PARA VER PRODUCTO
 
+//**********************Solucion */
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,7 +197,6 @@
         }
     </style>
 </head>
-
 <body>
     <header>
         <ul>
@@ -224,9 +224,9 @@
                 <?php foreach ($products as $product): ?>
                 <div class="product hidden">
                     <!-- Mostrar imagen del producto -->
-                    <img src="<?= "categorias/" . $categories[$category] . "/$product/1.jpg" ?>" 
+                    <img src="<?= "categorias/" . $categories[$category] . "/$product/1.png" ?>" 
                          alt="<?= $categories[$category] ?>" 
-                         onerror="this.onerror=null; this.src='/img/default.jpg';">
+                         onerror="this.onerror=null; this.src='/img/default.png';">
                     <!-- Mostrar descripción del producto -->
                     <div class="product-info">
                         <h3><?= ucfirst($categories[$category]) ?> - Producto <?= $product ?></h3>
@@ -251,53 +251,55 @@
 
 <!-- PHP para manejar la lógica del servidor -->
 <?php
-// Leer categoría seleccionada desde el método GET
-$category = isset($_GET['category']) ? intval($_GET['category']) : 1;
+    // Leer categoría seleccionada desde el método GET
+    $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
 
-// Definir nombres de categorías según la base de datos
-$categories = [
-    1 => 'microcontroladores',
-    2 => 'sensores',
-    3 => 'servos',
-    4 => 'kits de robots',
-    5 => 'libros'
-];
+    // Definir nombres de categorías según la base de datos
+    $categories = [
+        1 => 'microcontroladores',
+        2 => 'sensores',
+        3 => 'servos',
+        4 => 'kits de robots',
+        5 => 'libros'
+    ];
 
-// Verificar si la categoría es válida
-if (!array_key_exists($category, $categories)) {
-    $category = 1; // Por defecto, microcontroladores
-}
-
-// Consultar productos de la categoría seleccionada desde la base de datos
-$conexion = "mysql:dbname=irjama;host=localhost";
-$usuario = "root";
-$contraseña = "root";
-
-try {
-    // Conexión a la base de datos
-    $db = new PDO($conexion, $usuario, $contraseña);
-
-    // Buscar productos por categoría en la base de datos
-    $sql = "SELECT id FROM productos WHERE categoria = :categoria";
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':categoria', $category, PDO::PARAM_INT);
-    $stmt->execute();
-
-    // Obtener IDs de productos
-    $products = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-} catch (PDOException $e) {
-    // Manejo de errores de conexión
-    echo "Error en la base de datos: " . $e->getMessage();
-}
-
-// Obtener imágenes desde el sistema de archivos según la estructura
-foreach ($products as $key => $product) {
-    $productPath = "categorias/" . $categories[$category] . "/$product";
-    if (is_dir($productPath)) {
-        $products[$key] = $product; // Guardar ID del producto
-    } else {
-        unset($products[$key]); // Eliminar si no tiene carpeta
+    // Verificar si la categoría es válida
+    if (!array_key_exists($category, $categories)) {
+        $category = 1; // Por defecto, microcontroladores
     }
-}
+
+    // Consultar productos de la categoría seleccionada desde la base de datos
+    $conexion = "mysql:dbname=irjama;host=localhost";
+    $usuario = "root";
+    $contraseña = "root";
+
+    try {
+        // Conexión a la base de datos
+        $db = new PDO($conexion, $usuario, $contraseña);
+
+        // Buscar productos por categoría en la base de datos
+        $sql = "SELECT id FROM productos WHERE categoria = :categoria";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':categoria', $category, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Obtener IDs de productos
+        $products = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    } catch (PDOException $e) {
+        // Manejo de errores de conexión
+        echo "Error en la base de datos: " . $e->getMessage();
+    }
+
+    // Obtener imágenes desde el sistema de archivos según la estructura
+    if (!empty($products)) {
+        foreach ($products as $key => $product) {
+            $productPath = "categorias/" . $categories[$category] . "/$product";
+            if (is_dir($productPath)) {
+                $products[$key] = $product; // Guardar ID del producto
+            } else {
+                unset($products[$key]); // Eliminar si no tiene carpeta
+            }
+        }
+    }
 ?>
