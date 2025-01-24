@@ -1,10 +1,15 @@
+// al pinchar ver mas o en producto..;
+//Mandamos a traves del metodo get en el href que categoria y producto se ha seleccionado, redirigir a --producto.php PARA VER PRODUCTO
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
+    <title>Categorias</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/estilos_principales.css">
+    <!-- Estilos de categorias.php-->
     <style>
         body {
             margin: 0;
@@ -191,40 +196,45 @@
         }
     </style>
 </head>
+
 <body>
-    <!--Insertar header de irene-->
     <header>
-        <div class="logo" src="G:\Mi unidad\D.A.W01.02\D.A.W02\Desarrollo Web Entorno Servidor\ProyectoDwes-Irjama\servidor\img\LOGO 2.png">Irjama</div>
-        <nav>
-            <a href="#">Inicio</a>
-            <div class="dropdown">
-                <a href="#">Categorías</a>
-                <div class="dropdown-content">
-                    <a href="#" data-category="1">Microcontroladores</a>
-                    <a href="#" data-category="2">Sensores</a>
-                    <a href="#" data-category="3">Servos</a>
-                    <a href="#" data-category="4">Kits de Robots</a>
-                    <a href="#" data-category="5">Libros</a>
-                </div>
-            </div>
-            <a href="#">Contacto</a>
-        </nav>
+        <ul>
+            <li><img src="/img/LOGO 2.png"></li>
+            <li><a href="index.php">Inicio</a></li>
+            <li><a href="categorias.php">Categorías</a>
+                <ul class="categorias">
+                    <!-- Aquí mostramos las categorías dinámicamente -->
+                    <?php
+                    foreach ($categories as $id => $name) {
+                        echo "<li><a href='categorias.php?category=$id'>" . ucfirst($name) . "</a></li>";
+                    }
+                    ?>
+                </ul>
+            </li>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="/php/login.php">Registrarse</a></li>
+            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
+        </ul>
     </header>
 
-    <!--Panel visualización del producto-->
-    <main>
+    <main class="contenedor-imagenes">
         <div class="product-grid" id="product-grid">
             <?php if (!empty($products)): ?>
-                <?php foreach ($products as $index => $product): ?>
-                    <div class="product hidden">
-                        <img src="<?= $path . $product ?>" alt="<?= $categories[$category] . ' ' . ($index + 1) ?>" 
-                            onerror="this.onerror=null; this.src='./pr';">
-                        <div class="product-info">
-                            <h3><?= $categories[$category] . ' ' . ($index + 1) ?></h3>
-                            <p>Descripción del producto <?= ($index + 1) ?>.</p>
-                            <button>Ver más</button>
-                        </div>
+                <?php foreach ($products as $product): ?>
+                <div class="product hidden">
+                    <!-- Mostrar imagen del producto -->
+                    <img src="<?= "categorias/" . $categories[$category] . "/$product/1.jpg" ?>" 
+                         alt="<?= $categories[$category] ?>" 
+                         onerror="this.onerror=null; this.src='/img/default.jpg';">
+                    <!-- Mostrar descripción del producto -->
+                    <div class="product-info">
+                        <h3><?= ucfirst($categories[$category]) ?> - Producto <?= $product ?></h3>
+                        <p>Producto ID: <?= $product ?></p>
+                        <!-- Botón que redirige a producto.php con la categoría y producto seleccionados -->
+                        <button onclick="window.location.href='producto.php?categoria=<?= $category ?>&producto=<?= $product ?>'">Ver más</button>
                     </div>
+                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <p>No hay productos disponibles en esta categoría.</p>
@@ -232,45 +242,62 @@
         </div>
     </main>
 
-    <div class="modal" id="product-modal">
-        <span class="close">&times;</span>
-        <img src="" alt="Producto">
-    </div>
-
+    <footer>
+        <p>Calle Instituto, 7, 45593 Bargas, Toledo</p>
+        <p>Tlf: 653 985 395</p>
+    </footer>
 </body>
 </html>
 
+<!-- PHP para manejar la lógica del servidor -->
 <?php
-    //Todo-->Leer categoría desde la solicitud GET
-    $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
+// Leer categoría seleccionada desde el método GET
+$category = isset($_GET['category']) ? intval($_GET['category']) : 1;
 
-    // Definir nombres de categorías
-    $categories = [
-        1 => 'microcontroladores',
-        2 => 'sensores',
-        3 => 'servos',
-        4 => 'kits de robots',
-        5 => 'libros'
-    ];
+// Definir nombres de categorías según la base de datos
+$categories = [
+    1 => 'microcontroladores',
+    2 => 'sensores',
+    3 => 'servos',
+    4 => 'kits de robots',
+    5 => 'libros'
+];
 
-    // Verificar si la categoría es válida
-    if (!array_key_exists($category, $categories)) {
-        $category = 1;
+// Verificar si la categoría es válida
+if (!array_key_exists($category, $categories)) {
+    $category = 1; // Por defecto, microcontroladores
+}
+
+// Consultar productos de la categoría seleccionada desde la base de datos
+$conexion = "mysql:dbname=irjama;host=localhost";
+$usuario = "root";
+$contraseña = "root";
+
+try {
+    // Conexión a la base de datos
+    $db = new PDO($conexion, $usuario, $contraseña);
+
+    // Buscar productos por categoría en la base de datos
+    $sql = "SELECT id FROM productos WHERE categoria = :categoria";
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':categoria', $category, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Obtener IDs de productos
+    $products = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+} catch (PDOException $e) {
+    // Manejo de errores de conexión
+    echo "Error en la base de datos: " . $e->getMessage();
+}
+
+// Obtener imágenes desde el sistema de archivos según la estructura
+foreach ($products as $key => $product) {
+    $productPath = "categorias/" . $categories[$category] . "/$product";
+    if (is_dir($productPath)) {
+        $products[$key] = $product; // Guardar ID del producto
+    } else {
+        unset($products[$key]); // Eliminar si no tiene carpeta
     }
-
-    // Ruta a las imágenes de productos
-    $path = "categorias/$category/";
-    $products = [];
-
-    //!Escanear carpeta de la categoría
-    //**Buscar categoria por nombre 
-    //**Buscar producto por id mejor..
-
-    if (is_dir($path)) {
-        foreach (scandir($path) as $file) {
-            if (preg_match('/\.(jpg|png|jpeg|gif)$/i', $file)) {
-                $products[] = $file;
-            }
-        }
-    }
+}
 ?>
