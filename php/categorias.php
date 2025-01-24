@@ -1,6 +1,6 @@
 
 <?php
-    /* PHP para manejar la lógica del servidor */
+    /*PHP para manejar la lógica del servidor */
 
     // Leer categoría seleccionada desde el método GET
     $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
@@ -16,7 +16,7 @@
 
     // Verificar si la categoría es válida
     if (!array_key_exists($category, $categories)) {
-        $category = 1; // Por defecto, microcontroladores
+        $category = 1; //*Por defecto, microcontroladores
     }
 
     //*Consultar productos de la categoría seleccionada desde la base de datos
@@ -28,14 +28,14 @@
         // Conexión a la base de datos
         $db = new PDO($conexion, $usuario, $contraseña);
 
-        // Buscar productos por categoría en la base de datos
+        //!Buscar productos por categoría en la base de datos
         $sql = "SELECT ref FROM producto WHERE categoria = :categoria";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':categoria', $category, PDO::PARAM_INT);
         $stmt->execute();
 
         //! REVISAR PRODUCTO , no coge la referencia
-        // Obtener IDs de productos
+        // Obtener ref s de productos
         $products = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
     } catch (PDOException $e) {
@@ -43,12 +43,12 @@
         echo "Error en la base de datos: " . $e->getMessage();
     }
 
-    // Obtener imágenes desde el sistema de archivos según la estructura
+    //!Obtener imágenes desde el sistema de archivos según la estructura
     if (!empty($products)) {
         foreach ($products as $key => $product) {
             $productPath = "categorias/" . $categories[$category] . "/$product";
             if (is_dir($productPath)) {
-                $products[$key] = $product; // Guardar ID del producto
+                $products[$key] = $product; // Guardar ref del producto
             } else {
                 unset($products[$key]); // Eliminar si no tiene carpeta
             }
@@ -66,24 +66,21 @@
     <link rel="stylesheet" href="/css/estilos_principales.css">
     <link rel="stylesheet" href="/css/estilos_categoria.css">
     <!-- Estilos de categorias.php-->
-    <style>
-    </style>
 </head>
 <body>
-<!--mi header-->
+<!--reusado header-->
     <header>
         <ul>
             <li><img src="/img/LOGO 2.png"></li>
             <li><a href="../index.php">Inicio</a></li>
             <li><a href="categorias.php">Categorías</a>
                 <ul class="categorias">
-                    <!-- Aquí mostramos las categorías dinámicamente -->
-                    <!-- ERROR -->
-                    <?php
-                    foreach ($categories as $id => $name) {
-                        echo "<li><a href='categorias.php?category=$id'>" . ucfirst($name) . "</a></li>";
-                    }
-                    ?>
+                    <li><a href="?category=1">Microcontroladores</a></li>
+                    <li><a href="?category=2">Sensores</a></li>
+                    <li><a href="?category=3">Servos</a></li>
+                    <li><a href="?category=4">Kits de Robots</a></li>   
+                    <li><a href="?category=5">Libros</a></li> 
+                    <!-- Aquí mostramos las categorías dinámicamente todavia no -->
                 </ul>
             </li>
             <li><a href="#">Contacto</a></li>
@@ -91,9 +88,6 @@
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>
     </header>
-
-    <!--header irene-->
-    
 
     <main class="contenedor-imagenes">
         <div class="product-grid" id="product-grid">
