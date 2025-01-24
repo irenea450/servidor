@@ -53,10 +53,10 @@ header ul li:last-child:hover:not(.categorias li:last-child){
     background-color: #d85300;
 }
 
-header li:nth-child(2){
-    /* Espacio entre logo y opciones del menu */
-    flex-grow: 1;
-}
+/* header li:nth-child(2){
+    /* Espacio entre logo y opciones del menu 
+    flex-grow: 1; 
+}*/
 
 /* ?Enlaces del header */
 header a{

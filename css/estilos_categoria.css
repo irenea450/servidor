@@ -5,6 +5,19 @@ body {
     color: #fff;
 }
 
+/* ---------------------------- Header con logoi ---------------------------- */
+
+header ul{
+    height: auto;
+    background-color:#d85300 ;
+}
+header ul li a{
+    color: white;
+}
+header ul li a:hover{
+    color: black;
+}
+
 /* Encabezado */
 /* header {
     background: linear-gradient(90deg, #ff6700, #ff4500);

@@ -1,6 +1,6 @@
 
 <?php
-/* PHP para manejar la lógica del servidor */
+    /* PHP para manejar la lógica del servidor */
 
     // Leer categoría seleccionada desde el método GET
     $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
@@ -19,7 +19,7 @@
         $category = 1; // Por defecto, microcontroladores
     }
 
-    // Consultar productos de la categoría seleccionada desde la base de datos
+    //*Consultar productos de la categoría seleccionada desde la base de datos
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
     $usuario = "root";
     $contraseña = "";
@@ -62,15 +62,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categorias</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    --<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos_principales.css">
-    <link rel="stylesheet" href="/css/estilos_categorias.css">
+    <link rel="stylesheet" href="/css/estilos_categoria.css">
     <!-- Estilos de categorias.php-->
     <style>
-        
     </style>
 </head>
 <body>
+<!--mi header-->
     <header>
         <ul>
             <li><img src="/img/LOGO 2.png"></li>
@@ -91,6 +91,9 @@
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>
     </header>
+
+    <!--header irene-->
+    
 
     <main class="contenedor-imagenes">
         <div class="product-grid" id="product-grid">
