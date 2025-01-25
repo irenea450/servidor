@@ -104,6 +104,7 @@ if (session_status() == PHP_SESSION_NONE) {
 <body>
     <div class="contenedor2">
         <img id="icono-login" src="/img/login_icono.png">
+        <h2>Registro</h2>
         <!-- Contenedor donde se van a mostrar los errores -->
         <div class="erroresContenedor">
         <?php
@@ -157,7 +158,7 @@ if (session_status() == PHP_SESSION_NONE) {
         ?>
 
         </div>
-        <!-- Formualario de inicio de sesión -->
+        <!-- Formualario de registro -->
         <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST" >
         
             <div class="inputs2">

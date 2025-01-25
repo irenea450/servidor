@@ -9,7 +9,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//$_SESSION['usuario'] = "email@gmail.com"; //!- variable de prueba para pasar los controles----BORRAR
+//$_SESSION['usuario'] = "sergio@gmail.com"; //!- variable de prueba para pasar los controles----BORRAR
 
 
 /**
@@ -34,14 +34,9 @@ if (session_status() == PHP_SESSION_NONE) {
         $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
         $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
 
-        //introduzco los valores de $_POST en variables para simplificar comillas en la query
-        $email = $_POST['email'];
-        $clave = $_POST['clave'];
-        $clave2 = $_POST['clave2'];
-
-        //preparada para sacar el id del nuevo cliente
+        //preparada para borrar el cliente con los datos del post previamente comprobados
         $preparada1 = $db ->prepare("DELETE FROM cliente WHERE email = ? AND clave = ?");
-        $resul = $preparada1->execute(array($email, $clave));
+        $resul = $preparada1->execute(array($_POST['email'], $_POST['clave']));
 
         //en caso de borrado exitoso borramos tambien los datos de session existentes o las cookies , mantendremos $_COOKIE["carrito"] por si acaso
         if($resul){
@@ -61,13 +56,14 @@ if (session_status() == PHP_SESSION_NONE) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cancelar cuenta</title>
+    <title>Cancelar cuenta</title>
     <link rel="stylesheet" href="/css/estilos_principales.css">
     <link rel="stylesheet" href="/css/estilos_login.css">
 </head>
 <body>
     <div class="contenedor2">
         <img id="icono-login" src="/img/login_icono.png">
+        <h2>Cancelar cuenta</h2>
         <!-- Contenedor donde se van a mostrar los errores -->
         <div class="erroresContenedor">
         <?php
@@ -90,7 +86,7 @@ if (session_status() == PHP_SESSION_NONE) {
         ?>
 
         </div>
-        <!-- Formualario de inicio de sesión -->
+        <!-- Formualario para cancelar la cuenta -->
         <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST" >
             <!-- Campo oculto para poder hacer la redirección -->
         <input type="hidden" name="redirigido" value="<?php echo htmlspecialchars($_GET['redirigido'] ?? ''); ?>">
