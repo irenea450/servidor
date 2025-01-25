@@ -135,6 +135,7 @@ session_start();
                 $preparada -> execute(array($id));
                 $datos = $preparada->fetch();
                 //?- inicializar las variables de session necesarias
+                $_SESSION['usuario'] = $datos["email"];
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
             }

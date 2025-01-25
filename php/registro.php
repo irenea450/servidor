@@ -1,4 +1,5 @@
 <?php
+//!- FALTA EL BOTON DE RETORNO
 
 //scripts que vamos a necesitar
 require 'cookies.php';
@@ -20,7 +21,7 @@ if (session_status() == PHP_SESSION_NONE) {
         addCliente();
     }else{
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
-        $_SESSION["error_registro"] = TRUE;
+        $_SESSION["error_registro1"] = TRUE;
     }
 
     //?- conectamos con la base de datos y procedemos a realizar el insert del nuevo cliente 
@@ -57,7 +58,7 @@ if (session_status() == PHP_SESSION_NONE) {
         //?- -sacamos el id del nuevo cliente
         //?- -inicializamos las variables de sesion
         //?- -redirigimos al index
-        //?- -en caso de fallo lanzara un mensaje de aviso
+        //?- -en caso de fallo comprobara que el email no es repetido y lanzara el mensaje de error correspondiente
         if($resul){
             //preparada para sacar el id del nuevo cliente
             $preparada1 = $db ->prepare("SELECT id FROM cliente WHERE email = ? AND clave = ?");
@@ -73,7 +74,18 @@ if (session_status() == PHP_SESSION_NONE) {
             //redirigimos al index para empezar a comprar
             header("Location: ../index.php");
         }else{
-            echo "<h1>Fallo en el registro pruebe mas tarde</h1>";
+            //preparada para comprobar si el email es repetido
+            $preparada2 = $db -> prepare("SELECT email, COUNT(*) AS cantidad FROM cliente WHERE email = ?"); 
+            $preparada2 -> execute(array($email));
+            $datos = $preparada2->fetch();
+
+            if($datos['cantidad'] > 0){
+                //en este caso se lanzara el aviso <h1>Email no valido</h1>
+                $_SESSION["error_registro2"] = TRUE;
+            }else{
+                //en este caso se lanzara el aviso <h1>Fallo en el registro pruebe mas tarde</h1>
+                $_SESSION["error_registro3"] = TRUE;
+            }
         }
 }
 
@@ -96,7 +108,7 @@ if (session_status() == PHP_SESSION_NONE) {
         <div class="erroresContenedor">
         <?php
             //?En caso de que no esten todos los campos rellenos manda mensaje de error 
-            if(isset($_SESSION["error_registro"])){
+            if(isset($_SESSION["error_registro1"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>
@@ -108,9 +120,40 @@ if (session_status() == PHP_SESSION_NONE) {
                     contenedor.innerHTML = mensaje;
                 </script>';
                 // Eliminar el error después de mostrarlo
-                unset($_SESSION["error_registro"]); 
+                unset($_SESSION["error_registro1"]); 
             }
-                
+
+            //?En caso de que el email sea repetido manda mensaje de error
+            if(isset($_SESSION["error_registro2"])){
+                //* En javascript se inserta el mensaje de error
+                echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
+                <script>
+                    // Seleccionar elementos correctamente
+                    let mensaje = "Email no valido";
+                    let contenedor = document.querySelector(".erroresContenedor");
+
+                    // Mostrar mensaja en el contenedor en caso de error
+                    contenedor.innerHTML = mensaje;
+                </script>';
+                // Eliminar el error después de mostrarlo
+                unset($_SESSION["error_registro2"]); 
+            }
+
+            //?En caso de que el insert falle manda mensaje de error
+            if(isset($_SESSION["error_registro3"])){
+                //* En javascript se inserta el mensaje de error
+                echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
+                <script>
+                    // Seleccionar elementos correctamente
+                    let mensaje = "Fallo en el registro pruebe mas tarde";
+                    let contenedor = document.querySelector(".erroresContenedor");
+
+                    // Mostrar mensaja en el contenedor en caso de error
+                    contenedor.innerHTML = mensaje;
+                </script>';
+                // Eliminar el error después de mostrarlo
+                unset($_SESSION["error_registro3"]); 
+            }
         ?>
 
         </div>

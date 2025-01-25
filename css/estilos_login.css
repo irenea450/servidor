@@ -132,6 +132,10 @@ body{
     width: 300px;
 }
 
+.contenedor2 form img{
+    margin-left: 10px;
+}
+
 .contenedor2 input::placeholder , textarea::placeholder{
     color: white;
 }
