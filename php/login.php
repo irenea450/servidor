@@ -1,4 +1,4 @@
-<!-- opcion de registro / isset del metodo post -->
+<!-- opcion de registro y check / isset del metodo post -->
 <?php
 //scripts que vamos a necesitar
 require 'cookies.php';
@@ -145,7 +145,9 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             }
                 
         ?>
-
+        <div class="registrarse">
+            <p><a href="registro.php">Registrase como nuevo Usuario</a></p>
+        </div>
         </div>
         <!-- Formualario de inicio de sesión -->
         <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST" >
@@ -160,6 +162,13 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
                 <label for="clave"><img src="/img/contraseña.png"></label>
                 <input name="clave" type="password" placeholder="contraseña">
             </div>
+
+            
+            <div class="sesionIniciada">
+                <label>Mantener sesión iniciada</label>
+                <input type="radio" name="auth" >
+            </div>
+            
 
             <input type="submit" id="enviar" value="LOGIN">
             

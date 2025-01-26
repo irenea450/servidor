@@ -29,11 +29,10 @@ if (isset($_SESSION["id"])) {
 </head>
 <body>
     <header>
+        <img src="/img/LOGO 2.png">
         <ul>
-            <li><img src="/img/LOGO 2.png"></li>
-            <li></li>
             <li><a href="index.php">Inicio</a></li>
-            <li><a href="#">Categorias</a>
+            <li><a href="/php/categorias.php">Categorias</a>
                 <ul class="categorias">
                     <!-- Poner los enlaces que corresponden -->
                     <li><a href="#">Microcontroladores</a></li>

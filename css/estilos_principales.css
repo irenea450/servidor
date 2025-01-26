@@ -9,7 +9,14 @@
 header{
     width: 100%;
     height: auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
 }
+
 
 header ul{
     width: auto;
