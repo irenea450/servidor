@@ -1,6 +1,9 @@
 <?php
 //!- FALTA EL BOTON DE RETORNO
 
+//scripts que vamos a necesitar
+require 'funcionesInsUpdDel.php';
+
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
  *? session_status -> devuelve el estado actual de la sesión  */
@@ -9,7 +12,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//$_SESSION['usuario'] = "sergio@gmail.com"; //!- variable de prueba para pasar los controles----BORRAR
+//$_SESSION['usuario'] = "ana@gmail.com"; //!- necesario $_SESSION['usuario'] inicializado
 
 
 /**
@@ -24,28 +27,6 @@ if (session_status() == PHP_SESSION_NONE) {
     }else{
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_deleteCuenta"] = TRUE;
-    }
-
-    function deleteCliente (){
-        //conexion con la base de datos
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
-
-        //preparada para borrar el cliente con los datos del post previamente comprobados
-        $preparada1 = $db ->prepare("DELETE FROM cliente WHERE email = ? AND clave = ?");
-        $resul = $preparada1->execute(array($_POST['email'], $_POST['clave']));
-
-        //en caso de borrado exitoso borramos tambien los datos de session existentes o las cookies , mantendremos $_COOKIE["carrito"] por si acaso
-        if($resul){
-            $_SESSION = []; // Vacia el array $_SESSION asignando un array vacío
-
-            if(isset($_COOKIE["session_token"])){
-                setcookie("session_token", 0 , time() - 100);// elimina $_COOKIE["session_token"]
-            }
-        }
     }
 ?>
 

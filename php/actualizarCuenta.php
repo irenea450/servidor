@@ -1,6 +1,8 @@
 <?php
 //!- FALTA EL BOTON DE RETORNO
-//!- VOY POR la linea 157
+
+//scripts que vamos a necesitar
+require 'funcionesInsUpdDel.php';
 
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -10,7 +12,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$_SESSION['id'] = 1; //!- variable de prueba para pasar los controles----BORRAR
+//$_SESSION['id'] = 1; //!- necesario $_SESSION['id'] inicializado
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y quedatos se han introducido
@@ -23,175 +25,15 @@ $_SESSION['id'] = 1; //!- variable de prueba para pasar los controles----BORRAR
         $_SESSION["error_registro1"] = TRUE;
     }
 
-
-    function updateCliente(){
-        //conexion con la base de datos
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
-
-        //variable de control
-        $resul = false;
-
-        // Identificar de qué formulario proviene la información
-        if (isset($_POST['formulario'])) {
-            switch ($_POST['formulario']) {
-                // Procesar datos del Formulario 1
-                case 'formulario1':
-                    // Buscamos las variables post que no esten vacias y realizamos los updates
-                    if(!empty($_POST['direccion'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET direccionEnvio = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['direccion'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-
-                    if(!empty($_POST['direccionFac'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET direccionFacturacion = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['direccionFac'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-                    break;
-
-                // Procesar datos del Formulario 2
-                case 'formulario2':
-                    // Buscamos las variables post que no esten vacias y realizamos los updates
-                    if(!empty($_POST['email'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET email = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['email'], $_SESSION['id']));
-
-                        //si el update es correcto se actualiza la variable de sesion
-                        if($resul){
-                            $_SESSION['usuario'] = $_POST['email'];
-                        }else{
-                            //preparada para comprobar si el email es repetido
-                            $preparada2 = $db -> prepare("SELECT email, COUNT(*) AS cantidad FROM cliente WHERE email = ?"); 
-                            $preparada2 -> execute(array($_POST['email']));
-                            $datos = $preparada2->fetch();
-
-                            //si el email ya esta en la base de datos
-                            if($datos['cantidad'] > 0){
-                                //en este caso se lanzara el aviso <h1>Email no valido</h1>
-                                $_SESSION["error_update2"] = TRUE;
-                            }else{
-                                //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                                $_SESSION["error_update1"] = TRUE;
-                            }
-                        }
-                    }
-
-                    if(!empty($_POST['nombre'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET nombre = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['nombre'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-                    
-                    if(!empty($_POST['apellidos'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET apellidos = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['apellidos'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-                    
-                    if(!empty($_POST['telefono'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET tlf = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['telefono'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-                    
-                    if(!empty($_POST['sexo'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET sexo = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['sexo'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-
-                    if(!empty($_POST['fechaNacimiento'])){
-                        //preparada para update del cliente con los datos del post previamente comprobados
-                        $preparada1 = $db ->prepare("UPDATE cliente SET fechaNacimiento = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($_POST['fechaNacimiento'], $_SESSION['id']));
-
-                        //si la preparada falla
-                        if(!$resul){
-                            //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                            $_SESSION["error_update1"] = TRUE;
-                        }
-                    }
-                    break;
-
-                    //!- VOY POR AQUI HAY QUE RECTIFICAR E INTRODUCIR LOS DIVS DE ERROR EN EL HTML
-                    /* //en este caso se lanzara el aviso <h1>Email no valido</h1>
-                    $_SESSION["error_update2"] = TRUE; formulario 2
-                    //en este caso se lanzara el aviso <h1>Fallo al actualizar pruebe mas tarde</h1>
-                    $_SESSION["error_update1"] = TRUE; formulario 1,2 y 3 */ 
-                    //!
-
-                // Procesar datos del Formulario 3
-                case 'formulario3':
-                    // Buscamos las variables post que no esten vacias y realizamos los updates
-                    if(!empty($_POST['direccion'])){
-                        //guardo la info
-                        $dir = $_POST['direccion']; //guardo la info
-
-                        $preparada1 = $db ->prepare("UPDATE cliente SET direccionEnvio = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($dir, $_SESSION['id']));
-                    }
-
-                    if(!empty($_POST['direccionFac'])){
-                        //guardo la info
-                        $dir = $_POST['direccionFac']; //guardo la info
-
-                        $preparada1 = $db ->prepare("UPDATE cliente SET direccionFacturacion = ? WHERE id = ?");
-                        $resul = $preparada1->execute(array($dir, $_SESSION['id']));
-                    }
-                    echo "Datos del Formulario 3";
-                    break;
-
-                default:
-                    echo "Formulario no identificado.";
-            }
-        } else {
-            echo "No se envió información del formulario.";
-        }
-
-        echo $resul;
-    }
+    //?- Leyenda de errores de update
+        /* 
+        form1 - 1 <h1>Fallo al actualizar pruebe mas tarde</h1>
+        form2 - 2 <h1>Fallo al actualizar pruebe mas tarde</h1>
+                3 <h1>Email no valido</h1>
+        form3 - 4 <h1>Clave actual erronea</h1>
+                5 <h1>Las nuevas claves no coinciden</h1>
+        html  - 6 <h1>Fallo al actualizar pruebe mas tarde</h1>
+        */
 ?>
 
 <!-- HTML-> Formulario y manejo de errores -->
@@ -205,27 +47,47 @@ $_SESSION['id'] = 1; //!- variable de prueba para pasar los controles----BORRAR
     <link rel="stylesheet" href="/css/estilos_login.css">
 </head>
 <body>
-    <!-- formulario para el cambio de direcciones -->
+    <div class="erroresContenedor0">
+    <?php
+        //?En caso de que haya un error en la lectura del input tipo hidden 
+        if(isset($_SESSION["error_update6"])){
+            //* En javascript se inserta el mensaje de error
+            echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
+            <script>
+                // Seleccionar elementos correctamente
+                let mensaje = "Fallo al actualizar, pruebe mas tarde";
+                let contenedor = document.querySelector(".erroresContenedor0");
+
+                // Mostrar mensaja en el contenedor en caso de error
+                contenedor.innerHTML = mensaje;
+            </script>';
+            // Eliminar el error después de mostrarlo
+            unset($_SESSION["error_update6"]); 
+        }
+    ?>
+    </div>
+
+    <!-- FORMULARIO1--------------------------------------------------------------- para el cambio de direcciones -->
     <div class="contenedor2">
         <img id="icono-login" src="/img/login_icono.png">
         <h2>Direcciones</h2>
         <!-- Contenedor donde se van a mostrar los errores -->
-        <div class="erroresContenedor">
+        <div class="erroresContenedor1">
         <?php
-            //?En caso de que no esten todos los campos rellenos manda mensaje de error 
-            if(isset($_SESSION["error_registro1"])){
+            //?En caso de que haya un error en el update 
+            if(isset($_SESSION["error_update1"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>
                     // Seleccionar elementos correctamente
                     let mensaje = "Fallo al actualizar, pruebe mas tarde";
-                    let contenedor = document.querySelector(".erroresContenedor");
+                    let contenedor = document.querySelector(".erroresContenedor1");
 
                     // Mostrar mensaja en el contenedor en caso de error
                     contenedor.innerHTML = mensaje;
                 </script>';
                 // Eliminar el error después de mostrarlo
-                unset($_SESSION["error_registro1"]); 
+                unset($_SESSION["error_update1"]); 
             }
         ?>
 
@@ -253,27 +115,42 @@ $_SESSION['id'] = 1; //!- variable de prueba para pasar los controles----BORRAR
 
 
 
-    <!-- formulario para el cambio de datos -->
+    <!-- FORMULARIO2--------------------------------------------------------------- para el cambio de datos -->
     <div class="contenedor2">
         <img id="icono-login" src="/img/login_icono.png">
         <h2>Datos personales</h2>
         <!-- Contenedor donde se van a mostrar los errores -->
-        <div class="erroresContenedor">
+        <div class="erroresContenedor2">
         <?php
-            //?En caso de que no esten todos los campos rellenos manda mensaje de error 
-            if(isset($_SESSION["error_registro1"])){
+            //?En caso de que haya un error en el update 
+            if(isset($_SESSION["error_update2"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>
                     // Seleccionar elementos correctamente
                     let mensaje = "Fallo al actualizar, pruebe mas tarde";
-                    let contenedor = document.querySelector(".erroresContenedor");
+                    let contenedor = document.querySelector(".erroresContenedor2");
 
                     // Mostrar mensaja en el contenedor en caso de error
                     contenedor.innerHTML = mensaje;
                 </script>';
                 // Eliminar el error después de mostrarlo
-                unset($_SESSION["error_registro1"]); 
+                unset($_SESSION["error_update2"]); 
+            }
+            //?En caso de que el email nuevo no sea valido 
+            if(isset($_SESSION["error_update3"])){
+                //* En javascript se inserta el mensaje de error
+                echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
+                <script>
+                    // Seleccionar elementos correctamente
+                    let mensaje = "Email no valido";
+                    let contenedor = document.querySelector(".erroresContenedor2");
+
+                    // Mostrar mensaja en el contenedor en caso de error
+                    contenedor.innerHTML = mensaje;
+                </script>';
+                // Eliminar el error después de mostrarlo
+                unset($_SESSION["error_update3"]); 
             }
         ?>
 
@@ -323,27 +200,42 @@ $_SESSION['id'] = 1; //!- variable de prueba para pasar los controles----BORRAR
 
 
 
-    <!-- formulario para el cambio de contraseña -->
+    <!-- FORMULARIO3--------------------------------------------------------------- para el cambio de contraseña -->
     <div class="contenedor2">
         <img id="icono-login" src="/img/login_icono.png">
         <h2>Cambio de contraseña</h2>
         <!-- Contenedor donde se van a mostrar los errores -->
-        <div class="erroresContenedor">
+        <div class="erroresContenedor3">
         <?php
             //?En caso de que no esten todos los campos rellenos manda mensaje de error 
-            if(isset($_SESSION["error_registro1"])){
+            if(isset($_SESSION["error_update4"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>
                     // Seleccionar elementos correctamente
-                    let mensaje = "Fallo al actualizar, pruebe mas tarde";
-                    let contenedor = document.querySelector(".erroresContenedor");
+                    let mensaje = "Clave actual erronea";
+                    let contenedor = document.querySelector(".erroresContenedor3");
 
                     // Mostrar mensaja en el contenedor en caso de error
                     contenedor.innerHTML = mensaje;
                 </script>';
                 // Eliminar el error después de mostrarlo
-                unset($_SESSION["error_registro1"]); 
+                unset($_SESSION["error_update4"]); 
+            }
+            //?En caso de que no esten todos los campos rellenos manda mensaje de error 
+            if(isset($_SESSION["error_update5"])){
+                //* En javascript se inserta el mensaje de error
+                echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
+                <script>
+                    // Seleccionar elementos correctamente
+                    let mensaje = "Las nuevas claves no coinciden";
+                    let contenedor = document.querySelector(".erroresContenedor3");
+
+                    // Mostrar mensaja en el contenedor en caso de error
+                    contenedor.innerHTML = mensaje;
+                </script>';
+                // Eliminar el error después de mostrarlo
+                unset($_SESSION["error_update5"]); 
             }
         ?>
 

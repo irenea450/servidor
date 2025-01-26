@@ -2,7 +2,7 @@
 //!- FALTA EL BOTON DE RETORNO
 
 //scripts que vamos a necesitar
-require 'cookies.php';
+require 'funcionesInsUpdDel.php';
 
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -23,72 +23,6 @@ if (session_status() == PHP_SESSION_NONE) {
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_registro1"] = TRUE;
     }
-
-    //?- conectamos con la base de datos y procedemos a realizar el insert del nuevo cliente 
-    function addCliente(){
-        //conexion con la base de datos
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
-
-        //introduzco los valores de $_POST en variables para simplificar comillas en la query
-        $clave = $_POST['clave'];
-        $nombre = $_POST['nombre'];
-        $apellidos = $_POST['apellidos'];
-        $email = $_POST['email'];
-        $direccionEnvio = $_POST['direccion'];
-        $direccionFacturacion = $_POST['direccion'];
-        $tlf = $_POST['telefono'];
-        $fechaNacimiento = $_POST['fechaNacimiento'];
-        $sexo = $_POST['sexo'];
-        $tipo = "normal";
-
-        //* La preparada da error y optamos por una query
-        /* $preparada1 = $db ->prepare("INSERT INTO cliente (clave, nombre, apellidos, email, direccionEnvio, direccionFacturacion, tlf, fechaNacimiento, sexo, tipo) 
-                                    VALUES ('?', '?', '?', '?', '?', '?', '?', '?', '?', '?')");
-        $array = array($_POST['clave'], $_POST['nombre'], $_POST['apellidos'], $_POST['email'], $_POST['direccion'], $_POST['direccion'], $_POST['telefono'], $_POST['fechaNacimiento'], $_POST['sexo'], $tipo); */
-        
-        $ins1 =  "INSERT INTO cliente (clave, nombre, apellidos, email, direccionEnvio, direccionFacturacion, tlf, fechaNacimiento, sexo, tipo) 
-                                    VALUES ('$clave', '$nombre', '$apellidos', '$email', '$direccionEnvio', '$direccionFacturacion', '$tlf', '$fechaNacimiento', '$sexo', '$tipo')";
-        $resul = $db->query($ins1);
-
-        //?- si resul es true, es decir el insert a sido correcto 
-        //?- -sacamos el id del nuevo cliente
-        //?- -inicializamos las variables de sesion
-        //?- -redirigimos al index
-        //?- -en caso de fallo comprobara que el email no es repetido y lanzara el mensaje de error correspondiente
-        if($resul){
-            //preparada para sacar el id del nuevo cliente
-            $preparada1 = $db ->prepare("SELECT id FROM cliente WHERE email = ? AND clave = ?");
-            $preparada1->execute(array($email, $clave));
-
-            $usu = $preparada1->fetch();
-
-            //inicio variables de sesion
-            $_SESSION["id"] = $usu["id"];
-            $_SESSION["usuario"] = $email;
-            $_SESSION["logeado"] = true;
-
-            //redirigimos al index para empezar a comprar
-            header("Location: ../index.php");
-        }else{
-            //preparada para comprobar si el email es repetido
-            $preparada2 = $db -> prepare("SELECT email, COUNT(*) AS cantidad FROM cliente WHERE email = ?"); 
-            $preparada2 -> execute(array($email));
-            $datos = $preparada2->fetch();
-
-            if($datos['cantidad'] > 0){
-                //en este caso se lanzara el aviso <h1>Email no valido</h1>
-                $_SESSION["error_registro2"] = TRUE;
-            }else{
-                //en este caso se lanzara el aviso <h1>Fallo en el registro pruebe mas tarde</h1>
-                $_SESSION["error_registro3"] = TRUE;
-            }
-        }
-}
-
 ?>
 
 <!-- HTML-> Formulario y manejo de errores -->
