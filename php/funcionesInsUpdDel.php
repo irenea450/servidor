@@ -277,4 +277,38 @@ if (session_status() == PHP_SESSION_NONE) {
         }
     }
 
+
+//TODO- :::::::::::::::::::::::::::::::::::::: RECARGA ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    function recargarSaldo(){
+        //conexion con la base de datos
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuario_bd = "root";
+        $clave_bd = "";
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
+
+        //preparada para recuperar el saldo actual
+        $preparada1 = $db ->prepare("SELECT saldo FROM cliente WHERE id = ?");
+        $preparada1->execute(array($_SESSION['id']));
+        $datos = $preparada1->fetch();
+
+        //si el cliente aun no tiene saldo (NULL) entrara en el if, de tener saldo sumaria ambos 
+        if($datos['saldo'] === null){
+            //preparada para update de saldo con los datos del post previamente comprobados
+            $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($_POST['saldo'], $_SESSION['id']));
+        }else{
+            $saldo = $datos['saldo'] + $_POST['saldo'];
+            //preparada para update de saldo con los datos del post previamente comprobados
+            $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($saldo, $_SESSION['id']));
+        }
+
+        //si la preparada falla
+        if(!$resul){
+            //en este caso se lanzara el aviso <h1>Fallo en la recarga, pruebe mas tarde</h1>
+            $_SESSION["error_recarga1"] = TRUE;
+        }
+    }
+
 ?>
