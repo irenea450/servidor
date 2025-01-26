@@ -129,6 +129,15 @@ ul > li:hover ul.categorias{
     height: 85vh;
 
     background-color: #3D3D3D;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedor-imagenes img{
+    width: auto;
+    height: 90%;
 }
 
 

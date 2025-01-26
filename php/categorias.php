@@ -113,8 +113,8 @@ session_start();
                 <div class="product hidden">
                     <!-- Mostrar imagen del producto -->
                     <img src="<?= "categorias/" . $categories[$category] . "/$product/1.png" ?>" 
-                         alt="<?= $categories[$category] ?>" 
-                         onerror="this.onerror=null; this.src='/img/default.png';">
+                        alt="<?= $categories[$category] ?>" 
+                        onerror="this.onerror=null; this.src='/img/default.png';">
                     <!-- Mostrar descripción del producto -->
                     <div class="product-info">
                         <h3><?= ucfirst($categories[$category]) ?> - Producto <?= $product ?></h3>
