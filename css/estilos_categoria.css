@@ -7,15 +7,34 @@ body {
 
 /* Encabezado */
 /* ---------------------------- Header con logoi -----------Irene-----------*/
-header ul{
+header{
+    width: 100%;
     height: auto;
-    background-color:#d85300 ;
+
+    background-color:#d85300;
+
+}
+header ul{
+    width: auto;
+    height: auto;
+    background-color:#d85300;
+
+}
+header li{
+    padding: 20px 30px;
 }
 header ul li a{
     color: white;
 }
 header ul li a:hover{
     color: black;
+}
+
+header > img{
+    width: auto;
+    height: 50px;
+    /* Padding de 6px para ajustar al contenedor */
+    padding: 6px;
 }
 
 /* Categorías desplegables */

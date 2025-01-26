@@ -1,5 +1,7 @@
 
 <?php
+require "funciones.php";
+session_start();
     /*PHP para manejar la lógica del servidor */
 
     // Leer categoría seleccionada desde el método GET
@@ -54,6 +56,20 @@
             }
         }
     }
+
+    /* -------------------------- Ajuste menu variables ------------------------- */
+    /** 
+     * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
+     * ? Aparecerá su nombre arriba con un enlace a su area personal */
+    $nombreUsuario = ""; // Por defecto, vacío
+
+    if (isset($_SESSION["id"])) {
+        // Si la sesión está iniciada, obtenemos el nombre del usuario
+        $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
+    } else {
+        // Si la sesión no está iniciada, dejamos "Área Personal" o vacío
+        $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+    }
 ?>
 
 <!DOCTYPE html>
@@ -70,8 +86,8 @@
 <body>
 <!--reusado header-->
     <header>
+        <img id="logo" src="/img/LOGO 2.png">
         <ul>
-            <li><img src="/img/LOGO 2.png"></li>
             <li><a href="../index.php">Inicio</a></li>
             <li><a href="categorias.php">Categorías</a>
                 <ul class="categorias">
@@ -83,7 +99,7 @@
                     <!-- Aquí mostramos las categorías dinámicamente todavia no -->
                 </ul>
             </li>
-            <li><a href="#">Contacto</a></li>
+            <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>

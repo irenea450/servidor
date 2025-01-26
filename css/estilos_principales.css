@@ -149,3 +149,26 @@ footer{
     align-items: center;
 
 }
+
+/* ------------------------- Opciones Area Personal ------------------------- */
+.opcionesArea{
+    width: 100%;
+    height: auto;
+    background-color: rebeccapurple;
+
+    display: flex;
+    flex-direction: row;
+}
+.botonRecargarSaldo,
+.botonActualizarDatos,
+.botonCancelar{
+    width: auto;
+    height: auto;
+    background-color: #d85300;
+    color: white;
+    border: solid 1px #d85300;
+    border-radius: 20px;
+    padding: 10px 20px;
+
+    margin: 10px 20px;
+}

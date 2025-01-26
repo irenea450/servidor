@@ -5,7 +5,7 @@
     padding: 0px;
 }
 
-/* ---------------------------- Header con logoi ---------------------------- */
+/* ---------------------------- Header fondo naranja ---------------------------- */
 header{
     width: 100%;
     height: auto;
@@ -19,12 +19,14 @@ header ul{
     background-color:#d85300;
 
 }
+
 header ul li a{
     color: white;
     padding: 20px 30px;
 }
 header ul li a:hover{
     color: black;
+
 }
 
 header > img{
