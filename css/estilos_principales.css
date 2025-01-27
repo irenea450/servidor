@@ -9,7 +9,14 @@
 header{
     width: 100%;
     height: auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
 }
+
 
 header ul{
     width: auto;
@@ -122,6 +129,15 @@ ul > li:hover ul.categorias{
     height: 85vh;
 
     background-color: #3D3D3D;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedor-imagenes img{
+    width: auto;
+    height: 90%;
 }
 
 
@@ -141,4 +157,27 @@ footer{
     justify-content: space-around;
     align-items: center;
 
+}
+
+/* ------------------------- Opciones Area Personal ------------------------- */
+.opcionesArea{
+    width: 100%;
+    height: auto;
+    background-color: rebeccapurple;
+
+    display: flex;
+    flex-direction: row;
+}
+.botonRecargarSaldo,
+.botonActualizarDatos,
+.botonCancelar{
+    width: auto;
+    height: auto;
+    background-color: #d85300;
+    color: white;
+    border: solid 1px #d85300;
+    border-radius: 20px;
+    padding: 10px 20px;
+
+    margin: 10px 20px;
 }

@@ -56,9 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
 </head>
 <body>
     <header>
+        <img src="/img/LOGO 2.png">
         <ul>
-            <li><img src="/img/LOGO 2.png"></li>
-            <li></li>
             <li><a href="../index.php">Volver al inicio</a></li>
         </ul>
     </header>

@@ -277,4 +277,104 @@ if (session_status() == PHP_SESSION_NONE) {
         }
     }
 
+
+//TODO- :::::::::::::::::::::::::::::::::::::: RECARGA ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    function recargarSaldo(){
+        //conexion con la base de datos
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuario_bd = "root";
+        $clave_bd = "";
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
+
+        //preparada para recuperar el saldo actual
+        $preparada1 = $db ->prepare("SELECT saldo FROM cliente WHERE id = ?");
+        $preparada1->execute(array($_SESSION['id']));
+        $datos = $preparada1->fetch();
+
+        //si el cliente aun no tiene saldo (NULL) entrara en el if, de tener saldo sumaria ambos 
+        if($datos['saldo'] === null){
+            //preparada para update de saldo con los datos del post previamente comprobados
+            $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($_POST['saldo'], $_SESSION['id']));
+        }else{
+            $saldo = $datos['saldo'] + $_POST['saldo'];
+            //preparada para update de saldo con los datos del post previamente comprobados
+            $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($saldo, $_SESSION['id']));
+        }
+
+        //si la preparada falla
+        if(!$resul){
+            //en este caso se lanzara el aviso <h1>Fallo en la recarga, pruebe mas tarde</h1>
+            $_SESSION["error_recarga1"] = TRUE;
+        }
+    }
+
+//TODO- :::::::::::::::::::::::::::::::::::::: UPDATE PUNTOS + TIPO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //?- Esta funcion recibe los puntos creados por cada compra y los suma a los del cliente
+    //?- Necesita que $_SESSION['id'] este inicializada
+    //?- Dependiendo de la suma rectifica el tipo de cliente
+    //?- Tipos: 0(normal), 500(bronce), 1200(plata), 2000(oro), 3000(platino)
+    function puntosTipo($puntosNew){
+        $puntos = ""; //variable global para guardar el saldo total y elegir el tipo de cliente
+
+        //conexion con la base de datos
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuario_bd = "root";
+        $clave_bd = "";
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+        $db = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
+
+        //preparada para recuperar los puntos actuales
+        $preparada1 = $db -> prepare("SELECT puntos FROM cliente WHERE id = ?"); 
+        $preparada1 -> execute(array($_SESSION['id']));
+        $datos = $preparada1->fetch();
+
+        //si el cliente aun no tiene puntos (NULL) entrara en el if, de tener puntos sumaria ambos 
+        if($datos['puntos'] === null){
+            //preparada para update de los puntos
+            $preparada2 = $db ->prepare("UPDATE cliente SET puntos = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($puntosNew, $_SESSION['id']));
+        }else{
+            $puntos = $datos['puntos'] + $puntosNew;
+            //preparada para update de los puntos
+            $preparada2 = $db ->prepare("UPDATE cliente SET puntos = ? WHERE id = ?");
+            $resul = $preparada2->execute(array($puntos, $_SESSION['id']));
+        }
+
+        //si la preparada falla
+        if(!$resul){
+            //en este caso se lanzara error (futuro control de errores mediante cookie)
+            $_SESSION["error_puntos"] = TRUE;
+        }
+
+        //switch de $puntos para controlar el update del tipo de cliente
+        switch($puntos){
+            case $puntos < 500:
+                $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
+                $preparada3->execute(array("normal", $_SESSION['id']));
+                break;
+            case $puntos >= 500 && $puntos <1200:
+                $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
+                $preparada3->execute(array("bronce", $_SESSION['id']));
+                break;
+            case $puntos >= 1200 && $puntos <2000:
+                $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
+                $preparada3->execute(array("plata", $_SESSION['id']));
+                break;
+            case $puntos >= 2000 && $puntos <3000:
+                $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
+                $preparada3->execute(array("oro", $_SESSION['id']));
+                break;
+            case $puntos >= 3000:
+                $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
+                $preparada3->execute(array("platino", $_SESSION['id']));
+                break;
+            default:
+                //en este caso se lanzara error (futuro control de errores mediante cookie)
+                $_SESSION["error_tipo"] = TRUE;
+        }
+    }
+
 ?>

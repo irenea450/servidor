@@ -18,8 +18,10 @@ if (isset($_SESSION["id"])) {
 
 <!-- PHP para manejar la lógica del servidor -->
 <?php
-// Leer categoría seleccionada desde el método GET
-$category = isset($_GET['category']) ? intval($_GET['category']) : 1;
+    /*PHP para manejar la lógica del servidor */
+
+    // Leer categoría seleccionada desde el método GET
+    $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
 
 // Definir nombres de categorías según la base de datos
 $categories = [
@@ -124,11 +126,11 @@ try {
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $product): ?>
                 <div class="product hidden">
-                    <?php
-                    // Construir la ruta de la imagen
-                    $imagePath = "categorias/$category/{$product['ref']}/1.png";
-                    ?>
-                    <img src="<?= $imagePath ?>" alt="<?= $product['nombre'] ?>" onerror="this.src='img/default.png';">
+                    <!-- Mostrar imagen del producto -->
+                    <img src="<?= "categorias/" . $categories[$category] . "/$product/1.png" ?>" 
+                         alt="<?= $categories[$category] ?>" 
+                         onerror="this.onerror=null; this.src='/img/default.png';">
+                    <!-- Mostrar descripción del producto -->
                     <div class="product-info">
                         <h3><?= $product['nombre'] ?></h3>
                         <p><?= $product['caracteristicas'] ?></p>

@@ -97,7 +97,7 @@ if (session_status() == PHP_SESSION_NONE) {
         
             <div class="inputs2">
                 <label for="email">Email</label>
-                <input id="email" name="email" placeholder="email" type="text" value="<?php if(isset($usuario)) echo $usuario ?>" >
+                <input id="email" name="email" placeholder="email" type="text" >
             </div>
 
             <div class="inputs2">

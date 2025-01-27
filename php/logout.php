@@ -15,11 +15,11 @@ if (isset($_SESSION["id"])) {
 //? Varible que guarda el nombre de usuario , usarlo más adelnate parav infromar que ese usuario ya esta logueado
 $_SESSION["usuario"] = $usuario;
 
-//~ Si se activa el botón de volver atras redirige a la pagina principal
+//? Si se activa el botón de volver atras redirige a la pagina principal
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
     header("Location: ../index.php");}
 
-//~ Si se activa el boton log out(name="out") se cierra sesión
+//? Si se activa el boton log out(name="out") se cierra sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['out'])) {
 
     //! Destruyo cookies de sesión y carrito de compra

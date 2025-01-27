@@ -15,7 +15,26 @@ if (isset($_SESSION["id"])) {
     $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
 }
 
+/* ------------------------- Sacar imagen aleatoria ------------------------- */
+//Categorias existentes
+$categorias = [
+    1 => 'microcontroladores',
+    2 => 'sensores',
+    3 => 'servos',
+    4 => 'kits de robots',
+    5 => 'libros'
+];
 
+// Genera un número aleatorio entre 1 y 5
+$numeroAleatorio = rand(1, 5); 
+$categoriaAleatoria = $categorias[$numeroAleatorio];
+
+// Numero aleatorio para el producto de esa categoria
+$numeroAleatorio2 = rand(1, 8); 
+
+//? Ruta de l aimagen aleatoria
+$rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png";
+//echo "<p>Ruta generada: $rutaImagen</p>"; // imprimir ruta para probar que ruta esta sacando
 
 ?>
 
@@ -29,11 +48,10 @@ if (isset($_SESSION["id"])) {
 </head>
 <body>
     <header>
+        <img src="/img/LOGO 2.png">
         <ul>
-            <li><img src="/img/LOGO 2.png"></li>
-            <li></li>
             <li><a href="index.php">Inicio</a></li>
-            <li><a href="#">Categorias</a>
+            <li><a href="/php/categorias.php">Categorias</a>
                 <ul class="categorias">
                     <!-- Poner los enlaces que corresponden -->
                     <li><a href="#">Microcontroladores</a></li>
@@ -50,7 +68,7 @@ if (isset($_SESSION["id"])) {
     </header>
 
     <main class="contenedor-imagenes">
-        <img src="/categorias/<?php $categoria?>/<?php $idProductoImagen?>/1">
+        <img src="<?php echo $rutaImagen; ?>">
     </main>
 
     <footer>
