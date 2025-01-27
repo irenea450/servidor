@@ -27,6 +27,13 @@ $_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_recarga"] = TRUE;
     }
+
+
+    //? Botón retorno al área personal
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
+        //* Si se pulsa volver atrás, te llevará al area personal del usuario
+        header("Location: areaPersonal.php");
+    }
 ?>
 
 
@@ -105,6 +112,16 @@ $_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
 
             <input type="submit" id="enviar" value="RECARGAR">
             
+        </form>
+    </div>
+
+    <!-- flecha volver atras -->
+    <div class="volverInicio">
+        <form id="atrasForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario con función de ir atrás -->
+            <button type="submit" name="atras" class="flechaVolver"  >
+                <img src="/img/flecha_atras.png">
+            </button>
         </form>
     </div>
 </body>

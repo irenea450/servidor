@@ -1,6 +1,4 @@
 <?php
-//!- FALTA EL BOTON DE RETORNO
-
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';
 
@@ -34,6 +32,12 @@ if (session_status() == PHP_SESSION_NONE) {
                 5 <h1>Las nuevas claves no coinciden</h1>
         html  - 6 <h1>Fallo al actualizar pruebe mas tarde</h1>
         */
+
+    //? Botón retorno al área personal
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
+        //* Si se pulsa volver atrás, te llevará al area personal del usuario
+        header("Location: areaPersonal.php");
+    }
 ?>
 
 <!-- HTML-> Formulario y manejo de errores -->
@@ -263,6 +267,16 @@ if (session_status() == PHP_SESSION_NONE) {
 
             <input type="submit" id="enviar" value="ACTUALIZAR">
             
+        </form>
+    </div>
+
+    <!-- flecha volver atras -->
+    <div class="volverInicio">
+        <form id="atrasForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario con función de ir atrás -->
+            <button type="submit" name="atras" class="flechaVolver"  >
+                <img src="/img/flecha_atras.png">
+            </button>
         </form>
     </div>
 </body>

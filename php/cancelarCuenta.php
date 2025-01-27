@@ -1,6 +1,4 @@
 <?php
-//!- FALTA EL BOTON DE RETORNO
-
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';
 
@@ -27,6 +25,12 @@ if (session_status() == PHP_SESSION_NONE) {
     }else{
         //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_deleteCuenta"] = TRUE;
+    }
+
+    //? Botón retorno al área personal
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
+        //* Si se pulsa volver atrás, te llevará al area personal del usuario
+        header("Location: areaPersonal.php");
     }
 ?>
 
@@ -87,6 +91,17 @@ if (session_status() == PHP_SESSION_NONE) {
 
             <input type="submit" id="enviar" value="ACEPTAR">
             
+        </form>
+    </div>
+
+
+    <!-- flecha volver atras -->
+    <div class="volverInicio">
+        <form id="atrasForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario con función de ir atrás -->
+            <button type="submit" name="atras" class="flechaVolver"  >
+                <img src="/img/flecha_atras.png">
+            </button>
         </form>
     </div>
 </body>

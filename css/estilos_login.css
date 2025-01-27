@@ -51,6 +51,7 @@ body{
 .contenedor h1{
     font-size: medium;
     text-align: center;
+    margin: 0px 10px;
 }
 
 /* ? Contenedor de registro nuevo */
@@ -86,10 +87,18 @@ body{
 
     margin: 0px 5% 10px 5%;
     
-    
     border: solid #3D3D3D 2px;
     border-radius: 8px;
 
+}
+#logout{
+    width: 170px;
+    height: 30px;
+
+    margin: 0px;
+    
+    border: solid #3D3D3D 2px;
+    border-radius: 8px;
 }
 
 /* -------------------------- Contenedor de errores ------------------------- */
