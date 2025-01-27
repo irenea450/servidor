@@ -56,7 +56,10 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
             $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
-            cookieSesion2($_SESSION["id"]);
+            //*Pero solo si se ha marcado la opción de recordar
+            if (!empty($_POST["recordar_sesion"])) {
+                cookieSesion2($_SESSION["id"]);
+            }
 
             //? Una vez el login es correcto va a redidirgir por defecto al index
             //? si llega redirigido de otra pagina se va a volver a esa pagina
@@ -166,7 +169,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             
             <div class="sesionIniciada">
                 <label>Mantener sesión iniciada</label>
-                <input type="radio" name="auth" >
+                <input type="checkbox" name="auth" >
             </div>
             
 
