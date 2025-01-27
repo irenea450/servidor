@@ -1,6 +1,6 @@
 <?php
 
-        //todo - FUNCIONES PARA DESMONTAR STRINGS
+//todo - FUNCIONES PARA DESMONTAR STRINGS
     /**
      * Funciónes para procesar la cookie "carrito" (desmontar1 + desmontar2), caracteristicas de producto (desmontar1), etc.
      * string $info = Cadena de texto con los datos del carrito, carcteristicas, etc.
