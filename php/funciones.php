@@ -1,4 +1,22 @@
 <?php
+//?- INDICE:
+//?-21   .funciones para desmontar strings
+//?-27      .desmontar1() -divide un string en cada asterisco generando un array
+//?-35      .desmontar2() -divide cada posicion de un array por las comas generando una matriz (:ref , :cantidad)
+//?-87      .desmontar3() -divide cada posicion de un array por las comas generando una matriz (:id , :token)
+//?-107  .obtenerNombreUsuario() -Función para obtener el nombre del usuario con base en el ID almacenado en la sesión 
+//?-133  .obtenerDirecciones() -Función que va a sacar los datos de facturación el usaurio que este logueado mediante el id 
+//?-160  .obtenerSaldo() -función que obtiene el saldo y puntos que tiene el usuario logueado 
+//?-187  .obtenerDatosCliente() -consultamos todos los datos sobre el clinete (excepto contraseña)
+//?-
+//?-
+//?-
+//?-
+//?-
+//?-
+//?-
+//?-
+
 
 //todo - FUNCIONES PARA DESMONTAR STRINGS
     /**
@@ -166,7 +184,7 @@ function obtenerSaldo($id){
     return $resultado; 
 }
 
-/* ------------------ Consulta general de datos del cliente ----------------- */
+//TODO ------------------ Consulta general de datos del cliente ----------------- 
 //? Consultamos todos los datos sobre el clinete (excepto contraseña)
 function obtenerDatosCliente($id){
     //? Consulta que extrae los datos del usuario
