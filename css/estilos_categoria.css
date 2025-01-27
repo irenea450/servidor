@@ -6,7 +6,7 @@ body {
 }
 
 /* Encabezado */
-/* ---------------------------- Header con logoi -----------Irene-----------*/
+/* ---------------------------- Header con logoi -----------Irene-----------
 header ul{
     height: auto;
     background-color:#d85300 ;
@@ -17,6 +17,7 @@ header ul li a{
 header ul li a:hover{
     color: black;
 }
+*/
 
 /* Categorías desplegables */
 .dropdown {
