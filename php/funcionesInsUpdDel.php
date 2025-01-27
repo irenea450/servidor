@@ -1,9 +1,12 @@
 <?php
-//?- Script de apoyo para las funciones de: 
-        //?. registro.php
-        //?. cancelarCuenta.php
-        //?. actualizarCuenta.php
-        //?. recarga.php
+//?- INDICE: 
+//?- 19   .addCliente() .conectamos con la base de datos y procedemos a realizar el insert del nuevo cliente 
+//?- 87   .updateCliente() .segun el formulario que rellenes realizara el update
+//?- 259  .deleteCliente () -Se borra tanto la cuenta como el array SESSION y $_COOKIE["session_token"]
+//?- 284  .recargarSaldo() -Recarga  el saldo
+//?- 317  .puntosTipo() -Update de los puntos y el tipo de cliente
+//?
+//?
 
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
