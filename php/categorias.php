@@ -1,5 +1,5 @@
 <?php
-/*require "php/funciones.php";*/
+/* require "php/funciones.php"; */
 session_start();
 
 /** 
@@ -16,33 +16,32 @@ if (isset($_SESSION["id"])) {
 }
 ?>
 
-<!-- PHP para manejar la lógica del servidor -->
 <?php
     /*PHP para manejar la lógica del servidor */
 
     // Leer categoría seleccionada desde el método GET
     $category = isset($_GET['category']) ? intval($_GET['category']) : 1;
 
-// Definir nombres de categorías según la base de datos
-$categories = [
+    // Definir nombres de categorías según la base de datos
+    $categories = [
     1 => 'microcontroladores',
     2 => 'sensores',
     3 => 'servos',
     4 => 'kits de robots',
     5 => 'libros'
-];
+    ];
 
-// Verificar si la categoría es válida
-if (!array_key_exists($category, $categories)) {
+    // Verificar si la categoría es válida
+    if (!array_key_exists($category, $categories)) {
     $category = 1; // Por defecto, microcontroladores
-}
+    }
 
-// Consultar productos de la categoría seleccionada desde la base de datos
-$conexion = "mysql:dbname=irjama;host=127.0.0.1";
-$usuario = "root";
-$contraseña = "";
+    // Consultar productos de la categoría seleccionada desde la base de datos
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario = "root";
+    $contraseña = "";
 
-try {
+    try {
     // Conexión a la base de datos
     $db = new PDO($conexion, $usuario, $contraseña);
 
@@ -55,10 +54,10 @@ try {
     // Obtener IDs de productos
     $products = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-} catch (PDOException $e) {
+    } catch (PDOException $e) {
     // Manejo de errores de conexión
     echo "Error en la base de datos: " . $e->getMessage();
-}
+    }
 
 
     //!Obtener imágenes desde el sistema de archivos según la estructura
@@ -121,7 +120,7 @@ try {
         </ul>
     </header>
     <!--Mostrar productos-->
-    <main class="contenedor-imagenes">
+    <main>
     <div class="product-grid" id="product-grid">
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $product): ?>
