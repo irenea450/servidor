@@ -56,19 +56,20 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
             $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
+            //*Pero solo si se ha marcado la opción de recordar
+            /* if (!empty($_POST["recordar_sesion"])) {
+                cookieSesion2($_SESSION["id"]);
+            } */
             cookieSesion2($_SESSION["id"]);
 
             //? Una vez el login es correcto va a redidirgir por defecto al index
             //? si llega redirigido de otra pagina se va a volver a esa pagina
-            if (isset($_POST['redirigido']) && $_POST['redirigido'] === 'carrito.php') {
-                $redirectUrl = 'carrito.php';
-            } else {
-                //? si no está redirigido por defecto va a index
-                $redirectUrl = '../index.php';
-            }
-            //* Cambia la la pantalla con el url de index o redirigido
+            $redirectUrl = !empty($_POST['redirigido']) ? $_POST['redirigido'] : '../index.php';
+
+            //* Redirigir al usuario a la desde la ha sido redirigido antes
+            //Ejemplo: si viene desde carrito.php, va a volver a esa página
             header("Location: " . $redirectUrl);
-    
+
         }
     }
 
@@ -166,7 +167,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             
             <div class="sesionIniciada">
                 <label>Mantener sesión iniciada</label>
-                <input type="radio" name="auth" >
+                <input type="checkbox" name="auth" >
             </div>
             
 

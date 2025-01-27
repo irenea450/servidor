@@ -106,8 +106,8 @@ function obtenerNombreUsuario($id) {
     // Obtener el resultado de la consulta
     $resultado = $stmt->fetch();
 
-    // Devolver el nombre del usuario si se encuentra, o "Usuario desconocido" si no
-    return $resultado ? $resultado['nombre'] : "Usuario desconocido";
+    // Devolver el nombre del usuario si se encuentra si no aparecerá usuario
+    return $resultado ? $resultado['nombre'] : "Usuario";
 
 }
 
@@ -165,9 +165,11 @@ function obtenerSaldo($id){
     }
     return $resultado; 
 }
-//* preubas irene
-function sacarIdImagen($categoria){
-    //? Consulta que extrae los id de los productos para mostrarlos segun su categoria
+
+/* ------------------ Consulta general de datos del cliente ----------------- */
+//? Consultamos todos los datos sobre el clinete (excepto contraseña)
+function obtenerDatosCliente($id){
+    //? Consulta que extrae los datos del usuario
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
     $usuario_bd = "root";
     $clave_bd = "";
@@ -176,17 +178,27 @@ function sacarIdImagen($categoria){
 
 
     // Consulta para obtener el nombre del usuario con el ID
-    $consulta = "SELECT id  FROM productos WHERE categodia = :categodia";
+    $consulta = "SELECT nombre, apellidos, email ,direccionEnvio , direccionFacturacion, tlf, fechaNacimiento, sexo , saldo , puntos, tipo FROM cliente WHERE id = :id";
     $ejecuto = $bd->prepare($consulta);
 
     // Ejecutar la consulta pasando solo el parámetro id
-    $ejecuto->execute(['categodia' => $categoria]);
+    $ejecuto->execute(['id' => $id]);
 
     // Obtener el resultado de la consulta
     $resultado = $ejecuto->fetch();
 
     if ($resultado) {
-        $idProducto = $resultado['idProducto'];
+        $nombre = $resultado['nombre'];
+        $apellidos = $resultado['apellidos'];
+        $email = $resultado['email'];
+        $direccionEnvio = $resultado['direccionEnvio'];
+        $direccionFacturacion = $resultado['direccionFacturacion'];
+        $tlf = $resultado['tlf'];
+        $fechaNacimiento = $resultado['fechaNacimiento'];
+        $sexo = $resultado['sexo'];
+        $saldo = $resultado['saldo'];
+        $puntos = $resultado['puntos'];
+        $tipo = $resultado['tipo'];
     }
     return $resultado; 
 }

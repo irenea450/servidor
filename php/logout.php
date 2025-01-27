@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['out'])) {
         <h1>Tu sesión ya está iniciada, <?php echo htmlspecialchars($usuario); ?></h1>
         <!-- Formulario con boton de hacer logout -->
         <form id="logoutForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
-            <button type="submit" name="out" id="enviar" >Log Out</button>
+            <button type="submit" name="out" id="logout" >Log Out</button>
         </form>
     </div>
 

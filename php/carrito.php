@@ -3,29 +3,28 @@ require "funciones.php";
 //*Inicia sesión
 session_start();
 
-//? Si no esta inicaida la variable de sesión logeado, será necesario loguearse
+//? Si la sesión no está iniciada, se redirige al login pasando la URL actual
 if (!isset($_SESSION["logueado"]) || $_SESSION["logueado"] === FALSE) {
-    //* Usando GET se va a redirigir al login
-    header("Location: login.php?redirigido=carrito.php");
+    //* guarda la url en la que se encuentraa actualmente
+    $url_actual = $_SERVER['REQUEST_URI'];
+    //tedirige al login
+    header("Location: login.php?redirigido=$url_actual");
 }
 
 /**
  * ?Voy a extraer los datos del usuario que está logueado para mostrar los datos de la compra
  * ? uso variables para luego mostralo en el html */
-//*Variable de nombre del usuario
-$nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
 
-//? Para sacar los datos de facturación y envio se llama a la función pasando el id del usuario
-$datosUsuario = obtenerDirecciones($_SESSION["id"]);
-//? Para sacar los datos de saldo se llama a la función obtener saldo
-$datosSaldo = obtenerSaldo($_SESSION["id"]);
+//? se llama a la función que saca los datos del usaurio
+$datosUsuario = obtenerDatosCliente($_SESSION["id"]);
 
 //? las variables que van a guardar los datos extraidos en las consultas anteriores
 //? se incluyen estas variables más abajo para que sean visibles en el html
+$nombreUsuario = $datosUsuario['nombre'];
 $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
-$saldo = $datosSaldo['saldo'];
-$puntos = $datosSaldo['puntos'];
+$saldo = $datosUsuario['saldo'];
+$puntos = $datosUsuario['puntos'];
 
 $precioTotal = 100;
 
