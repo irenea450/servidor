@@ -160,6 +160,9 @@ footer{
 }
 
 /* ------------------------- Opciones Area Personal ------------------------- */
+#mainAreaPersonal{
+    padding: 10px;
+}
 .opcionesArea{
     width: 100%;
     height: auto;
@@ -183,4 +186,32 @@ footer{
     padding: 10px 20px;
 
     margin: 10px 20px;
+}
+
+.infoPersonal,
+.infoContactoUsuario,
+.infoUsuarioAplicacion{
+    margin: 10px 0px;
+}
+
+.infoPersonal,
+.infoUsuarioAplicacion{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.infoContactoUsuario p{
+    margin: 5px 0px;
+}
+
+/* Colores de fondo de los apartados, se va disminuyendo la transpariencia*/
+.infoPersonal{
+    background-color: rgba(226, 226, 226, 0.9);
+}
+.infoContactoUsuario{
+    background-color: rgba(226, 226, 226, 0.6);
+}
+.infoUsuarioAplicacion{
+    background-color: rgba(226, 226, 226, 0.35);
 }
