@@ -21,12 +21,32 @@ $datosUsuario = obtenerDatosCliente($_SESSION["id"]);
 //? las variables que van a guardar los datos extraidos en las consultas anteriores
 //? se incluyen estas variables más abajo para que sean visibles en el html
 $nombreUsuario = $datosUsuario['nombre'];
+$apellidoUsuario = $datosUsuario['apellidos'];
+$nombreCompleto = $nombreUsuario . " " . $apellidoUsuario;
 $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
 $saldo = $datosUsuario['saldo'];
 $puntos = $datosUsuario['puntos'];
 
-$precioTotal = 100;
+/* ----------------------------- peso del pedido ---------------------------- */
+//? El peso del pedido se pasa a la empresa de envio que es la que gestiona posibles aumentos de coste
+//? en nuestro caso solo vamos a mostrar el peso total
+$sumaPesoProductos = 30;
+
+
+/* --------------------------- precios del pedido --------------------------- */
+$sumaPrecioProductos = 0;
+//El gasto de envio va a tener un precio fijo de 4.5 manejado por la empresa de reparto, 
+//en caso de que el pedido supere los 50, el envio será gratuito
+if($sumaPrecioProductos > 50){
+    $gastosEnvio = 0;
+}else{
+    $gastosEnvio = 4.5;
+}
+
+//? Precio total del pedido
+$precioTotal = $sumaPrecioProductos + $gastosEnvio;
+
 
 /* ---------------------------- Proceder al pago ---------------------------- */
 //? Si se pulsa el botón de tramitar, se va a didigir a la pagina de pago.php 
@@ -39,8 +59,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
     $_SESSION["error_saldo"] = TRUE;
 }
 
+/* peso tener en cuanta
+emvio precio fijo excepto para mayores de 50 por ejemplo
+ */
+
+//? Guardamos variables necesarias para el pago en variables de sesión
+$_SESSION['nombreCompleto'] = $nombreCompleto;
+$_SESSION['direccionEnvio'] = $direccionEnvio;
+$_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos;
+$_SESSION['pesoEnvio'] = $sumaPesoProductos;
+$_SESSION['gastosEnvio'] = $gastosEnvio;
+$_SESSION['precioTotal'] = $precioTotal;
 
 
+//~ token al relaizar el pedido
+if (!isset($_SESSION['tokenPedido'])) {
+    $_SESSION['tokenPedido'] = bin2hex(random_bytes(32));
+}
 
 ?>
 
@@ -55,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
 </head>
 <body>
     <header>
-        <img src="/img/LOGO 2.png">
+        <img src="/img/LOGO 3.png">
         <ul>
             <li><a href="../index.php">Volver al inicio</a></li>
         </ul>
@@ -110,6 +145,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
                 <h4>Puntos <?php echo $puntos ?>
             </div>
             <div class="precioTotal">
+                <h4>Peso del pedido: <?php echo $sumaPesoProductos ?> kg</h4>
+                <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
                 <h4>Precio Total <?php echo $precioTotal ?><!-- Poner precio total aquí --> €</h4>
             </div>
             
@@ -148,12 +185,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
             </div>
             
             <!-- Formulario para tramitar pedido -->
-            <form id="tramitar" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
-            <!-- Formulario para comenzar proceso de pago-->
-            <button type="submit" name="tramitar" class="botonTramitar" >
-                TRAMITAR PEDIDO
-            </button>
-        </form>
+            <form id="tramitar" action="pago.php" method="post">
+                <input type="hidden" name="token" value="<?php echo $_SESSION['tokenPedido']; ?>">
+                <button type="submit" name="tramitar" class="botonTramitar">TRAMITAR PEDIDO</button>
+            </form>
         </section>
     </main>
 
