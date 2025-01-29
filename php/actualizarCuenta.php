@@ -12,15 +12,19 @@ if (session_status() == PHP_SESSION_NONE) {
 
 //$_SESSION['id'] = 1; //!- necesario $_SESSION['id'] inicializado
 
+
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y quedatos se han introducido
      * ? Con los datos introducidos se va a updateCliente() donde se realizara los apdates necesarios
      * ?   */
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        updateCliente();
-    }else{
-        //? En caso de no esten todos los campos rellenos se activa la variable de error 
-        $_SESSION["error_registro1"] = TRUE;
+        //array_filter($_POST): Filtra los valores vacíos ("", NULL, false) y devuelve un array con los que tienen datos.
+        if (!empty(array_filter($_POST))) {
+            updateCliente();
+        } else {
+            //? En caso de no esten todos los campos rellenos se activa la variable de error 
+        $_SESSION["error_update6"] = TRUE;
+        }
     }
 
     //?- Leyenda de errores de update

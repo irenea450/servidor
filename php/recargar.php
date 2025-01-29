@@ -12,8 +12,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
-
+//$_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
@@ -21,11 +20,13 @@ $_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
      * ? En un futuro se cotejaran los datos de la tarjeta de credito
      * ! Actualmete la recarga es simulada
      *  */
-    if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['num']) && !empty($_POST['cvv']) && !empty($_POST['fecha']) && !empty($_POST['saldo'])){
-        recargarSaldo();
-    }else{
-        //? En caso de no esten todos los campos rellenos se activa la variable de error 
-        $_SESSION["error_recarga"] = TRUE;
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if(!empty($_POST['num']) && !empty($_POST['cvv']) && !empty($_POST['fecha']) && !empty($_POST['saldo'])){
+            recargarSaldo();
+        }else{
+            //? En caso de no esten todos los campos rellenos se activa la variable de error 
+            $_SESSION["error_recarga"] = TRUE;
+        }
     }
 
 
@@ -70,7 +71,7 @@ $_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
                 unset($_SESSION["error_recarga"]); 
             }
             //?En caso de que falle el update manda mensaje de error 
-            if(isset($_SESSION["error_recarga1"])){
+            if(isset($_SESSION["error_recarga"])){
                 //* En javascript se inserta el mensaje de error
                 echo '<!-- uso de js para introdcuir el mensaje donde queremos del login -->
                 <script>

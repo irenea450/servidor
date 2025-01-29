@@ -20,11 +20,14 @@ if (session_status() == PHP_SESSION_NONE) {
      * ? ? Se comprueba si $_SESSION['usuario'] coincide o no con el email del post
      * ? Con los datos introducidos se va a deleteCliente() donde se realizara el delete
      * ?   */
-    if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && ($_POST['email'] === $_SESSION['usuario']) && !empty($_POST['clave']) && !empty($_POST['clave2']) && ($_POST['clave'] === $_POST['clave2'])){
-        deleteCliente();
-    }else{
-        //? En caso de no esten todos los campos rellenos se activa la variable de error 
-        $_SESSION["error_deleteCuenta"] = TRUE;
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if(!empty($_POST['email']) && ($_POST['email'] === $_SESSION['usuario']) && !empty($_POST['clave']) && !empty($_POST['clave2']) && ($_POST['clave'] === $_POST['clave2'])){
+            deleteCliente();
+            header("Location: index.php");
+        }else{
+            //? En caso de no esten todos los campos rellenos se activa la variable de error 
+            $_SESSION["error_deleteCuenta"] = TRUE;
+        }
     }
 
     //? Botón retorno al área personal

@@ -12,6 +12,10 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+//inicializamos los errores a false
+$_SESSION["error_registro1"] = false;
+$_SESSION["error_registro2"] = false;
+$_SESSION["error_registro2"] = false;
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
