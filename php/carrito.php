@@ -59,9 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
     $_SESSION["error_saldo"] = TRUE;
 }
 
-/* peso tener en cuanta
-emvio precio fijo excepto para mayores de 50 por ejemplo
- */
 
 //? Guardamos variables necesarias para el pago en variables de sesión
 $_SESSION['nombreCompleto'] = $nombreCompleto;
