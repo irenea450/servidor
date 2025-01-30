@@ -1,5 +1,7 @@
 <?php 
 //~ require dle correo madnadndole el email y nuemro de pedido
+require 'funcionesInsUpdDel.php';
+
 session_start(); // iniciar sesión
 
 //? Verificar si el token no existe, en caso de que ya haya sido eliminado(se ha reliazado el pedido)
@@ -26,7 +28,8 @@ $direccionEnvio = $_SESSION['direccionEnvio'];
 $pesoEnvio = $_SESSION['pesoEnvio'] ;
 $sumaPrecioProductos = $_SESSION['sumaPrecioProductos'] ?? 0;
 $gastosEnvio = $_SESSION['gastosEnvio'] ?? 4.5; // Valor por defecto si no está en la sesión
-$precioTotal = $_SESSION['precioTotal'] ?? 0;
+$precioTotal = $_SESSION['precioTotal'] ;
+$precioProductos = $_SESSION['sumaPrecioProductos'];
 
 // Conectar a la base de datos
 $conexion = "mysql:dbname=irjama;host=127.0.0.1";
@@ -42,12 +45,12 @@ try {
     $bd->beginTransaction();
 
     // Insertar un nuevo pedido
-    $stmt = $bd->prepare("
+    $preparada1 = $bd->prepare("
         INSERT INTO pedido (idCliente, fechaEnvio, enviado, peso, gastosEnvio, pvpTotal) 
         VALUES (:idCliente, NOW(), :enviado, :peso, :gastosEnvio, :pvpTotal)
     ");
 
-    $stmt->execute([
+    $preparada1->execute([
         'idCliente' => $idUsuario,  // id del cleinte que esta logueado
         'enviado' => "no" , // por defecto no, una vez la empresa de envio lo prepare cambiara su estado
         'peso' => $pesoEnvio,  //peso total dle paquete
@@ -59,11 +62,35 @@ try {
     $ultimoIdPedido = $bd->lastInsertId();
 
     // Recuperar los datos del pedido insertado
-    $stmt = $bd->prepare("SELECT * FROM pedido WHERE id = ?");
-    $stmt->execute([$ultimoIdPedido]);
-    $ultimoPedido = $stmt->fetch(PDO::FETCH_ASSOC);
+    $preparada2 = $bd->prepare("SELECT * FROM pedido WHERE id = ?");
+    $preparada2->execute([$ultimoIdPedido]);
+    $ultimoPedido = $preparada2->fetch(PDO::FETCH_ASSOC);
 
-    //* confrimar transacción
+
+    //? Saldo del cliente, se va a consultar a l abase de datos cual es el saldo actual
+    $preparada3 = $bd->prepare("SELECT saldo, puntos FROM cliente WHERE id = ?");
+    $preparada3->execute([$_SESSION['id']]);
+    $cliente = $preparada3-> fetch();
+    
+    $saldoActual = $cliente['saldo'];
+    $puntosActual = $cliente['puntos'];
+
+    //? Al saldo actual se le resta el precio del pedido
+    $saldoResta = $saldoActual - $precioTotal;
+    $sumaPuntos = $puntosActual + $precioProductos ;
+
+    //? Hace update del saldo del cliente en la base de datos, introduciendo el saldo ya restado (saldoResta)
+    $updateSaldo = $bd ->prepare("UPDATE cliente SET saldo = ?  WHERE id = ?");
+    // saldoResta es el saldo descontando el total del pedido
+    // $_SESSION['sumaPrecioProductos'] suma del precio de todos los productos, se va a sumar un punto por €
+    $resul = $updateSaldo->execute(array($saldoResta, $_SESSION['id']));
+
+
+
+
+
+
+    //* CONFIRMAR TRANSACCIÓN
     $bd->commit();
 
     //? Una vez la transacción se ha realizado con exito, se elimina el token , de esta froma no puedes
@@ -87,6 +114,7 @@ try {
     echo "❌ Error con la base de datos: " . $e->getMessage();
 }
 
+puntosTipo($sumaPuntos);
 
 /* -------------------------------------------------------------------------- */
 /*                             mostrar infromación                            */
@@ -102,10 +130,13 @@ echo "<p><strong>Gastos de Envío:</strong> $gastosEnvio €</p>";
 echo "<p><strong>Total a Pagar:</strong> $precioTotal €</p>";
 echo "<p><strong>Fecha de Envío:</strong> $fechaEnvio</p>";
 echo "<p><strong>Peso total del paquete:</strong> $pesoTotal kg</p>";
+echo "<h1><strong>Saldo resta</strong> $saldoResta €</h1>";
 
-
-
-
+if ($resul) {
+    echo "Saldo y puntos actualizados correctamente.";
+} else {
+    print_r($updateSaldo->errorInfo());  // Mostrar error de SQL si falla
+}
 
     
 ?>

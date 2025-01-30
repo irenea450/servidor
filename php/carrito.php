@@ -4,7 +4,7 @@ require "funciones.php";
 session_start();
 
 //? Si la sesión no está iniciada, se redirige al login pasando la URL actual
-if (!isset($_SESSION["logueado"]) || $_SESSION["logueado"] === FALSE) {
+if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
     //* guarda la url en la que se encuentraa actualmente
     $url_actual = $_SERVER['REQUEST_URI'];
     //tedirige al login
@@ -27,6 +27,7 @@ $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
 $saldo = $datosUsuario['saldo'];
 $puntos = $datosUsuario['puntos'];
+
 
 /* ----------------------------- peso del pedido ---------------------------- */
 //? El peso del pedido se pasa a la empresa de envio que es la que gestiona posibles aumentos de coste
@@ -67,6 +68,8 @@ $_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos;
 $_SESSION['pesoEnvio'] = $sumaPesoProductos;
 $_SESSION['gastosEnvio'] = $gastosEnvio;
 $_SESSION['precioTotal'] = $precioTotal;
+$_SESSION['saldoUsuario'] = $saldo;
+$_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos; //para sumar los puntos al cliente (sin los gatos adicionales)
 
 
 //~ token al relaizar el pedido
