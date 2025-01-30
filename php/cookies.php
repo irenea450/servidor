@@ -1,9 +1,4 @@
 <?php
-require "funciones.php";
-
-//!comprobar si poniendo session_start(); al principio del script vale para todas las funciones , en su defecto ponerlo al principio de cada funcion cookieSesion()
-// Inicia una sesión para el usuario 
-session_start();
 
 
     //todo - FUNCION PARA CREAR O ACTUALIZAR $_COOKIE["carrito"]
@@ -29,9 +24,9 @@ session_start();
         }
 
         try{
-            //creamos la cookie "carrito" con el valor de $info y una duracion de una semana
+            //creamos la cookie "carrito" con el valor de $info y una duracion de una semana y visible en todo el proyecto "/"
             //en caso de error se lanzara un error
-            if(!setcookie("carrito", $info, $time)){
+            if(!setcookie("carrito", $info, $time, "/")){
                 throw new Exception("Error al establecer la cookie");
             }
         
@@ -76,7 +71,6 @@ session_start();
     //?-  cookieSesion1() debera ser llamada al principio del codigo para comprobar si hay alguna sesion guardada
 
     function cookieSesion1(){
-        echo '<script> alert("entrado en cookie"); </script>';
         // La cookie esta formada por un string que contiene el id y el token separado por una coma ("id,token")
         /**El token generado en el código utiliza el formato hexadecimal porque se obtiene con la función bin2hex(random_bytes(32)). 
             Esto convierte los bytes generados por random_bytes (valores binarios) en una cadena de texto hexadecimal legible.
@@ -138,6 +132,7 @@ session_start();
                 $_SESSION['usuario'] = $datos["email"];
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
+                $_SESSION["tipo"] =$datos["tipo"];
             }
         } 
     }
@@ -179,7 +174,7 @@ session_start();
         // - Nombre de la cookie: 'session_token'
         // - Valor: el token generado ($token)
         // - Tiempo de expiración: ahora + 7 días
-        setcookie("session_token", $token, time() + $cookie_duration);
+        setcookie("session_token", $token, time() + $cookie_duration, "/"); // "/" es para que la cookie este activa en todo el proyecto
     }
 
     /**OPCION B APROVECHANDO LA CONEXION DE LOGIN() A LA BASE DE DATOS, HACER QUE COOKIESESION2() DEVUELVA EL TOKEN

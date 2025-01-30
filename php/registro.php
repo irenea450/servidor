@@ -12,20 +12,19 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//inicializamos los errores a false
-$_SESSION["error_registro1"] = false;
-$_SESSION["error_registro2"] = false;
-$_SESSION["error_registro2"] = false;
+
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
      * ? Con los datos introducitos se va a addCliente() donde se realizara el insert
      * ?   */
-    if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_POST['clave']) && !empty($_POST['nombre']) && !empty($_POST['apellidos']) && !empty($_POST['direccion']) && !empty($_POST['telefono']) && !empty($_POST['sexo']) && !empty($_POST['fechaNacimiento'])){
-        addCliente();
-    }else{
-        //? En caso de no esten todos los campos rellenos se activa la variable de error 
-        $_SESSION["error_registro1"] = TRUE;
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if(!empty($_POST['email']) && !empty($_POST['clave']) && !empty($_POST['nombre']) && !empty($_POST['apellidos']) && !empty($_POST['direccion']) && !empty($_POST['telefono']) && !empty($_POST['sexo']) && !empty($_POST['fechaNacimiento'])){
+            addCliente();
+        }else{
+            //? En caso de no esten todos los campos rellenos se activa la variable de error
+            $_SESSION["error_registro1"] = TRUE;
+        }
     }
 ?>
 

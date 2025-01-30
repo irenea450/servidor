@@ -8,10 +8,10 @@
 //?-133  .obtenerDirecciones() -Función que va a sacar los datos de facturación el usaurio que este logueado mediante el id 
 //?-160  .obtenerSaldo() -función que obtiene el saldo y puntos que tiene el usuario logueado 
 //?-187  .obtenerDatosCliente() -consultamos todos los datos sobre el clinete (excepto contraseña)
-//?-
-//?-
-//?-
-//?-
+//?-225  .funciones para el login
+//?-227     .comprobarUsuario() - Función de comprobar el usuario y contraseña en la base de datos
+//?-250     .obtenerIdUsuario() - Función para obtener el id del usuario que se loguea 
+//?-269     .obtenerTipoUsuario() - Función para obtener el tipo del usuario que se loguea
 //?-
 //?-
 //?-
@@ -219,5 +219,68 @@ function obtenerDatosCliente($id){
         $tipo = $resultado['tipo'];
     }
     return $resultado; 
+}
+
+
+//todo - FUNCIONES PARA EL LOGIN
+
+/* ---- Función de comprobar el usuario y contraseña en la base de datos ---- */
+function comprobarUsuario($email,$clave){
+    //conexion con la base de datos
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
+
+        
+    //consulta de email y clave del usuarios
+    $consulta = "SELECT email , clave  FROM cliente WHERE email = :email AND clave = :clave"; 
+    $comprobar = $bd->prepare($consulta);
+    $comprobar->execute(['email' => $email, 'clave' => $clave]);
+    $email = $comprobar->fetch();
+
+    //? Si la clave coincide se confirma el inicio y se devuelve true
+    if ($email && $email['clave'] === $clave){
+        return $email['email'];
+    }else return FALSE; //en caso de que no coincida se devuelve false
+}
+
+
+/* ---------- Función para obtener el id del usuario que se loguea ---------- */
+function obtenerIdUsuario($email) {
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+    // Consulta para obtener el ID del usuario
+    $consulta = "SELECT id FROM cliente WHERE email = :email"; 
+    $ejecutamos = $bd->prepare($consulta);
+    $ejecutamos->execute(['email' => $email]);
+    $resultado = $ejecutamos->fetch();
+
+    //? se devuelve el id o en caso de no encontrarlo se devuelve null
+    return $resultado ? $resultado['id'] : null;
+}
+
+
+/* ---------- Función para obtener el tipo del usuario que se loguea ---------- */
+function obtenerTipoUsuario($email) {
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+    $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+    // Consulta para obtener el tipo de usuario
+    $consulta = "SELECT tipo FROM cliente WHERE email = :email"; 
+    $ejecutamos = $bd->prepare($consulta);
+    $ejecutamos->execute(['email' => $email]);
+    $resultado = $ejecutamos->fetch();
+
+    //? se devuelve el tipo
+    return $resultado["tipo"];
 }
 ?>

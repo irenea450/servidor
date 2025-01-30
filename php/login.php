@@ -2,6 +2,7 @@
 <?php
 //scripts que vamos a necesitar
 require 'cookies.php';
+require 'funciones.php';
 
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -11,23 +12,11 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * ? 1º va a comprobar si la cookie sesion_token está activa
- * ? 2º Se llama a la función de cookie sesión
- * ? 3º Si la sesión ya esat inicaida en la cookie y se tiene el id y se ha hecho log in antes 
- * ? no hace falta hacer el log in de nuevo por lo que se dirige al log out  */ 
-
-//* Comprobar si ya hay una sesión activa (basada en la cookie)
-if (isset($_COOKIE['session_token'])) {
-    //? Si hay cookie -> verificamos si es válida y redirigimos a logout
-    cookieSesion1(); // Función para validar la cookie
-
+//? en el caso de que la sesion este ya iniciada mediante la cookie o mediante un login
+//? y vuelve a entrar a registro se renviara al cliente al logout para cerrar sesion
 if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
-    //? Si la sesión de la cookie ya está activa se redirige al logout
     header("Location: /php/logout.php");
 }
-}   
-
 
     //* Variable que maneja error al intentar inicar sesión, inicialemnte su estado va a ser false
     $error = false;
@@ -48,19 +37,20 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             //? En caso de no coincidir se activa la variable de error 
             $_SESSION["error_login"] = TRUE;
         }else{
-            //* Inicio de sesion 
-            session_start();
-
             //! VARIABLES DE SESIÓN AL HACER LOGIN
             $_SESSION["usuario"] = $comprobarDatos; // Guardar el email del usuario
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
-            $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
+            $_SESSION["login"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
+            $_SESSION["tipo"] = obtenerTipoUsuario($comprobarDatos);
+
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
-            //*Pero solo si se ha marcado la opción de recordar
-            /* if (!empty($_POST["recordar_sesion"])) {
-                cookieSesion2($_SESSION["id"]);
-            } */
-            cookieSesion2($_SESSION["id"]);
+            //*Pero solo si se ha marcado la opción de recordar si no esta checked no se inicializa la variable POST
+            if (isset($_POST["recordar_sesion"])) {
+                if ($_POST["recordar_sesion"] === "on") { //on = checked
+                    //generamos la cookie de sesion
+                    cookieSesion2($_SESSION["id"]);
+                }
+            }
 
             //? Una vez el login es correcto va a redidirgir por defecto al index
             //? si llega redirigido de otra pagina se va a volver a esa pagina
@@ -69,49 +59,9 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             //* Redirigir al usuario a la desde la ha sido redirigido antes
             //Ejemplo: si viene desde carrito.php, va a volver a esa página
             header("Location: " . $redirectUrl);
-
         }
     }
 
-    /* ---- Función de comprobar el usuario y contraseña en la base de datos ---- */
-    function comprobarUsuario($email,$clave){
-        //conexion con la base de datos
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $bd = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
-
-            
-        //consulta de email y clave del usuarios
-        $consulta = "SELECT email , clave  FROM cliente WHERE email = :email AND clave = :clave"; 
-        $comprobar = $bd->prepare($consulta);
-        $comprobar->execute(['email' => $email, 'clave' => $clave]);
-        $email = $comprobar->fetch();
-
-        //? Si la clave coincide se confirma el inicio y se devuelve true
-        if ($email && $email['clave'] === $clave){
-            return $email['email'];
-        }else return FALSE; //en caso de que no coincida se devuelve false
-    }
-
-    /* ---------- Función para obtener el id del usuario que se loguea ---------- */
-    function obtenerIdUsuario($email) {
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
-    
-        // Consulta para obtener el ID del usuario
-        $consulta = "SELECT id FROM cliente WHERE email = :email"; 
-        $ejecutamos = $bd->prepare($consulta);
-        $ejecutamos->execute(['email' => $email]);
-        $resultado = $ejecutamos->fetch();
-    
-        //? se devuelve el id o en caso de no encontrarlo se devuelve null
-        return $resultado ? $resultado['id'] : null;
-    }
 ?>
 <!-- HTML-> Formulario y manejo de errores -->
 <!DOCTYPE html>
@@ -167,7 +117,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             
             <div class="sesionIniciada">
                 <label>Mantener sesión iniciada</label>
-                <input type="checkbox" name="auth" >
+                <input type="checkbox" name="recordar_sesion" >
             </div>
             
 

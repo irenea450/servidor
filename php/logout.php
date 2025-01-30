@@ -24,9 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['out'])) {
 
     //! Destruyo cookies de sesión y carrito de compra
     //? Destruye cookie de sesión
-    setcookie("session_token", 123, time() - 1000);
+    setcookie("session_token", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
     //? Destruye cookie de carrito de compra
-    setcookie("carrito", 123, time() - 1000);
+    setcookie("carrito", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
 
     //Para cerrar la sesión es necesario borrar todas las variables de la sesión, para ello se inicializa el array $_SESSION:
     $_SESSION = array();

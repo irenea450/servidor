@@ -23,7 +23,6 @@ if (session_status() == PHP_SESSION_NONE) {
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(!empty($_POST['email']) && ($_POST['email'] === $_SESSION['usuario']) && !empty($_POST['clave']) && !empty($_POST['clave2']) && ($_POST['clave'] === $_POST['clave2'])){
             deleteCliente();
-            header("Location: index.php");
         }else{
             //? En caso de no esten todos los campos rellenos se activa la variable de error 
             $_SESSION["error_deleteCuenta"] = TRUE;
@@ -33,7 +32,7 @@ if (session_status() == PHP_SESSION_NONE) {
     //? Botón retorno al área personal
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
         //* Si se pulsa volver atrás, te llevará al area personal del usuario
-        header("Location: areaPersonal.php");
+        header("Location: ../index.php");
     }
 ?>
 
