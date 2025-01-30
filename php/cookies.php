@@ -1,9 +1,4 @@
 <?php
-//require "funciones.php"; //!BORRAR
-
-//!comprobar si poniendo session_start(); al principio del script vale para todas las funciones , en su defecto ponerlo al principio de cada funcion cookieSesion()
-// Inicia una sesión para el usuario 
-//session_start(); //!BORRAR
 
 
     //todo - FUNCION PARA CREAR O ACTUALIZAR $_COOKIE["carrito"]
@@ -137,6 +132,7 @@
                 $_SESSION['usuario'] = $datos["email"];
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
+                $_SESSION["tipo"] =$datos["tipo"];
             }
         } 
     }

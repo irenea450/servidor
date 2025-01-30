@@ -63,6 +63,7 @@
             $_SESSION["id"] = $usu["id"];
             $_SESSION["usuario"] = $email;
             $_SESSION["login"] = true;
+            $_SESSION["tipo"] = "normal";
 
             //redirigimos al index para empezar a comprar
             header("Location: ../index.php"); //! PROBAR con el redirigido de login

@@ -2,6 +2,7 @@
 <?php
 //scripts que vamos a necesitar
 require 'cookies.php';
+require 'funciones.php';
 
 /**
  *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -40,6 +41,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             $_SESSION["usuario"] = $comprobarDatos; // Guardar el email del usuario
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
             $_SESSION["login"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
+            $_SESSION["tipo"] = obtenerTipoUsuario($comprobarDatos);
 
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
             //*Pero solo si se ha marcado la opción de recordar si no esta checked no se inicializa la variable POST
@@ -60,45 +62,6 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
         }
     }
 
-    /* ---- Función de comprobar el usuario y contraseña en la base de datos ---- */
-    function comprobarUsuario($email,$clave){
-        //conexion con la base de datos
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $bd = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
-
-            
-        //consulta de email y clave del usuarios
-        $consulta = "SELECT email , clave  FROM cliente WHERE email = :email AND clave = :clave"; 
-        $comprobar = $bd->prepare($consulta);
-        $comprobar->execute(['email' => $email, 'clave' => $clave]);
-        $email = $comprobar->fetch();
-
-        //? Si la clave coincide se confirma el inicio y se devuelve true
-        if ($email && $email['clave'] === $clave){
-            return $email['email'];
-        }else return FALSE; //en caso de que no coincida se devuelve false
-    }
-
-    /* ---------- Función para obtener el id del usuario que se loguea ---------- */
-    function obtenerIdUsuario($email) {
-        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
-        $usuario_bd = "root";
-        $clave_bd = "";
-        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
-        $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
-    
-        // Consulta para obtener el ID del usuario
-        $consulta = "SELECT id FROM cliente WHERE email = :email"; 
-        $ejecutamos = $bd->prepare($consulta);
-        $ejecutamos->execute(['email' => $email]);
-        $resultado = $ejecutamos->fetch();
-    
-        //? se devuelve el id o en caso de no encontrarlo se devuelve null
-        return $resultado ? $resultado['id'] : null;
-    }
 ?>
 <!-- HTML-> Formulario y manejo de errores -->
 <!DOCTYPE html>
