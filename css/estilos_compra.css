@@ -183,3 +183,35 @@ table{
 
     /* margin: 35vh 0px 0px 0px; */
 }
+
+/* ------------------------- estilos envio pago.php ------------------------- */
+#contenedor-pago{
+    width: 100%;
+    /* height: 90%; */
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* align-items: center; */
+
+}
+#contenedor-pago h1{
+    width: 100%;
+    margin: 20px 0px 0px 0px;
+    text-align: center;
+}
+.datosResumenEnvio,
+.datosResumenPersonales{
+    width: 40%;
+    margin: 4%;
+    padding: 10px 0px 10px 10px;
+}
+.datosResumenEnvio{
+    border: solid 1px lightgray;
+    border-radius: 20px;
+}
+.datosResumenPersonales{
+    border: solid 1px lightgray;
+    border-radius: 20px;
+}

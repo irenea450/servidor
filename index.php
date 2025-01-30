@@ -36,7 +36,7 @@ $categorias = [
     1 => 'microcontroladores',
     2 => 'sensores',
     3 => 'servos',
-    4 => 'kits de robots',
+    4 => 'kits_de_robots',
     5 => 'libros'
 ];
 

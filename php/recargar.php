@@ -90,6 +90,9 @@ if (session_status() == PHP_SESSION_NONE) {
         </div>
         <!-- Formualario de registro -->
         <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST" >
+        <!-- Para redirigir  -->
+        <input type="hidden" name="redirigido" value="<?php echo isset($_GET['redirigido']) ? htmlspecialchars($_GET['redirigido']) : ''; ?>">
+
         
             <div class="inputs2">
                 <label for="num">Numero tarjeta</label>
