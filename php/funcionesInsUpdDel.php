@@ -8,13 +8,13 @@
 //?
 //?
 
-/**
- *? comprueba si no hay una sesión activa y si no la hay la inicia
- *? session_status -> devuelve el estado actual de la sesión  */
-if (session_status() == PHP_SESSION_NONE) {
-    //? si se cumple la condición de no activa se iniciar la sesión
-    session_start();
-}
+
+
+
+
+
+
+
 
 //TODO- :::::::::::::::::::::::::::::::::::::: INSERT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //?- conectamos con la base de datos y procedemos a realizar el insert del nuevo cliente 
@@ -62,10 +62,10 @@ if (session_status() == PHP_SESSION_NONE) {
             //inicio variables de sesion
             $_SESSION["id"] = $usu["id"];
             $_SESSION["usuario"] = $email;
-            $_SESSION["logeado"] = true;
+            $_SESSION["login"] = true;
 
             //redirigimos al index para empezar a comprar
-            header("Location: ../index.php");
+            header("Location: ../index.php"); //! PROBAR con el redirigido de login
         }else{
             //preparada para comprobar si el email es repetido
             $preparada2 = $db -> prepare("SELECT email, COUNT(*) AS cantidad FROM cliente WHERE email = ?"); 
@@ -277,6 +277,7 @@ if (session_status() == PHP_SESSION_NONE) {
             if(isset($_COOKIE["session_token"])){
                 setcookie("session_token", 0 , time() - 100);// elimina $_COOKIE["session_token"]
             }
+            header("Location: ../index.php");
         }
     }
 

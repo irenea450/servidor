@@ -11,23 +11,11 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * ? 1º va a comprobar si la cookie sesion_token está activa
- * ? 2º Se llama a la función de cookie sesión
- * ? 3º Si la sesión ya esat inicaida en la cookie y se tiene el id y se ha hecho log in antes 
- * ? no hace falta hacer el log in de nuevo por lo que se dirige al log out  */ 
-
-//* Comprobar si ya hay una sesión activa (basada en la cookie)
-if (isset($_COOKIE['session_token'])) {
-    //? Si hay cookie -> verificamos si es válida y redirigimos a logout
-    cookieSesion1(); // Función para validar la cookie
-
+//? en el caso de que la sesion este ya iniciada mediante la cookie o mediante un login
+//? y vuelve a entrar a registro se renviara al cliente al logout para cerrar sesion
 if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
-    //? Si la sesión de la cookie ya está activa se redirige al logout
     header("Location: /php/logout.php");
 }
-}   
-
 
     //* Variable que maneja error al intentar inicar sesión, inicialemnte su estado va a ser false
     $error = false;
@@ -48,19 +36,19 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             //? En caso de no coincidir se activa la variable de error 
             $_SESSION["error_login"] = TRUE;
         }else{
-            //* Inicio de sesion 
-            session_start();
-
             //! VARIABLES DE SESIÓN AL HACER LOGIN
             $_SESSION["usuario"] = $comprobarDatos; // Guardar el email del usuario
             $_SESSION["id"] = obtenerIdUsuario($comprobarDatos); // Obtener el ID del usuario 
-            $_SESSION["logueado"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
+            $_SESSION["login"] = TRUE; //Guardar variable logueado como tu si ha podido hacer log
+
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
-            //*Pero solo si se ha marcado la opción de recordar
-            /* if (!empty($_POST["recordar_sesion"])) {
-                cookieSesion2($_SESSION["id"]);
-            } */
-            cookieSesion2($_SESSION["id"]);
+            //*Pero solo si se ha marcado la opción de recordar si no esta checked no se inicializa la variable POST
+            if (isset($_POST["recordar_sesion"])) {
+                if ($_POST["recordar_sesion"] === "on") { //on = checked
+                    //generamos la cookie de sesion
+                    cookieSesion2($_SESSION["id"]);
+                }
+            }
 
             //? Una vez el login es correcto va a redidirgir por defecto al index
             //? si llega redirigido de otra pagina se va a volver a esa pagina
@@ -69,7 +57,6 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             //* Redirigir al usuario a la desde la ha sido redirigido antes
             //Ejemplo: si viene desde carrito.php, va a volver a esa página
             header("Location: " . $redirectUrl);
-
         }
     }
 
@@ -167,7 +154,7 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             
             <div class="sesionIniciada">
                 <label>Mantener sesión iniciada</label>
-                <input type="checkbox" name="auth" >
+                <input type="checkbox" name="recordar_sesion" >
             </div>
             
 

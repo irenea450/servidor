@@ -1,5 +1,6 @@
 <?php
 require "php/funciones.php";
+require 'php/cookies.php';
 session_start();
 
 /** 
@@ -7,12 +8,26 @@ session_start();
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
 $nombreUsuario = ""; // Por defecto, vacío
 
-if (isset($_SESSION["id"])) {
-    // Si la sesión está iniciada, obtenemos el nombre del usuario
-    $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
+
+//?- Si la cookie de sesion esta activa 
+if (isset($_COOKIE['session_token'])) {
+    // Si hay cookie -> verificamos si es válida y en caso afirmativo generamos las variables de sesion
+    cookieSesion1();
+    // Si la cookie es valida e inicia las variables de sesion, obtenemos el nombre del usuario
+    if(isset($_SESSION["id"])){
+        $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
+    }
 } else {
-    // Si la sesión no está iniciada, dejamos "Área Personal" o vacío
-    $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+    // Si la cookie de sesión no está iniciada
+    // Si la variable $_SESSION["id"] esta inicializada, obtenemos el nombre del usuario
+    if(isset($_SESSION["id"])){
+        $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
+    }else{
+        // Eliminamos todas las variables de sesión para que no generen datos erroneos
+        session_unset();  
+        // Dejamos "Área Personal" o vacío
+        $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+    }
 }
 
 /* ------------------------- Sacar imagen aleatoria ------------------------- */

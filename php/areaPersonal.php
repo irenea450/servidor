@@ -2,7 +2,7 @@
 require "funciones.php";
 session_start();
     //? Si no estas logeuado te redirige a iniciar sesión en en login y luego te volverá a esta página
-    if (!isset($_SESSION["logueado"]) || $_SESSION["logueado"] === FALSE) {
+    if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
         //* guarda la url en la que se encuentraa actualmente
         $url_actual = $_SERVER['REQUEST_URI'];
         //tedirige al login
