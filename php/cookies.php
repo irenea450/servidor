@@ -133,6 +133,7 @@
                 $_SESSION["id"] = $datos["id"];
                 $_SESSION["login"] = true; //?- OPCIONAL PARA QUE TODOS LOS SCRIPS SEPAN QUE ESTAS LOGUEADO
                 $_SESSION["tipo"] =$datos["tipo"];
+                $_SESSION["nombre"] =$datos["nombre"];
             }
         } 
     }

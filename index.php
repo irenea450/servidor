@@ -7,10 +7,21 @@ session_start();
  * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
 $nombreUsuario = ""; // Por defecto, vacío
+if(isset($_SESSION["nombre"])){
+    $nombreUsuario = $_SESSION["nombre"];
+}else{
+    // Dejamos "Área Personal" o vacío
+    $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+}
 
 
 //?- Si la cookie de sesion esta activa 
 if (isset($_COOKIE['session_token'])) {
+    cookieSesion1();
+}
+
+//!- OPCION ANTERIOR
+/* if (isset($_COOKIE['session_token'])) {
     // Si hay cookie -> verificamos si es válida y en caso afirmativo generamos las variables de sesion
     cookieSesion1();
     // Si la cookie es valida e inicia las variables de sesion, obtenemos el nombre del usuario
@@ -28,9 +39,18 @@ if (isset($_COOKIE['session_token'])) {
         // Dejamos "Área Personal" o vacío
         $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
     }
-}
+} */
 
 /* ------------------------- Sacar imagen aleatoria ------------------------- */
+// Definir nombres de categorías según la base de datos (ahora como array asociativo) //?- para la etiqueta li del menu
+$categories = [
+    'microcontroladores' => 'microcontroladores',
+    'sensores' => 'sensores',
+    'servos' => 'servos',
+    'kits de robots' => 'kits de robots',
+    'libros' => 'libros'
+];
+
 //Categorias existentes
 $categorias = [
     1 => 'microcontroladores',
@@ -68,12 +88,10 @@ $rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png";
             <li><a href="index.php">Inicio</a></li>
             <li><a href="/php/categorias.php">Categorias</a>
                 <ul class="categorias">
-                    <!-- Poner los enlaces que corresponden -->
-                    <li><a href="#">Microcontroladores</a></li>
-                    <li><a href="#">Sensores</a></li>
-                    <li><a href="#">Servos</a></li>
-                    <li><a href="#">Kits de Robots</a></li>
-                    <li><a href="#">Libros</a></li>
+                    <!-- Enlaces dinámicos basados en las categorías -->
+                    <?php foreach ($categories as $key => $name): ?>
+                        <li><a href="/php/categorias.php?category=<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($name) ?></a></li>
+                    <?php endforeach; ?>
                 </ul>
             </li>
             <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>

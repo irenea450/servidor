@@ -63,6 +63,7 @@
             $_SESSION["usuario"] = $email;
             $_SESSION["login"] = true;
             $_SESSION["tipo"] = "normal";
+            $_SESSION["nombre"] = $nombre;
 
             //redirigimos al index para empezar a comprar
             $redirectUrl = !empty($_POST['redirigido']) ? $_POST['redirigido'] : '../index.php';

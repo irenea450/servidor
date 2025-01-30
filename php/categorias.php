@@ -1,4 +1,26 @@
 <?php
+/**
+ *? comprueba si no hay una sesión activa y si no la hay la inicia
+ *? session_status -> devuelve el estado actual de la sesión  */
+if (session_status() == PHP_SESSION_NONE) {
+    //? si se cumple la condición de no activa se iniciar la sesión
+    session_start();
+}
+
+
+/** 
+ * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
+ * ? Aparecerá su nombre arriba con un enlace a su area personal */
+$nombreUsuario = ""; // Por defecto, vacío
+if(isset($_SESSION["nombre"])){
+    $nombreUsuario = $_SESSION["nombre"];
+}else{
+    // Dejamos "Área Personal" o vacío
+    $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+}
+
+
+
 // Leer categoría seleccionada desde el método GET
 $category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
 
@@ -51,14 +73,15 @@ try {
     <title>Categorías(prueba)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos_principales.css">
+    <link rel="stylesheet" href="/css/estilos_compra.css">
     <link rel="stylesheet" href="/css/estilos_categoria.css">
     <!-- Estilos de categorias.php-->
 </head>
 <body>
 <!-- Reusado header -->
     <header>
+    <img src="/img/LOGO 3.png">
         <ul>
-            <li><img src="/img/LOGO 2.png"></li>
             <li><a href="../index.php">Inicio</a></li>
             <li><a href="categorias.php">Categorías</a>
                 <ul class="categorias">
@@ -68,7 +91,7 @@ try {
                     <?php endforeach; ?>
                 </ul>
             </li>
-            <li><a href="#">Contacto</a></li>
+            <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
             <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
         </ul>
