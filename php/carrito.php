@@ -7,7 +7,7 @@ session_start();
 if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
     //* guarda la url en la que se encuentraa actualmente
     $url_actual = $_SERVER['REQUEST_URI'];
-    //tedirige al login
+    //te dirige al login
     header("Location: login.php?redirigido=$url_actual");
 }
 
@@ -36,7 +36,11 @@ $sumaPesoProductos = 30;
 
 
 /* --------------------------- precios del pedido --------------------------- */
-$sumaPrecioProductos = 0;
+//! Poner la suma de precios de los productos del carrito
+$sumaPrecioProductos = 10;
+
+
+
 //El gasto de envio va a tener un precio fijo de 4.5 manejado por la empresa de reparto, 
 //en caso de que el pedido supere los 50, el envio será gratuito
 if($sumaPrecioProductos > 50){
@@ -155,6 +159,10 @@ if (!isset($_SESSION['tokenPedido'])) {
                 <?php
                     //?En caso de que tengamos un error de saldo( se da en caso de que el precio total del pedido sea mayor al saldo disponible)
                     if(isset($_SESSION["error_saldo"]) && $_SESSION["error_saldo"] = TRUE){
+
+                        //* guarda la url actual
+                        $url_actual = $_SERVER['REQUEST_URI'];
+
                         //* En javascript se inserta el mensaje de error
                         echo '
                         <script>
@@ -172,23 +180,35 @@ if (!isset($_SESSION['tokenPedido'])) {
 
                             // Agregar evento al botón para redirigir a otro script (ejemplo: recarga.php)
                             botonRecarga.addEventListener("click", function() {
-                                window.location.href = "recargar.php"; // Cambia "recarga.php" por la URL del script al que quieres ir
+                                //* te dirige a cargar saldo
+                                window.location.href = "recargar.php?redirigido=' . $url_actual . '"; // Cambia "recarga.php" por la URL del script al que quieres ir
                             });
 
                             // Agregar el botón al contenedor
                             contenedor.appendChild(botonRecarga);
                         </script>';
+                        
+                        
+                        /* //* te dirige a cargar saldo
+                        header("Location: saldo.php?redirigido=$url_actual"); */
+                        
                         //? Una vez se muestre el error se elimina
                         unset($_SESSION["error_saldo"]); 
+                    }else{
+                        
+                        echo '
+                            <!-- Formulario para tramitar pedido -->
+                            <form id="tramitar" action="pago.php" method="post">
+                                <input type="hidden" name="token" value=" $_SESSION["tokenPedido"];">
+                                <button type="submit" name="tramitar" class="botonTramitar">TRAMITAR PEDIDO</button>
+                            </form>
+
+                        ';
                     }
                 ?>
             </div>
             
-            <!-- Formulario para tramitar pedido -->
-            <form id="tramitar" action="pago.php" method="post">
-                <input type="hidden" name="token" value="<?php echo $_SESSION['tokenPedido']; ?>">
-                <button type="submit" name="tramitar" class="botonTramitar">TRAMITAR PEDIDO</button>
-            </form>
+
         </section>
     </main>
 

@@ -4,7 +4,7 @@
 //?- 87   .updateCliente() .segun el formulario que rellenes realizara el update
 //?- 259  .deleteCliente () -Se borra tanto la cuenta como el array SESSION y $_COOKIE["session_token"]
 //?- 284  .recargarSaldo() -Recarga  el saldo
-//?- 317  .puntosTipo() -Update de los puntos y el tipo de cliente
+//?- 326  .puntosTipo() -Update de los puntos y el tipo de cliente
 //?
 //?
 
@@ -302,11 +302,19 @@
             //preparada para update de saldo con los datos del post previamente comprobados
             $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
             $resul = $preparada2->execute(array($_POST['saldo'], $_SESSION['id']));
+
+            //redirigimos al area personal para empezar a comprar
+            $redirectUrl = !empty($_POST['redirigido']) ? $_POST['redirigido'] : 'areaPersonal.php';
+            header("Location: " . $redirectUrl);
         }else{
             $saldo = $datos['saldo'] + $_POST['saldo'];
             //preparada para update de saldo con los datos del post previamente comprobados
             $preparada2 = $db ->prepare("UPDATE cliente SET saldo = ? WHERE id = ?");
             $resul = $preparada2->execute(array($saldo, $_SESSION['id']));
+
+            //redirigimos al area personal para empezar a comprar
+            $redirectUrl = !empty($_POST['redirigido']) ? $_POST['redirigido'] : 'areaPersonal.php';
+            header("Location: " . $redirectUrl);
         }
 
         //si la preparada falla
