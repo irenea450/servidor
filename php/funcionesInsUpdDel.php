@@ -56,7 +56,6 @@
             //preparada para sacar el id del nuevo cliente
             $preparada1 = $db ->prepare("SELECT id FROM cliente WHERE email = ? AND clave = ?");
             $preparada1->execute(array($email, $clave));
-
             $usu = $preparada1->fetch();
 
             //inicio variables de sesion
@@ -66,7 +65,8 @@
             $_SESSION["tipo"] = "normal";
 
             //redirigimos al index para empezar a comprar
-            header("Location: ../index.php"); //! PROBAR con el redirigido de login
+            $redirectUrl = !empty($_POST['redirigido']) ? $_POST['redirigido'] : '../index.php';
+            header("Location: " . $redirectUrl);
         }else{
             //preparada para comprobar si el email es repetido
             $preparada2 = $db -> prepare("SELECT email, COUNT(*) AS cantidad FROM cliente WHERE email = ?"); 
@@ -82,7 +82,6 @@
             }
         }
     }
-
 
 
 //TODO- :::::::::::::::::::::::::::::::::::::: UPDATE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
