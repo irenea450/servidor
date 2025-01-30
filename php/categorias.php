@@ -2,17 +2,17 @@
 // Leer categoría seleccionada desde el método GET
 $category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
 
-// Definir nombres de categorías según la base de datos
+// Definir nombres de categorías según la base de datos (ahora como array asociativo)
 $categories = [
-    'microcontroladores',
-    'sensores',
-    'servos',
-    'kits de robots',
-    'libros'
+    'microcontroladores' => 'microcontroladores',
+    'sensores' => 'sensores',
+    'servos' => 'servos',
+    'kits de robots' => 'kits de robots',
+    'libros' => 'libros'
 ];
 
-// Verificar si la categoría es válida
-if (!in_array($category, $categories)) {
+// Verificar si la categoría existe en el array asociativo, si no, usar la predeterminada
+if (!array_key_exists($category, $categories)) {
     $category = 'microcontroladores'; // Por defecto, microcontroladores
 }
 
@@ -22,18 +22,21 @@ $usuario = "root";
 $contraseña = "";
 
 try {
-    $db = new PDO($conexion, $usuario, $contraseña);
+    // Crear conexión PDO
+    $db = new PDO($conexion, $usuario, $contraseña, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION // Activar excepciones en caso de error
+    ]);
 
     // Buscar productos de la categoría en la base de datos
-    $sql = "SELECT ref, nombre, caracteristicas FROM producto WHERE categoria = :categoria";
+    $sql = "SELECT ref, nombre, pvp FROM producto WHERE categoria = :categoria";
     $stmt = $db->prepare($sql);
-    $stmt->bindParam(':categoria', $category, PDO::PARAM_STR);
+    $stmt->bindParam(':categoria', $category, PDO::PARAM_STR); // Pasar como string
     $stmt->execute();
 
     // Obtener productos
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    // Manejo de errores
+    // Manejo de errores: mostrar mensaje y asignar un array vacío
     echo "Error en la base de datos: " . $e->getMessage();
     $products = [];
 }
@@ -41,29 +44,28 @@ try {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorias</title>
+    <title>Categorías(prueba)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos_principales.css">
     <link rel="stylesheet" href="/css/estilos_categoria.css">
     <!-- Estilos de categorias.php-->
 </head>
 <body>
-<!--reusado header-->
+<!-- Reusado header -->
     <header>
         <ul>
             <li><img src="/img/LOGO 2.png"></li>
             <li><a href="../index.php">Inicio</a></li>
             <li><a href="categorias.php">Categorías</a>
                 <ul class="categorias">
-                    <li><a href="?category=microcontroladores">Microcontroladores</a></li>
-                    <li><a href="?category=sensores">Sensores</a></li>
-                    <li><a href="?category=servos">Servos</a></li>
-                    <li><a href="?category=kits de robots">Kits de Robots</a></li>
-                    <li><a href="?category=libros">Libros</a></li>
+                    <!-- Enlaces dinámicos basados en las categorías -->
+                    <?php foreach ($categories as $key => $name): ?>
+                        <li><a href="?category=<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($name) ?></a></li>
+                    <?php endforeach; ?>
                 </ul>
             </li>
             <li><a href="#">Contacto</a></li>
@@ -73,30 +75,30 @@ try {
     </header>
 
     <main>
-    <div class="product-grid">
-        <?php if (!empty($products)): ?>
-            <?php foreach ($products as $product): ?>
-                <div class="product">
-                    <?php
-                        // Construir la ruta de la imagen
+        <div class="product-grid">
+            <?php if (!empty($products)): ?>
+                <?php foreach ($products as $product): ?>
+                    <div class="product">
+                        <?php
+                        // Construir la ruta de la imagen del producto
                         $imagePath = "/categorias/$category/{$product['ref']}/1.png";
                         ?>
-                    <img src="<?= $imagePath ?>" alt="<?= $product['nombre'] ?>" onerror="this.src='/img/default.png';">
-                    <div class="product-info">
-                        <h3><?= $product['nombre'] ?></h3>
-                        <p><?= $product['caracteristicas'] ?></p>
-                        <button onclick="window.location.href='producto.php?categoria=<?= $category ?>&producto=<?= $product['ref'] ?>'">
-                            Ver más
-                        </button>
+                        <img src="<?= htmlspecialchars($imagePath) ?>" alt="<?= htmlspecialchars($product['nombre']) ?>" 
+                             onerror="this.src='/img/default.png';">
+                        <div class="product-info">
+                            <h3><?= htmlspecialchars($product['nombre']) ?></h3>
+                            <p><?= htmlspecialchars($product['pvp']) ?>€</p>
+                            <button onclick="window.location.href='producto.php?categoria=<?= htmlspecialchars($category) ?>&producto=<?= htmlspecialchars($product['ref']) ?>'">
+                                Ver más
+                            </button>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay productos disponibles en esta categoría.</p>
-        <?php endif; ?>
-    </div>
-</main>
-
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No hay productos disponibles en esta categoría.</p>
+            <?php endif; ?>
+        </div>
+    </main>
 
     <footer>
         <p>Calle Instituto, 7, 45593 Bargas, Toledo</p>
@@ -104,4 +106,3 @@ try {
     </footer>
 </body>
 </html>
-
