@@ -7,7 +7,8 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-
+//?- descuentos: normal 0%, bronce 5%, plata 8%, oro 11%, platino 15%
+$_SESSION["tipo"] = "bronce"; //!BORRAR
 /** 
  * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
@@ -18,8 +19,6 @@ if(isset($_SESSION["nombre"])){
     // Dejamos "Área Personal" o vacío
     $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
 }
-
-
 
 // Leer categoría seleccionada desde el método GET
 $category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
@@ -50,7 +49,7 @@ try {
     ]);
 
     // Buscar productos de la categoría en la base de datos
-    $sql = "SELECT ref, nombre, pvp FROM producto WHERE categoria = :categoria";
+    $sql = "SELECT ref, nombre, neto, iva, pvp, stock, descuento FROM producto WHERE categoria = :categoria";
     $stmt = $db->prepare($sql);
     $stmt->bindParam(':categoria', $category, PDO::PARAM_STR); // Pasar como string
     $stmt->execute();
@@ -98,6 +97,9 @@ try {
     </header>
 
     <main>
+        <div class="tituloCat">
+        <h1><?php echo strtoupper($category); ?></h1>
+        </div>
         <div class="product-grid">
             <?php if (!empty($products)): ?>
                 <?php foreach ($products as $product): ?>
@@ -107,13 +109,55 @@ try {
                         $imagePath = "/categorias/$category/{$product['ref']}/1.png";
                         ?>
                         <img src="<?= htmlspecialchars($imagePath) ?>" alt="<?= htmlspecialchars($product['nombre']) ?>" 
-                             onerror="this.src='/img/default.png';">
+                            onerror="this.src='/img/default.png';">
                         <div class="product-info">
                             <h3><?= htmlspecialchars($product['nombre']) ?></h3>
-                            <p><?= htmlspecialchars($product['pvp']) ?>€</p>
-                            <button onclick="window.location.href='producto.php?categoria=<?= htmlspecialchars($category) ?>&producto=<?= htmlspecialchars($product['ref']) ?>'">
-                                Ver más
-                            </button>
+                            <div>
+                                <?php
+                                    //si el producto tiene descuento
+                                    if($product['descuento'] === "si"){
+                                        //imprimimos el pvp en gris class(pvpAfter)
+                                        echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
+                                        if(isset($_SESSION["tipo"])){
+                                            switch($_SESSION["tipo"]){
+                                                case "normal": //usuarios normales no tienen descuento
+                                                    break;
+                                                case "bronce":
+                                                    $pvpBefore = $product['neto'] - ($product['neto'] * 0.05); //quitamos descuento 
+                                                    $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                                    $pvpBefore = number_format($pvpBefore, 2, '.', ''); //truncamos a dos decimales
+                                                    echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                                    break;
+                                                case "plata":
+                                                    $pvpBefore = $product['neto'] - ($product['neto'] * 0.08); //quitamos descuento 
+                                                    $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                                    echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                                    break;
+                                                case "oro":
+                                                    $pvpBefore = $product['neto'] - ($product['neto'] * 0.11); //quitamos descuento 
+                                                    $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                                    echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                                    break;
+                                                case "platino":
+                                                    $pvpBefore = $product['neto'] - ($product['neto'] * 0.15); //quitamos descuento 
+                                                    $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                                    echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                                    break;
+                                                default:
+                                                    echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
+                                                    break;
+                                            }
+                                        }
+                                        
+                                    }else{
+                                        echo "<p>{$product['pvp']}€</p>";
+                                    }
+                                ?>
+                                <button onclick="window.location.href='producto.php?categoria=<?= htmlspecialchars($category) ?>&producto=<?= htmlspecialchars($product['ref']) ?>'">
+                                    Ver más
+                                </button>
+                            </div>
+                            
                         </div>
                     </div>
                 <?php endforeach; ?>

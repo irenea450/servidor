@@ -6,7 +6,7 @@ body {
 }
 
 /* Encabezado */
-/* ---------------------------- Header con logoi -----------Irene-----------
+/* ---------------------------- Header con logoi -----------Irene-----------*/
 header ul{
     width: auto;
     height: auto;
@@ -14,7 +14,7 @@ header ul{
 
 }
 header li{
-    padding: 20px 30px;
+    padding: 20px 5px;
 }
 header ul li a{
     color: white;
@@ -22,7 +22,7 @@ header ul li a{
 header ul li a:hover{
     color: black;
 }
-*/
+
 
 /* Categorías desplegables */
 .dropdown {
@@ -57,7 +57,6 @@ header ul li a:hover{
 
 /* Sección de productos */
 main {
-    margin-top: 80px;
     padding: 30px;
 }
 
@@ -86,7 +85,11 @@ main {
 }
 
 .product-info {
+    height: 200px;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .product-info h3 {
@@ -102,6 +105,7 @@ main {
 }
 
 .product-info button {
+    width: 100%;
     margin-top: 10px;
     background: #ff6700;
     border: none;
@@ -161,6 +165,21 @@ main {
     font-size: 2rem;
     color: #fff;
     cursor: pointer;
+}
+
+.tituloCat{
+    text-align: center;
+    padding-bottom: 50px;
+    color: #ff4500;
+}
+
+.pvpBefore{
+    color: rgb(15, 176, 15)!important;/*pongo important para que pise el color de otra clase*/
+    font-size: 1.1em!important;
+}
+
+.pvpAfter{
+    color: #424141!important;/*pongo important para que pise el color de otra clase*/
 }
 
 /* Responsividad */
