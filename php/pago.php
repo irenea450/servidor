@@ -123,17 +123,6 @@ puntosTipo($sumaPuntos);
 /* -------------------------------------------------------------------------- */
 
 
-// Mostrar la información
-/* echo "<h2>Tu pedido ha sido realizado: Nº $ultimoIdPedido</h2>"; */
-/* echo "<p><strong>Nombre:</strong> $nombreCompleto</p>"; */
-/* echo "<p><strong>Dirección de Envío:</strong> $direccionEnvio</p>"; */
-/* echo "<p><strong>Suma de Productos:</strong> $sumaPrecioProductos €</p>"; */
-/* echo "<p><strong>Gastos de Envío:</strong> $gastosEnvio €</p>"; */
-/* echo "<p><strong>Total a Pagar:</strong> $precioTotal €</p>"; */
-/* echo "<p><strong>Fecha de Envío:</strong> $fechaEnvio</p>"; */
-/* echo "<p><strong>Peso total del paquete:</strong> $pesoTotal kg</p>"; */
-/* echo "<h1><strong>Saldo resta</strong> $saldoResta €</h1>"; */
-
 ?>
 
 <!DOCTYPE html>
