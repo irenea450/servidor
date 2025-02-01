@@ -8,7 +8,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 //?- descuentos: normal 0%, bronce 5%, plata 8%, oro 11%, platino 15%
-$_SESSION["tipo"] = "bronce"; //!BORRAR
+
 /** 
  * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
@@ -114,9 +114,9 @@ try {
                                 <?php
                                     //si el producto tiene descuento
                                     if($product['descuento'] === "si"){
-                                        //imprimimos el pvp en gris class(pvpAfter)
-                                        echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
                                         if(isset($_SESSION["tipo"])){
+                                            //imprimimos el pvp en gris class(pvpAfter)
+                                            echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
                                             switch($_SESSION["tipo"]){
                                                 case "normal": //usuarios normales no tienen descuento
                                                     break;
@@ -145,9 +145,11 @@ try {
                                                     echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
                                                     break;
                                             }
+                                        }else{ // si $_SESSION["tipo"] no esta inicializado imprimimos el pvp sin descuento
+                                            echo "<p>{$product['pvp']}€</p>";
                                         }
                                         
-                                    }else{
+                                    }else{ // si no tiene descuento imprimimos el pvp
                                         echo "<p>{$product['pvp']}€</p>";
                                     }
                                 ?>

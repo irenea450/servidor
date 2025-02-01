@@ -3,7 +3,7 @@ require "funciones.php";
 require "cookies.php";
 
 //?- Mostrar unico producto con sus img
-//Boton añadir producto--para añadir producto al carrito.._ANTES_Comprobar que ha echo login el us--redirigir a carrito.php;
+
 
     /**
      *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -14,12 +14,6 @@ require "cookies.php";
     }
 
     $nombreUsuario = ""; // Por defecto, vacío
-
-    $_GET['categoria'] = 'libros';//! EN PRUEBA BORRAR
-    $_GET['producto'] = 45;//! EN PRUEBA BORRAR
-    $_SESSION['id'] = 4;//!BORRAR
-    $_SESSION['login'] = true;//!BORRAR
-    $_SESSION["tipo"] = "bronce"; //!BORRAR
 
     // Leer parámetros del producto desde la URL e inicializar variables
     if(isset($_GET['categoria'])){
@@ -38,11 +32,11 @@ require "cookies.php";
         $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
         $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
 
-        // Consulta para obtener el nombre del usuario con el ID
+        // Consulta para obtener todos los datos del producto con la ref
         $preparada = "SELECT * FROM producto WHERE ref = :ref";
         $stmt = $bd->prepare($preparada);
 
-        // Ejecutar la consulta pasando solo el parámetro id
+        // Ejecutar la consulta pasando solo el parámetro ref
         $stmt->execute(['ref' => $ref]);
 
         // Obtener el resultado de la consulta
@@ -51,7 +45,7 @@ require "cookies.php";
         $ref = 'Sin producto';
     }
 
-    // Definir nombres de categorías según la base de product (ahora como array asociativo)
+    // Definir nombres de categorías para generar el submenu de categorias
     $categories = [
         'microcontroladores' => 'microcontroladores',
         'sensores' => 'sensores',
@@ -69,19 +63,19 @@ require "cookies.php";
     }
     
     //? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
-    //? Al refrescar la pagina $_POST['cantidad'] siempre manda 0 evitando que se introduzcan productos al refrescar la pagina 
-    //? Ya que el form manda informacion siempre que refrescamos la pagina
 
     if($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)){
         // si no estan vacios $_POST['cantidad'] y $product['ref'] se procedera a introducir los datos en: $_COOKIE["carrito"]     
         if (!empty($_POST['cantidad']) && !empty($product['ref'])){
-            // Agregar una fila con dos columnas
+            // Agregar una fila con dos columnas "ref" y "cantidad"
             $_SESSION["matriz"][] = ["ref" => $product['ref'], "cantidad" => $_POST['cantidad']];
+            //darle a la cookie "carrito" el valor de $_SESSION["matriz"]
             cookieCarrito($_SESSION["matriz"]);
 
-            //* guarda la url en la que se encuentraa actualmente
+            //* guarda la url en la que se encuentra actualmente y redirigir a redirigido.php donde nos devolvera a la pagina 
+            //*y asi evitar errores del form al refrescar la pagina
             $url_actual = $_SERVER['REQUEST_URI'];
-            //tedirige al login
+            //tedirige al redirigido 
             header("Location: redirigido.php?redirigido=$url_actual");
         }
     }
@@ -125,6 +119,7 @@ require "cookies.php";
                         $productPath = "/categorias/$categoria/$ref";
                         // concatenamos el final de la ruta + la extension
                         $productPath = $productPath . "/" . $i . ".png";
+                        //imprimimos la imagen
                         echo "<img src='{$productPath}'>";
                     }
                 ?>
@@ -142,7 +137,7 @@ require "cookies.php";
                     <?php
                         //troceo transformando el string de caracteristicas en un array
                         $array = desmontar1($product['caracteristicas']);
-                        
+                        //muestro una por una las categorias
                         foreach($array as $posicionArray){
                             echo "<p>- {$posicionArray}</p>";
                             echo "<br>";
@@ -152,11 +147,11 @@ require "cookies.php";
                 <div class="datosProd1">
                     <h3>Comprame:</h3>
                     <?php
-                        //si el producto tiene descuento
+                        //si el producto tiene descuento y $_SESSION["tipo"] esta inicializado
                         if($product['descuento'] === "si"){
-                            //imprimimos el pvp en gris class(pvpAfter)
-                            echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
                             if(isset($_SESSION["tipo"])){
+                                //imprimimos el pvp en gris class(pvpAfter)
+                                echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
                                 switch($_SESSION["tipo"]){
                                     case "normal": //usuarios normales no tienen descuento
                                         break;
@@ -185,27 +180,31 @@ require "cookies.php";
                                         echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
                                         break;
                                 }
+                            }else{ // si $_SESSION["tipo"] no esta inicializado imprimimos el pvp sin descuento
+                                echo "<p>{$product['pvp']}€</p>";
                             }
                             
-                        }else{
+                        }else{ // si no tiene descuento imprimimos el pvp
                             echo "<p>{$product['pvp']}€</p>";
                         }
                     ?>
-                    
+                    <!-- formulario para elegir la cantidad y comprar -->
                     <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST">
                         <label for="cantidad">Cantidad:</label>
                         <?php
+                            // si tiene stock de sobra se podran elegir hasta 10 unidades
                             if($product['stock'] >= 10){
                                 echo "<select id='cantidad' name='cantidad' required>";
-                                //?- Opcion "0" preseleccionada para evitar errores al refrescar mas info en linea 72
+                                // Opcion "0" preseleccionada
                                 echo "<option selected='selected' value=0>0</option>"; 
                                 for ($i = 1; $i <= 10; $i++) {
                                     echo "<option value=$i>$i</option>";
                                 }
                             echo "</select>";
+                            // si tiene menos de 10 de stock se podra elegir como maximo el stock actual 
                             }else{
                                 echo "<select id='cantidad' name='cantidad' required>";
-                                //?- Opcion "0" preseleccionada para evitar errores al refrescar mas info en linea 72
+                                // Opcion "0" preseleccionada
                                 echo "<option selected='selected' value=0>0</option>";
                                 for ($i = 1; $i <= $product['stock']; $i++) {
                                     echo "<option value=$i>$i</option>";

@@ -21,6 +21,8 @@ if (session_status() == PHP_SESSION_NONE) {
         //array_filter($_POST): Filtra los valores vacíos ("", NULL, false) y devuelve un array con los que tienen datos.
         if (!empty(array_filter($_POST))) {
             updateCliente();
+            //aviso de actualizado correcto
+            echo "<script> alert('Datos actualizados correctamente.'); </script>";
         } else {
             //? En caso de no esten todos los campos rellenos se activa la variable de error 
         $_SESSION["error_update6"] = TRUE;
@@ -191,6 +193,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
                 <label class="labelRegistro" for="sexo">Sexo:</label>
                 <select class="selectRegistro" name="sexo">
+                    <option selected='selected' value=>Sexo</option>
                     <option value="hombre">Hombre</option>
                     <option value="mujer">Mujer</option>
                 </select>

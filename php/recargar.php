@@ -23,6 +23,8 @@ if (session_status() == PHP_SESSION_NONE) {
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(!empty($_POST['num']) && !empty($_POST['cvv']) && !empty($_POST['fecha']) && !empty($_POST['saldo'])){
             recargarSaldo();
+            //aviso de recarga correcta
+            echo "<script> alert('Recarga realizada con exito.'); </script>";
         }else{
             //? En caso de no esten todos los campos rellenos se activa la variable de error 
             $_SESSION["error_recarga"] = TRUE;

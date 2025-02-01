@@ -1,5 +1,5 @@
 <?php
-//!- FALTA EL BOTON DE RETORNO
+
 
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';

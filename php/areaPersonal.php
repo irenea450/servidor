@@ -53,7 +53,7 @@ session_start();
 </head>
 <body>
 <header>
-    <img src="/img/LOGO 2.png">
+    <img src="/img/LOGO 3.png">
         <ul>
             <li><a href="../index.php">Volver al inicio</a></li>
         </ul>
