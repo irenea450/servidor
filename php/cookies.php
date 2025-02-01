@@ -16,7 +16,7 @@
         // Mandar la matriz a la cookie
         foreach ($matriz as $fila) {
             // Si $info no está vacío, añadimos un asterisco antes de concatenar para separar cada producto
-            if (!empty($info)) {
+            if (!empty($info)) { 
                 $info .= "*";
             }
             //concatenamos la referencia del producto + la cantidad de articulos como texto y separados por una coma
@@ -35,7 +35,9 @@
             echo "No ha sido posible guardar el carrito.";
         }
         
+        
     }
+
 
     /*     //todo- prueba cookie carrito
     // Crear una matriz con 5 filas y 2 columnas

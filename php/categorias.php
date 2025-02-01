@@ -72,9 +72,7 @@ try {
     <title>Categorías(prueba)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos_principales.css">
-    <link rel="stylesheet" href="/css/estilos_compra.css">
     <link rel="stylesheet" href="/css/estilos_categoria.css">
-    <!-- Estilos de categorias.php-->
 </head>
 <body>
 <!-- Reusado header -->

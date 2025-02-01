@@ -1,7 +1,91 @@
-//Mostrar unico producto con sus img
-//Boton añadir producto--para añadir producto al carrito.._ANTES_Comprobar que ha echo login el us--redirigir a carrito.php;
-//*Falta ajustar..
+<?php
+require "funciones.php";
+require "cookies.php";
 
+//?- Mostrar unico producto con sus img
+//Boton añadir producto--para añadir producto al carrito.._ANTES_Comprobar que ha echo login el us--redirigir a carrito.php;
+
+    /**
+     *? comprueba si no hay una sesión activa y si no la hay la inicia
+    *? session_status -> devuelve el estado actual de la sesión  */
+    if (session_status() == PHP_SESSION_NONE) {
+        //? si se cumple la condición de no activa se iniciar la sesión
+        session_start();
+    }
+
+    $nombreUsuario = ""; // Por defecto, vacío
+
+    $_GET['categoria'] = 'libros';//! EN PRUEBA BORRAR
+    $_GET['producto'] = 45;//! EN PRUEBA BORRAR
+    $_SESSION['id'] = 4;//!BORRAR
+    $_SESSION['login'] = true;//!BORRAR
+    $_SESSION["tipo"] = "bronce"; //!BORRAR
+
+    // Leer parámetros del producto desde la URL e inicializar variables
+    if(isset($_GET['categoria'])){
+        $categoria = $_GET['categoria'];
+    }else{
+        $categoria = 'Sin categoría';
+    }
+
+    if(isset($_GET['producto'])){
+        $ref = $_GET['producto'];
+
+        // Aquí debes conectar a la base de product y obtener la info del producto con la referencia
+        $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+        $usuario_bd = "root";
+        $clave_bd = "";
+        $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+        $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+        // Consulta para obtener el nombre del usuario con el ID
+        $preparada = "SELECT * FROM producto WHERE ref = :ref";
+        $stmt = $bd->prepare($preparada);
+
+        // Ejecutar la consulta pasando solo el parámetro id
+        $stmt->execute(['ref' => $ref]);
+
+        // Obtener el resultado de la consulta
+        $product = $stmt->fetch();
+    }else{
+        $ref = 'Sin producto';
+    }
+
+    // Definir nombres de categorías según la base de product (ahora como array asociativo)
+    $categories = [
+        'microcontroladores' => 'microcontroladores',
+        'sensores' => 'sensores',
+        'servos' => 'servos',
+        'kits de robots' => 'kits de robots',
+        'libros' => 'libros'
+    ];
+
+    // Leer categoría seleccionada desde el método GET
+    $category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
+
+    // Verificar si la categoría existe en el array asociativo, si no, usar la predeterminada
+    if (!array_key_exists($category, $categories)) {
+        $category = 'microcontroladores'; // Por defecto, microcontroladores
+    }
+    
+    //? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
+    //? Al refrescar la pagina $_POST['cantidad'] siempre manda 0 evitando que se introduzcan productos al refrescar la pagina 
+    //? Ya que el form manda informacion siempre que refrescamos la pagina
+
+    if($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)){
+        // si no estan vacios $_POST['cantidad'] y $product['ref'] se procedera a introducir los datos en: $_COOKIE["carrito"]     
+        if (!empty($_POST['cantidad']) && !empty($product['ref'])){
+            // Agregar una fila con dos columnas
+            $_SESSION["matriz"][] = ["ref" => $product['ref'], "cantidad" => $_POST['cantidad']];
+            cookieCarrito($_SESSION["matriz"]);
+
+            //* guarda la url en la que se encuentraa actualmente
+            $url_actual = $_SERVER['REQUEST_URI'];
+            //tedirige al login
+            header("Location: redirigido.php?redirigido=$url_actual");
+        }
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -9,239 +93,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Producto</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="producto.css">-->
+    <!-- <link rel="stylesheet" href="estilos_producto.css"> -->
+    <link rel="stylesheet" href="/css/estilos_principales.css">
+    <link rel="stylesheet" href="/css/estilos_categoria.css">
 </head>
-<style>
-    /* Estilos personalizados para la página del producto */
-    body {
-    margin: 0;
-    font-family: 'Orbitron', sans-serif;
-    background-color: #121212;
-    color: #fff;
-}
-
-/* Encabezado */
-header {
-    background: linear-gradient(90deg, #ff6700, #ff4500);
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-}
-
-header .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-header nav {
-    display: flex;
-    gap: 20px;
-}
-
-header nav a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1rem;
-}
-
-/* Contenedor principal */
-main {
-    margin-top: 100px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Tarjeta del producto */
-.product-card {
-    background: #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    max-width: 800px;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    color: #fff;
-}
-
-/* Imagen del producto */
-.product-card img {
-    flex: 1 1 300px;
-    max-width: 300px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-    background: #000;
-}
-
-/* Información del producto */
-.product-info {
-    flex: 2 1 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.product-info h1 {
-    font-size: 2rem;
-    color: #ff6700;
-    margin-bottom: 10px;
-}
-
-.product-info p {
-    font-size: 1rem;
-    color: #bbb;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.product-info .product-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #ff4500;
-    margin-bottom: 20px;
-}
-
-.product-info .buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.product-info .buttons button {
-    background: #ff6700;
-    border: none;
-    padding: 10px 20px;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-size: 1rem;
-}
-
-.product-info .buttons button:hover {
-    background: #ff4500;
-}
-
-/* Modal de imágenes */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.5s;
-}
-
-.modal.active {
-    visibility: visible;
-    opacity: 1;
-}
-
-.modal img {
-    max-width: 80%;
-    max-height: 80%;
-}
-
-.modal .close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 2rem;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-    .product-card {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .product-card img {
-        width: 100%;
-        max-width: none;
-    }
-
-    .product-info {
-        text-align: center;
-    }
-}
-
-</style>
 <body>
     <header>
-        <div class="logo">Irjama</div>
-        <nav>
-            <a href="index.php">Inicio</a>
-            <a href="categorias.php">Categorías</a>
-            <a href="contacto.php">Contacto</a>
-        </nav>
+    <img src="/img/LOGO 3.png">
+        <ul>
+            <li><a href="../index.php">Inicio</a></li>
+            <li><a href="categorias.php">Categorías</a>
+                <ul class="categorias">
+                    <!-- Enlaces dinámicos basados en las categorías -->
+                    <?php foreach ($categories as $key => $name): ?>
+                        <li><a href="?category=<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($name) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+            <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
+            <li><a href="/php/login.php">Registrarse</a></li>
+            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
+        </ul>
     </header>
     <main>
-        <?php
-        // Leer parámetros del producto desde la URL
-        $categoria = $_GET['categoria'] ?? '';
-        $productoRef = $_GET['producto'] ?? '';
+        <div class="contProd">
+            <div class="imgprod">
+                <?php
+                    //bucle for para sacar las imagenes del producto
+                    for($i = 1; $i < 5; $i++){
+                        // Ruta de la imagen del producto al que habra que sumar la ultimaparte -$imagePath = "$productPath/1.png";
+                        $productPath = "/categorias/$categoria/$ref";
+                        // concatenamos el final de la ruta + la extension
+                        $productPath = $productPath . "/" . $i . ".png";
+                        echo "<img src='{$productPath}'>";
+                    }
+                ?>
+            </div>
+            <div class="nomProd">
+                <?php echo "<h2>{$product['nombre']}</h2>"; ?>
+            </div>
+            <div class="datosProd">
+                <div class="datosProd1">
+                    <h3>Descripcion:</h3>
+                    <?php echo "<p>{$product['descripcion']}</p>"; ?>
+                </div>
+                <div class="datosProd1">
+                    <h3>Caracteristicas:</h3>
+                    <?php
+                        //troceo transformando el string de caracteristicas en un array
+                        $array = desmontar1($product['caracteristicas']);
+                        
+                        foreach($array as $posicionArray){
+                            echo "<p>- {$posicionArray}</p>";
+                            echo "<br>";
+                        }
+                    ?>
+                </div>
+                <div class="datosProd1">
+                    <h3>Comprame:</h3>
+                    <?php
+                        //si el producto tiene descuento
+                        if($product['descuento'] === "si"){
+                            //imprimimos el pvp en gris class(pvpAfter)
+                            echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
+                            if(isset($_SESSION["tipo"])){
+                                switch($_SESSION["tipo"]){
+                                    case "normal": //usuarios normales no tienen descuento
+                                        break;
+                                    case "bronce":
+                                        $pvpBefore = $product['neto'] - ($product['neto'] * 0.05); //quitamos descuento 
+                                        $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                        $pvpBefore = number_format($pvpBefore, 2, '.', ''); //truncamos a dos decimales
+                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        break;
+                                    case "plata":
+                                        $pvpBefore = $product['neto'] - ($product['neto'] * 0.08); //quitamos descuento 
+                                        $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        break;
+                                    case "oro":
+                                        $pvpBefore = $product['neto'] - ($product['neto'] * 0.11); //quitamos descuento 
+                                        $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        break;
+                                    case "platino":
+                                        $pvpBefore = $product['neto'] - ($product['neto'] * 0.15); //quitamos descuento 
+                                        $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
+                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        break;
+                                    default:
+                                        echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
+                                        break;
+                                }
+                            }
+                            
+                        }else{
+                            echo "<p>{$product['pvp']}€</p>";
+                        }
+                    ?>
+                    
+                    <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST">
+                        <label for="cantidad">Cantidad:</label>
+                        <?php
+                            if($product['stock'] >= 10){
+                                echo "<select id='cantidad' name='cantidad' required>";
+                                //?- Opcion "0" preseleccionada para evitar errores al refrescar mas info en linea 72
+                                echo "<option selected='selected' value=0>0</option>"; 
+                                for ($i = 1; $i <= 10; $i++) {
+                                    echo "<option value=$i>$i</option>";
+                                }
+                            echo "</select>";
+                            }else{
+                                echo "<select id='cantidad' name='cantidad' required>";
+                                //?- Opcion "0" preseleccionada para evitar errores al refrescar mas info en linea 72
+                                echo "<option selected='selected' value=0>0</option>";
+                                for ($i = 1; $i <= $product['stock']; $i++) {
+                                    echo "<option value=$i>$i</option>";
+                                }
+                            echo "</select>";
+                            }
+                        
+                            //?- si el usuario no esta logueado se le reenvia a login.php
+                            if(!isset($_SESSION['id']) || !isset($_SESSION['login'])){
+                                //* guarda la url actual
+                                $url_actual = $_SERVER['REQUEST_URI'];
 
-        // Definir nombres de categorías
-        $categories = [
-            1 => 'microcontroladores',
-            2 => 'sensores',
-            3 => 'servos',
-            4 => 'kits de robots',
-            5 => 'libros'
-        ];
+                                //* En javascript generamos el boton
+                                echo '
+                                <script>
+                                    // Seleccionar elementos correctamente
+                                    let contenedor = document.querySelector("form");
 
-        if (!isset($categories[$categoria])) {
-            echo "<p>Categoría no encontrada.</p>";
-            exit;
-        }
+                                    // Crear el botón
+                                    let botonLogueate = document.createElement("button"); // Se usa "createElement" en lugar de "create"
+                                    botonLogueate.textContent = "Logueate"; // Texto del botón
+                                    botonLogueate.id = "botonLogueate";
 
-        $categoriaNombre = $categories[$categoria];
+                                    // Agregar evento al botón para redirigir a otro script (ejemplo: login.php)
+                                    botonLogueate.addEventListener("click", function() {
+                                        //* te dirige a login
+                                        window.location.href = "login.php?redirigido=' . $url_actual . '"; // Cambia "login.php" por la URL del script al que quieres ir
+                                    });
 
-        // Ruta de la imagen del producto
-        $productPath = "categorias/$categoriaNombre/$productoRef";
-        $imagePath = "$productPath/1.jpg";
-
-        // Mostrar información del producto
-        echo '<div class="product-card">';
-        if (file_exists($imagePath)) {
-            echo "<img src='$imagePath' alt='Producto $productoRef'>";
-        } else {
-            echo "<img src='img/default.jpg' alt='Imagen no disponible'>";
-        }
-
-        echo '<div class="product-info">';
-        echo "<h1>Producto $productoRef</h1>";
-        echo "<p>Este producto pertenece a la categoría: <strong>$categoriaNombre</strong>.</p>";
-        echo "<p>Descripción detallada del producto y sus características específicas.</p>";
-        echo "<p class='product-price'>Precio: $99.99</p>";
-        echo '<div class="buttons">';
-        echo '<button>Añadir al carrito</button>';
-        echo '<button>Comprar ahora</button>';
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-        ?>
+                                    // Agregar el botón al contenedor
+                                    contenedor.appendChild(botonLogueate);
+                                </script>';
+                            }else{
+                                echo '<input class="comprar" type="submit" id="enviar" value="COMPRAR">';
+                            }
+                        ?>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
     </main>
+
+    <footer>
+        <p>Calle Instituto, 7, 45593 Bargas, Toledo</p>
+        <p>Tlf: 653 985 395</p>
+    </footer>
 </body>
 </html>
 

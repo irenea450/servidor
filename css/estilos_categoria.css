@@ -7,6 +7,10 @@ body {
 
 /* Encabezado */
 /* ---------------------------- Header con logoi -----------Irene-----------*/
+header{
+    background-color:#d85300;
+}
+
 header ul{
     width: auto;
     height: auto;
@@ -14,7 +18,7 @@ header ul{
 
 }
 header li{
-    padding: 20px 5px;
+    padding: 20px 30px;
 }
 header ul li a{
     color: white;
@@ -25,7 +29,7 @@ header ul li a:hover{
 
 
 /* Categorías desplegables */
-.dropdown {
+/* .dropdown {
     position: relative;
 }
 
@@ -53,7 +57,7 @@ header ul li a:hover{
 
 .dropdown-content a:hover {
     background-color: #333;
-}
+} */
 
 /* Sección de productos */
 main {
@@ -95,7 +99,7 @@ main {
 .product-info h3 {
     margin: 0 0 10px;
     font-size: 1.2rem;
-    color: #ff6700;
+    color:#d85300;
 }
 
 .product-info p {
@@ -107,7 +111,7 @@ main {
 .product-info button {
     width: 100%;
     margin-top: 10px;
-    background: #ff6700;
+    background-color:#d85300;
     border: none;
     padding: 10px 15px;
     color: #fff;
@@ -117,7 +121,7 @@ main {
 }
 
 .product-info button:hover {
-    background: #ff4500;
+    background: #ff7d27;
 }
 
 /* Animación al hacer scroll */
@@ -188,4 +192,102 @@ main {
         flex-direction: column;
         gap: 10px;
     }
+}
+
+/*Producto.php*/
+
+.contProd{
+    width: 100%;
+    /* height: 77vh; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #121212;
+}
+
+.imgprod{
+    width: 90%;
+    background-color: #121212;
+    display: flex;
+    justify-content: space-around;
+}
+
+.imgprod img{
+    width: 20%;
+}
+
+.nomProd{
+    margin-top: 20px;
+    color:#d85300;
+}
+
+.datosProd{
+    margin-top: 30px;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.datosProd1{
+    width: 25%;
+}
+
+.datosProd1 h3{
+    text-align: center;
+    color:#d85300;
+}
+
+.datosProd1 h3 , p{
+    margin-top: 10px;
+
+}
+.datosProd1 form{
+    margin-top: 15px;
+}
+
+.comprar{
+    margin-left: 10px;
+    width: 40%;
+    background-color:#d85300;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.comprar:hover {
+background: #ff7d27;
+}
+
+.datosProd1 select{
+    font-size: 1.1em;
+    font-weight: bolder;
+    width: 15%;
+    height: 25px;
+    /* transform: scale(1.5); */
+}
+
+.datosProd1 label{
+    margin-top: 10px;
+    font-size: 1.1em;
+    font-weight: bolder;
+    color:#d85300;
+}
+
+#botonLogueate{
+    margin-left: 10px;
+    width: 40%;
+    background-color:#d85300;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#botonLogueate:hover {
+    background: #ff7d27;
 }

@@ -146,6 +146,8 @@ ul > li:hover ul.categorias{
 /* -------------------------------------------------------------------------- */
 
 footer{
+    position: fixed;
+    bottom: 0;
     width: 100%;
     height: 5vh;
 
