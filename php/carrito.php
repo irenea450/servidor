@@ -28,6 +28,48 @@ $direccionFacturacion = $datosUsuario['direccionFacturacion'];
 $saldo = $datosUsuario['saldo'];
 $puntos = $datosUsuario['puntos'];
 
+//? extraemos datos de la cookie carrito
+$productosCarrito = [];
+
+if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
+    // Conexion a la base de datos
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario_bd = "root";
+    $clave_bd = "";
+
+    try {
+        $bd = new PDO($conexion, $usuario_bd, $clave_bd, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]);
+
+        $items = explode("*", $_COOKIE["carrito"]); // Separar productos por "*"
+
+        foreach ($items as $item) {
+            list($ref, $cantidad) = explode(",", $item); // Separar referencia y cantidad
+
+            // Consultar los datos del producto
+            $stmt = $bd->prepare("SELECT nombre, categoria, pvp, peso FROM producto WHERE ref = :ref");
+            $stmt->execute(['ref' => $ref]);
+            $producto = $stmt->fetch();
+
+            if ($producto) {
+                $productosCarrito[] = [
+                    "ref" => $ref,
+                    "nombre" => $producto["nombre"],
+                    "categoria" => $producto["categoria"],
+                    "pvp" => $producto["pvp"], 
+                    "cantidad" => $cantidad
+                ];
+            }
+        }
+    } catch (PDOException $e) {
+        echo "Error en la conexión: " . $e->getMessage();
+    }
+} else {
+    echo "<p>No hay productos en el carrito.</p>";
+}
+
 
 /* ----------------------------- peso del pedido ---------------------------- */
 //? El peso del pedido se pasa a la empresa de envio que es la que gestiona posibles aumentos de coste
@@ -37,6 +79,7 @@ $sumaPesoProductos = 30;
 
 /* --------------------------- precios del pedido --------------------------- */
 //! Poner la suma de precios de los productos del carrito
+// hacer consulta a los datos de ese producto, si tiene descuento descontar y sumar todo a esta variable
 $sumaPrecioProductos = 10;
 
 
@@ -105,6 +148,13 @@ if (!isset($_SESSION['tokenPedido'])) {
         de envio y facturación -->
 
         <section  id="productos-carrito">
+        <!-- PRUEBAS DE QUE SACA LOS DATOS DE LA MATRIZ -->
+        <?php foreach ($productosCarrito as $producto): ?>
+            <tr>
+                <td><?= htmlspecialchars($producto["ref"]) ?></td>
+                <td><?= htmlspecialchars($producto["cantidad"]) ?></td>
+            </tr>
+        <?php endforeach; ?>
             <table>
                 <thead>
                     <tr>
@@ -115,6 +165,21 @@ if (!isset($_SESSION['tokenPedido'])) {
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach ($productosCarrito as $producto): ?>
+                        <tr>
+                            <?php
+                                // Construcción de la ruta de imagen
+                                $imagePath = "../categorias/" . htmlspecialchars($producto["categoria"]) . "/" . htmlspecialchars($producto["ref"]) . "/1.png";
+                            ?>
+                                
+                            <td><img src="<?= $imagePath ?>" width="80" ></td>
+                            <td><?= htmlspecialchars($producto['nombre']) ?></td>
+                            <td><?= number_format($producto['pvp'], 2) ?> €</td>
+                            <td><?= htmlspecialchars($producto['cantidad']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+<!--                 <tbody>
                     <tr>
                         <td><img src="/categorias/1.Microcontroladores/1/1.png" id="imagenProductoCarrito"></td>
                         <td>Arduino Microcontrolador USB Uno R3</td>
@@ -128,7 +193,7 @@ if (!isset($_SESSION['tokenPedido'])) {
                         <td>1</td>
                     </tr>
 
-                </tbody>
+                </tbody> -->
             </table>
         </section>
         <!-- En esta sección se van a mostrar los datos de envio -->
