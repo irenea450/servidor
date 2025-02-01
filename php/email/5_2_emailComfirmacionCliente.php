@@ -2,10 +2,11 @@
     // Usamos el espacio de nombres PHPMailer\PHPMailer\PHPMailer para acceder a la clase PHPMailer.
     use PHPMailer\PHPMailer\PHPMailer;
 
-    echo "Envio de correo en curso";
+    //!- BORRAR CUANDO ESTE TESTEADO (VARIABLES DE PRUEBA)
+    /* echo "Envio de correo en curso";
     $email = "culebras.jr@gmail.com";
     $pedido = "1289";
-    mailPedido($email, $pedido);
+    mailPedido($email, $pedido); */
 
 
     function mailPedido($email, $numPedido){
