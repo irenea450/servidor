@@ -1,5 +1,5 @@
 <?php
-//!- FALTA EL BOTON DE RETORNO
+
 
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';
@@ -12,7 +12,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//$_SESSION['id'] = 25; //!- necesario $_SESSION['id'] inicializado
+
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos

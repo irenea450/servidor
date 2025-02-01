@@ -10,7 +10,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//$_SESSION['id'] = 1; //!- necesario $_SESSION['id'] inicializado
+
 
 
 /**

@@ -10,7 +10,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//$_SESSION['usuario'] = "ana@gmail.com"; //!- necesario $_SESSION['usuario'] inicializado
+
 
 
 /**
