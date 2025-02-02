@@ -22,6 +22,7 @@ $datosUsuario = obtenerDatosCliente($_SESSION["id"]);
 //? se incluyen estas variables más abajo para que sean visibles en el html
 $nombreUsuario = $datosUsuario['nombre'];
 $apellidoUsuario = $datosUsuario['apellidos'];
+$emailUsuario = $datosUsuario['email'];
 $nombreCompleto = $nombreUsuario . " " . $apellidoUsuario;
 $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
@@ -71,8 +72,18 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
         echo "Error en la conexión: " . $e->getMessage();
     }
 } else {
-    echo "<p>No hay productos en el carrito.</p>";
+    echo 'Carrito Vacio - añadir a la cesta ';
+    //! añadir mensaje de error de carrito vacio
+/*     echo '<script>
+    alert("carrito vacio");
+    //coger contenedor #productos-carrito y meter este parrafo dentro
+    contenedor =document.querySelector("#productos-carrito");
+    contenedor = " ";
+    contenedor.innerHTML = "<p class="carritoVacio">No hay productos en el carrito.</p>";
+
+    </script>'; */
 }
+
 
 
 /* ----------------------------- peso del pedido ---------------------------- */
@@ -87,7 +98,7 @@ foreach ($productosCarrito as $producto) {
 
 
 /* --------------------------- precios del pedido --------------------------- */
-//! Poner la suma de precios de los productos del carrito
+// Poner la suma de precios de los productos del carrito
 // hacer consulta a los datos de ese producto, si tiene descuento descontar y sumar todo a esta variable
 
 $sumaPrecioProductos = 0.00; 
@@ -133,9 +144,6 @@ $subtotal = $precioFinalConIva * intval($producto['cantidad']);
 $sumaPrecioProductos += $subtotal;
 }
 
-//! APLICAR DESCUENTOS
-
-
 
 
 //El gasto de envio va a tener un precio fijo de 4.5 manejado por la empresa de reparto, 
@@ -148,6 +156,33 @@ if($sumaPrecioProductos > 50){
 
 //? Precio total del pedido
 $precioTotal = $sumaPrecioProductos + $gastosEnvio;
+
+/* --------------- Carrito actualizaciones(eliminar producto) --------------- */
+//! TERMINAR ELIMINAR CARRITO
+//? ESTO ES COPIADO QUEDA MODIFICAR 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
+    $refEliminar = $_POST['eliminar_producto'];
+    
+    // Obtener la cookie del carrito
+    if (isset($_COOKIE["carrito"])) {
+        $items = explode("*", $_COOKIE["carrito"]);
+        $nuevoCarrito = [];
+
+        foreach ($items as $item) {
+            list($ref, $cantidad) = explode(",", $item);
+            if ($ref !== $refEliminar) {
+                $nuevoCarrito[] = $item; // Guardamos los que no se eliminan
+            }
+        }
+
+        // Actualizar la cookie del carrito sin el producto eliminado
+        setcookie("carrito", implode("*", $nuevoCarrito), time() + 3600, "/");
+
+        // Recargar la página para reflejar los cambios
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+}
 
 
 /* ---------------------------- Proceder al pago ---------------------------- */
@@ -163,6 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tramitar']) && $saldo 
 
 
 //? Guardamos variables necesarias para el pago en variables de sesión
+$_SESSION['emailUsuario'] = $emailUsuario;
 $_SESSION['nombreCompleto'] = $nombreCompleto;
 $_SESSION['direccionEnvio'] = $direccionEnvio;
 $_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos;
@@ -223,11 +259,9 @@ if (!isset($_SESSION['tokenPedido'])) {
                             <td> <?= $producto['nombre'] ?></td>
 
                             <td> <?=
-
                                 //? Sacamos el precio del producto
                                 //precio sin descuento
                                 $descuentoAplicado = FALSE;
-
 
                                 // Precio con descuento ya aplicado
                                 if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
@@ -253,30 +287,32 @@ if (!isset($_SESSION['tokenPedido'])) {
                                     }
                                 }
 
-                // Aplicar IVA al precio final
-                $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
+                                // Aplicar IVA al precio final
+                                $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
 
-                // Multiplicar por la cantidad
-                $subtotal = $precioFinalConIva * intval($producto['cantidad']);
+                                // Multiplicar por la cantidad
+                                $subtotal = $precioFinalConIva * intval($producto['cantidad']);
 
-                // Sumar al total
-                $sumaPrecioProductos += $subtotal;
+                                // Sumar al total
+                                $sumaPrecioProductos += $subtotal;
 
-                // Mostrar precio con IVA
-                if($descuentoAplicado){
-                    echo '<div class="descuentoAplicado">' . number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
-                }else{
-                    echo  number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
+                                // Mostrar precio con IVA
+                                if($descuentoAplicado){
+                                    echo '<div class="descuentoAplicado">' . number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
+                                }else{
+                                    echo  number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
 
-                }
-                
-
+                                }
                                 ?>
                                 </td>
-
-
                             
                             <td> <?= $producto['cantidad'] ?></td>
+                            <td>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="eliminar_producto" value="<?= $producto['ref'] ?>">
+                                    <button type="submit">❌</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

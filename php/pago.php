@@ -1,6 +1,7 @@
 <?php 
 //~ require dle correo madnadndole el email y nuemro de pedido
 require 'funcionesInsUpdDel.php';
+require 'email/emailConfirmacion.php';
 
 session_start(); // iniciar sesión
 
@@ -115,8 +116,11 @@ try {
     echo "Error en la base de datos: " . $e->getMessage();
 }
 
-
+//? se añaden losn puntos al usuario
 puntosTipo($sumaPuntos);
+//? Mandar email de confrimación de pedido
+/* mailPedido($_SESSION['emailUsuario'], $ultimoIdPedido); */
+mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
 
 /* -------------------------------------------------------------------------- */
 /*                             mostrar infromación                            */
