@@ -107,6 +107,12 @@ table{
     min-width: 70px;
 }
 
+/* Precio si hay decsuento */
+.descuentoAplicado {
+    color: green;
+    font-weight: bold;
+}
+
 /* ------------------- imagen del prodducto en el carrito ------------------- */
 #imagenProductoCarrito{
     width: 120px;
@@ -160,7 +166,7 @@ table{
     border-radius: 20px;
     padding: 10px 20px;
 
-    margin: 30vh 0px 0px 0px;
+    margin: 25vh 0px 0px 0px;
 }
 
 /*? Contenedor de errores de saldo */

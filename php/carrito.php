@@ -49,7 +49,7 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
             list($ref, $cantidad) = explode(",", $item); // Separar referencia y cantidad
 
             // Consultar los datos del producto
-            $stmt = $bd->prepare("SELECT nombre, categoria, pvp, peso FROM producto WHERE ref = :ref");
+            $stmt = $bd->prepare("SELECT nombre, categoria,neto, iva, pvp, peso, descuento FROM producto WHERE ref = :ref");
             $stmt->execute(['ref' => $ref]);
             $producto = $stmt->fetch();
 
@@ -58,7 +58,11 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
                     "ref" => $ref,
                     "nombre" => $producto["nombre"],
                     "categoria" => $producto["categoria"],
+                    "neto" => $producto["neto"],
+                    "iva" => $producto["iva"],
                     "pvp" => $producto["pvp"], 
+                    "peso" => $producto["peso"], 
+                    "descuento" => $producto["descuento"], 
                     "cantidad" => $cantidad
                 ];
             }
@@ -74,13 +78,63 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
 /* ----------------------------- peso del pedido ---------------------------- */
 //? El peso del pedido se pasa a la empresa de envio que es la que gestiona posibles aumentos de coste
 //? en nuestro caso solo vamos a mostrar el peso total
-$sumaPesoProductos = 30;
+$sumaPesoProductos = 0.00; //tipo float tener en cuanta para la suma
+
+foreach ($productosCarrito as $producto) {
+    //? multiplicar el peso por la cantidad pedida
+    $sumaPesoProductos += floatval($producto['peso']) * intval($producto['cantidad']);
+}
 
 
 /* --------------------------- precios del pedido --------------------------- */
 //! Poner la suma de precios de los productos del carrito
 // hacer consulta a los datos de ese producto, si tiene descuento descontar y sumar todo a esta variable
-$sumaPrecioProductos = 10;
+
+$sumaPrecioProductos = 0.00; 
+
+foreach ($productosCarrito as $producto) {
+    //? Sacamos el precio del producto
+    //precio sin descuento
+    $precioFinal = floatval($producto['pvp']);
+    $descuentoAplicado = FALSE;
+
+
+    // Precio con descuento ya aplicado
+    if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
+        switch ($_SESSION["tipo"]) {
+            case "normal": // usuarios normales no tienen descuento
+                break;
+            case "bronce":
+                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.05);
+                $descuentoAplicado = true;
+                break;
+            case "plata":
+                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.08);
+                $descuentoAplicado = true;
+                break;
+            case "oro":
+                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.11);
+                $descuentoAplicado = true;
+                break;
+            case "platino":
+                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.15);
+                $descuentoAplicado = true;
+                break;
+        }
+    }
+
+// Aplicar IVA al precio final
+$precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
+
+// Multiplicar por la cantidad
+$subtotal = $precioFinalConIva * intval($producto['cantidad']);
+
+// Sumar al total
+$sumaPrecioProductos += $subtotal;
+}
+
+//! APLICAR DESCUENTOS
+
 
 
 
@@ -148,13 +202,6 @@ if (!isset($_SESSION['tokenPedido'])) {
         de envio y facturación -->
 
         <section  id="productos-carrito">
-        <!-- PRUEBAS DE QUE SACA LOS DATOS DE LA MATRIZ -->
-        <?php foreach ($productosCarrito as $producto): ?>
-            <tr>
-                <td><?= htmlspecialchars($producto["ref"]) ?></td>
-                <td><?= htmlspecialchars($producto["cantidad"]) ?></td>
-            </tr>
-        <?php endforeach; ?>
             <table>
                 <thead>
                     <tr>
@@ -173,27 +220,67 @@ if (!isset($_SESSION['tokenPedido'])) {
                             ?>
                                 
                             <td><img src="<?= $imagePath ?>" width="80" ></td>
-                            <td><?= htmlspecialchars($producto['nombre']) ?></td>
-                            <td><?= number_format($producto['pvp'], 2) ?> €</td>
-                            <td><?= htmlspecialchars($producto['cantidad']) ?></td>
+                            <td> <?= $producto['nombre'] ?></td>
+
+                            <td> <?=
+
+                                //? Sacamos el precio del producto
+                                //precio sin descuento
+                                $descuentoAplicado = FALSE;
+
+
+                                // Precio con descuento ya aplicado
+                                if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
+                                    switch ($_SESSION["tipo"]) {
+                                        case "normal": // usuarios normales no tienen descuento
+                                            break;
+                                        case "bronce":
+                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.05);
+                                            $descuentoAplicado = true;
+                                            break;
+                                        case "plata":
+                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.08);
+                                            $descuentoAplicado = true;
+                                            break;
+                                        case "oro":
+                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.11);
+                                            $descuentoAplicado = true;
+                                            break;
+                                        case "platino":
+                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.15);
+                                            $descuentoAplicado = true;
+                                            break;
+                                    }
+                                }
+
+                // Aplicar IVA al precio final
+                $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
+
+                // Multiplicar por la cantidad
+                $subtotal = $precioFinalConIva * intval($producto['cantidad']);
+
+                // Sumar al total
+                $sumaPrecioProductos += $subtotal;
+
+                // Mostrar precio con IVA
+                if($descuentoAplicado){
+                    echo '<div class="descuentoAplicado">' . number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
+                }else{
+                    echo  number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
+
+                }
+                
+
+                                ?>
+                                </td>
+
+
+                            
+                            <td> <?= $producto['cantidad'] ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-<!--                 <tbody>
-                    <tr>
-                        <td><img src="/categorias/1.Microcontroladores/1/1.png" id="imagenProductoCarrito"></td>
-                        <td>Arduino Microcontrolador USB Uno R3</td>
-                        <td>23 €</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td><img src=""></td>
-                        <td>Arduino Microcontrolador USB Uno R3 </td>
-                        <td>153 €</td>
-                        <td>1</td>
-                    </tr>
 
-                </tbody> -->
             </table>
         </section>
         <!-- En esta sección se van a mostrar los datos de envio -->
@@ -214,8 +301,8 @@ if (!isset($_SESSION['tokenPedido'])) {
                 <h4>Puntos <?php echo $puntos ?>
             </div>
             <div class="precioTotal">
-                <h4>Peso del pedido: <?php echo $sumaPesoProductos ?> kg</h4>
-                <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
+            <h4>Peso del pedido: <?php echo number_format(floatval($sumaPesoProductos), 2, '.', '') ?> kg</h4>
+            <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
                 <h4>Precio Total <?php echo $precioTotal ?><!-- Poner precio total aquí --> €</h4>
             </div>
             
