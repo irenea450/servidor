@@ -72,16 +72,41 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
         echo "Error en la conexión: " . $e->getMessage();
     }
 } else {
-    echo 'Carrito Vacio - añadir a la cesta ';
-    //! añadir mensaje de error de carrito vacio
-/*     echo '<script>
-    alert("carrito vacio");
-    //coger contenedor #productos-carrito y meter este parrafo dentro
-    contenedor =document.querySelector("#productos-carrito");
-    contenedor = " ";
-    contenedor.innerHTML = "<p class="carritoVacio">No hay productos en el carrito.</p>";
+    //? Si el carrito esta vacio, manda mensaje de error y muetsra foto del carrito vacio 
+    echo '         <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Crear el contenedor del mensaje
+            let mensajeCarrito = document.createElement("div");
+            mensajeCarrito.textContent = "Carrito esta vacío, añade productos";
 
-    </script>'; */
+            // Crear la imagen
+            let imagenCarrito = document.createElement("img");
+            imagenCarrito.src = "../img/carro-vacio.png"; // Reemplaza con el enlace de tu imagen
+            imagenCarrito.alt = "Carrito vacío";
+            imagenCarrito.style.width = "200px"; // Ajusta el tamaño si es necesario
+            imagenCarrito.style.position = "absolute";
+            imagenCarrito.style.top = "calc(40% + 60px)"; // Lo coloca debajo del mensaje
+            imagenCarrito.style.left = "30%";
+            imagenCarrito.style.transform = "translate(-50%, 0)";
+            
+            // Estilos para que el cuadro flote sobre la tabla
+            mensajeCarrito.style.position = "absolute"; // O "fixed" si quieres que siempre sea visible
+            mensajeCarrito.style.top = "40%";
+            mensajeCarrito.style.left = "30%";
+            mensajeCarrito.style.transform = "translate(-50%, -50%)"; // Centrarlo
+            mensajeCarrito.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+            mensajeCarrito.style.color = "white";
+            mensajeCarrito.style.padding = "20px";
+            mensajeCarrito.style.borderRadius = "10px";
+            mensajeCarrito.style.fontSize = "18px";
+            mensajeCarrito.style.zIndex = "1000";
+            mensajeCarrito.style.textAlign = "center";
+
+        // Insertar en el body
+        document.body.appendChild(mensajeCarrito);
+        document.body.appendChild(imagenCarrito);
+        });
+    </script>';
 }
 
 
@@ -98,8 +123,8 @@ foreach ($productosCarrito as $producto) {
 
 
 /* --------------------------- precios del pedido --------------------------- */
-// Poner la suma de precios de los productos del carrito
-// hacer consulta a los datos de ese producto, si tiene descuento descontar y sumar todo a esta variable
+//? Se suman los precio de los productos a la variable de sumaPrecioProductos
+//? se aplican los descuentos , se suma el iva y se multiplica po la cantidad antes de añadirlo
 
 $sumaPrecioProductos = 0.00; 
 
@@ -339,7 +364,7 @@ if (!isset($_SESSION['tokenPedido'])) {
             <div class="precioTotal">
             <h4>Peso del pedido: <?php echo number_format(floatval($sumaPesoProductos), 2, '.', '') ?> kg</h4>
             <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
-                <h4>Precio Total <?php echo $precioTotal ?><!-- Poner precio total aquí --> €</h4>
+                <h4>Precio Total <?php echo number_format($precioTotal, 2)  ?><!-- Poner precio total aquí --> €</h4>
             </div>
             
             <!-- aqui mostrara los errores al tramitar el pedido -->
@@ -377,13 +402,12 @@ if (!isset($_SESSION['tokenPedido'])) {
                         </script>';
                         
                         
-                        /* //* te dirige a cargar saldo
-                        header("Location: saldo.php?redirigido=$url_actual"); */
-                        
                         //? Una vez se muestre el error se elimina
                         unset($_SESSION["error_saldo"]); 
                     }else{
-                        
+                        //? En caso de que si tenga saldo suficiente para pagar el pedido
+                        //? Y tenga metidos productos en el carrito se va a mostrar el botón de tramitar pedido
+                        if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
                         echo '
                             <!-- Formulario para tramitar pedido -->
                             <form id="tramitar" action="pago.php" method="post">
@@ -392,6 +416,7 @@ if (!isset($_SESSION['tokenPedido'])) {
                             </form>
 
                         ';
+                        }
                     }
                 ?>
             </div>
