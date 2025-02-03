@@ -150,12 +150,10 @@ require "cookies.php";
                     <?php
                         //si el producto tiene descuento y $_SESSION["tipo"] esta inicializado
                         if($product['descuento'] === "si"){
-                            if(isset($_SESSION["tipo"])){
+                            if(isset($_SESSION["tipo"]) && ($_SESSION["tipo"] !== "normal")){
                                 //imprimimos el pvp en gris class(pvpAfter)
                                 echo "<p class='pvpAfter'>{$product['pvp']}€</p>";
                                 switch($_SESSION["tipo"]){
-                                    case "normal": //usuarios normales no tienen descuento
-                                        break;
                                     case "bronce":
                                         $pvpBefore = $product['neto'] - ($product['neto'] * 0.05); //quitamos descuento 
                                         $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva

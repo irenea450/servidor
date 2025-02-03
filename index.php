@@ -69,6 +69,7 @@ $numeroAleatorio2 = rand(1, 8);
 
 //? Ruta de l aimagen aleatoria
 $rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png";
+echo $rutaImagen; //! hay que sacar una ref al azar pero dependiendo de la categoria que ha salido al azar (HACERLO TODO EN UNA FUNCION A PARTE)
 //echo "<p>Ruta generada: $rutaImagen</p>"; // imprimir ruta para probar que ruta esta sacando
 
 ?>
