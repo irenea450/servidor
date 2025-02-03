@@ -78,7 +78,7 @@ session_start();
 
         <!-- Datos del usuario en l apalicación, tipo de cliente, saldo y puntos -->
         <div class="infoUsuarioAplicacion">
-            <p><b>Tipo de Clinete:</b> <?php echo $tipo?> </p>
+            <p><b>Tipo de Cliente:</b> <?php echo $tipo?> </p>
             <p><b>Saldo:</b> <?php echo $saldo?> </p>
             <p><b>Puntos:</b> <?php echo $puntos?> </p>
         </div>

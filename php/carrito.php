@@ -1,5 +1,6 @@
 <?php
 require "funciones.php";
+require "cookies.php";
 //*Inicia sesión
 session_start();
 
@@ -31,7 +32,7 @@ $puntos = $datosUsuario['puntos'];
 
 //? extraemos datos de la cookie carrito
 $productosCarrito = [];
-
+//? Si la cookie de carrito esta iniciada y tiene productos se extraen datos y se consulta a la base de datos
 if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
     // Conexion a la base de datos
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
@@ -44,16 +45,17 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
 
-        $items = explode("*", $_COOKIE["carrito"]); // Separar productos por "*"
+        $productos = explode("*", $_COOKIE["carrito"]); // Separar productos por "*"
 
-        foreach ($items as $item) {
-            list($ref, $cantidad) = explode(",", $item); // Separar referencia y cantidad
+        foreach ($productos as $producto) {
+            list($ref, $cantidad) = explode(",", $producto); // Separar referencia y cantidad
 
-            // Consultar los datos del producto
-            $stmt = $bd->prepare("SELECT nombre, categoria,neto, iva, pvp, peso, descuento FROM producto WHERE ref = :ref");
-            $stmt->execute(['ref' => $ref]);
-            $producto = $stmt->fetch();
+            //Consultar datos del producto segun su referencia
+            $consultaProducto = $bd->prepare("SELECT nombre, categoria,neto, iva, pvp, peso, descuento FROM producto WHERE ref = :ref");
+            $consultaProducto->execute(['ref' => $ref]);
+            $producto = $consultaProducto->fetch();
 
+            //se guardan los datos del producto
             if ($producto) {
                 $productosCarrito[] = [
                     "ref" => $ref,
@@ -72,8 +74,8 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
         echo "Error en la conexión: " . $e->getMessage();
     }
 } else {
-    //? Si el carrito esta vacio, manda mensaje de error y muetsra foto del carrito vacio 
-    echo '         <script>
+    //? Si el carrito esta vacio, manda mensaje de error y muestra foto del carrito vacio (con js)
+    echo '<script>
         document.addEventListener("DOMContentLoaded", function () {
             // Crear el contenedor del mensaje
             let mensajeCarrito = document.createElement("div");
@@ -110,8 +112,7 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
 }
 
 
-
-/* ----------------------------- peso del pedido ---------------------------- */
+/* ----------------------------- Peso del pedido ---------------------------- */
 //? El peso del pedido se pasa a la empresa de envio que es la que gestiona posibles aumentos de coste
 //? en nuestro caso solo vamos a mostrar el peso total
 $sumaPesoProductos = 0.00; //tipo float tener en cuanta para la suma
@@ -122,7 +123,7 @@ foreach ($productosCarrito as $producto) {
 }
 
 
-/* --------------------------- precios del pedido --------------------------- */
+/* --------------------------- Precios del pedido --------------------------- */
 //? Se suman los precio de los productos a la variable de sumaPrecioProductos
 //? se aplican los descuentos , se suma el iva y se multiplica po la cantidad antes de añadirlo
 
@@ -130,76 +131,78 @@ $sumaPrecioProductos = 0.00;
 
 foreach ($productosCarrito as $producto) {
     //? Sacamos el precio del producto
-    //precio sin descuento
-    $precioFinal = floatval($producto['pvp']);
-    $descuentoAplicado = FALSE;
+    // inicializamos descuentos aplicados y precio final
+    $descuentoAplicado = false;
+    $precioFinal = $producto['neto']; // Precio base
 
-
-    // Precio con descuento ya aplicado
+    //? aplicamos descuento segun el tipo de cliente 
     if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
         switch ($_SESSION["tipo"]) {
-            case "normal": // usuarios normales no tienen descuento
-                break;
+            //tipo normal no tiene ningun descuento
             case "bronce":
-                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.05);
+                $precioFinal -= ($producto['neto'] * 0.05);
                 $descuentoAplicado = true;
                 break;
             case "plata":
-                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.08);
+                $precioFinal -= ($producto['neto'] * 0.08);
                 $descuentoAplicado = true;
                 break;
             case "oro":
-                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.11);
+                $precioFinal -= ($producto['neto'] * 0.11);
                 $descuentoAplicado = true;
                 break;
             case "platino":
-                $precioFinal = $producto['neto'] - ($producto['neto'] * 0.15);
+                $precioFinal -= ($producto['neto'] * 0.15);
                 $descuentoAplicado = true;
                 break;
         }
     }
 
-// Aplicar IVA al precio final
-$precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
+    //? Aplicar IVA al precio final
+    $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
 
-// Multiplicar por la cantidad
-$subtotal = $precioFinalConIva * intval($producto['cantidad']);
+    //? Calcular subtotal(precio con iva por la cantidad pedida)
+    $subtotal = $precioFinalConIva * intval($producto['cantidad']);
 
-// Sumar al total
-$sumaPrecioProductos += $subtotal;
+    //? Sumar al pecio total de todos los productosy se guarda (para mostrar abajo)
+    $sumaPrecioProductos += $subtotal;
 }
 
 
-
-//El gasto de envio va a tener un precio fijo de 4.5 manejado por la empresa de reparto, 
-//en caso de que el pedido supere los 50, el envio será gratuito
+/* ----------------------------- Gastos de envio ---------------------------- */
+//?El gasto de envio va a tener un precio fijo de 4.5 manejado por la empresa de reparto, 
+//? en caso de que el pedido supere los 50, el envio será gratuito
 if($sumaPrecioProductos > 50){
+    $gastosEnvio = 0;
+}else if($sumaPrecioProductos == 0){
+    //si no hay productos añadidos
     $gastosEnvio = 0;
 }else{
     $gastosEnvio = 4.5;
 }
 
-//? Precio total del pedido
+//? Precio total del pedido (sumando el precio de productos + gastos de envio)
 $precioTotal = $sumaPrecioProductos + $gastosEnvio;
 
 /* --------------- Carrito actualizaciones(eliminar producto) --------------- */
 //! TERMINAR ELIMINAR CARRITO
-//? ESTO ES COPIADO QUEDA MODIFICAR 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
+
+/* if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
     $refEliminar = $_POST['eliminar_producto'];
     
     // Obtener la cookie del carrito
     if (isset($_COOKIE["carrito"])) {
-        $items = explode("*", $_COOKIE["carrito"]);
+        $productos = explode("*", $_COOKIE["carrito"]);
         $nuevoCarrito = [];
 
-        foreach ($items as $item) {
-            list($ref, $cantidad) = explode(",", $item);
+        foreach ($productos as $producto) {
+            list($ref, $cantidad) = explode(",", $producto);
             if ($ref !== $refEliminar) {
-                $nuevoCarrito[] = $item; // Guardamos los que no se eliminan
+                $nuevoCarrito[] = $producto; // Guardamos los que no se eliminan
             }
         }
 
+        //! aqui actualizar la cookie 
         // Actualizar la cookie del carrito sin el producto eliminado
         setcookie("carrito", implode("*", $nuevoCarrito), time() + 3600, "/");
 
@@ -207,8 +210,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) 
         header("Location: " . $_SERVER["PHP_SELF"]);
         exit;
     }
-}
+} */
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
+    // Verificamos si la petición es POST y si se ha enviado la referencia del producto a eliminar.
+    
+    $refEliminar = $_POST['eliminar_producto']; // Guardamos la referencia del producto a eliminar.
+
+    // Comprobamos si existe la cookie "carrito".
+    if (isset($_COOKIE["carrito"])) {
+        $productos = explode("*", $_COOKIE["carrito"]); // Dividimos la cadena de la cookie en productos individuales.
+        $nuevoCarrito = []; // Creamos un array para almacenar los productos que no se eliminen.
+
+        // Recorremos los productos en la cookie.
+        foreach ($productos as $producto) {
+            list($ref, $cantidad) = explode(",", $producto); // Extraemos la referencia y cantidad del producto.
+
+            if ($ref !== $refEliminar) { // Si la referencia no coincide con la que queremos eliminar...
+                $nuevoCarrito[] = $producto; // Mantenemos el producto en el nuevo carrito.
+            }
+        }
+
+/*         // Llamamos a la función cookieCarrito para actualizar la cookie con los productos restantes.
+        cookieCarrito($nuevoCarrito);
+
+        // También actualizamos la variable global $_COOKIE para que los cambios se reflejen inmediatamente.
+        $_COOKIE["carrito"] = implode("*", $nuevoCarrito);
+
+        // Recargamos la página para que los cambios sean visibles al usuario.
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit; // Detenemos la ejecución del script después de redirigir. */
+    }
+}
 
 /* ---------------------------- Proceder al pago ---------------------------- */
 //? Si se pulsa el botón de tramitar, se va a didigir a la pagina de pago.php 
@@ -273,78 +306,72 @@ if (!isset($_SESSION['tokenPedido'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($productosCarrito as $producto): ?>
-                        <tr>
-                            <?php
-                                // Construcción de la ruta de imagen
-                                $imagePath = "../categorias/" . htmlspecialchars($producto["categoria"]) . "/" . htmlspecialchars($producto["ref"]) . "/1.png";
-                            ?>
-                                
-                            <td><img src="<?= $imagePath ?>" width="80" ></td>
-                            <td> <?= $producto['nombre'] ?></td>
+                <?php 
+                    foreach ($productosCarrito as $producto) {
+                        //* Ruta de la imagen
+                        $imagePath = "../categorias/" . htmlspecialchars($producto["categoria"]) . "/" . htmlspecialchars($producto["ref"]) . "/1.png";
 
-                            <td> <?=
-                                //? Sacamos el precio del producto
-                                //precio sin descuento
-                                $descuentoAplicado = FALSE;
+                        // inicializamos descuentos aplicados y precio final
+                        $descuentoAplicado = false;
+                        $precioFinal = $producto['neto']; // Precio base
 
-                                // Precio con descuento ya aplicado
-                                if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
-                                    switch ($_SESSION["tipo"]) {
-                                        case "normal": // usuarios normales no tienen descuento
-                                            break;
-                                        case "bronce":
-                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.05);
-                                            $descuentoAplicado = true;
-                                            break;
-                                        case "plata":
-                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.08);
-                                            $descuentoAplicado = true;
-                                            break;
-                                        case "oro":
-                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.11);
-                                            $descuentoAplicado = true;
-                                            break;
-                                        case "platino":
-                                            $precioFinal = $producto['neto'] - ($producto['neto'] * 0.15);
-                                            $descuentoAplicado = true;
-                                            break;
-                                    }
-                                }
+                        //? aplicamos decuento segun el tipo de cliente 
+                        if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
+                            switch ($_SESSION["tipo"]) {
+                                //tipo normal no tiene ningun descuento
+                                case "bronce":
+                                    $precioFinal -= ($producto['neto'] * 0.05);
+                                    $descuentoAplicado = true;
+                                    break;
+                                case "plata":
+                                    $precioFinal -= ($producto['neto'] * 0.08);
+                                    $descuentoAplicado = true;
+                                    break;
+                                case "oro":
+                                    $precioFinal -= ($producto['neto'] * 0.11);
+                                    $descuentoAplicado = true;
+                                    break;
+                                case "platino":
+                                    $precioFinal -= ($producto['neto'] * 0.15);
+                                    $descuentoAplicado = true;
+                                    break;
+                            }
+                        }
 
-                                // Aplicar IVA al precio final
-                                $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
+                        //? Aplicar IVA al precio final para mostrarlo
+                        $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
 
-                                // Multiplicar por la cantidad
-                                $subtotal = $precioFinalConIva * intval($producto['cantidad']);
 
-                                // Sumar al total
-                                $sumaPrecioProductos += $subtotal;
+                        // Mostramos en la tabla
+                        echo "<tr>
+                                <td><img src='{$imagePath}' width='80'></td>
+                                <td>{$producto['nombre']}</td>
+                                <td>";
 
-                                // Mostrar precio con IVA
-                                if($descuentoAplicado){
-                                    echo '<div class="descuentoAplicado">' . number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
-                                }else{
-                                    echo  number_format($precioFinalConIva, 2) . ' € (con IVA)</div>';
+                        //Si tiene descuento mostrar en verde, si no normal
+                        if ($descuentoAplicado) {
+                            echo "<div class='descuentoAplicado'>" . number_format($precioFinalConIva, 2) . " € (con IVA)</div>";
+                        } else {
+                            echo number_format($precioFinalConIva, 2) . " € (con IVA)</div>";
+                        }
 
-                                }
-                                ?>
+                        echo "  </td>
+                                <td>{$producto['cantidad']}</td>
+                                <td>
+                                    <form method='POST' action=''>
+                                        <input type='hidden' name='eliminar_producto' value='{$producto['ref']}'>
+                                        <button type='submit'>❌🗑️</button>
+                                    </form>
                                 </td>
-                            
-                            <td> <?= $producto['cantidad'] ?></td>
-                            <td>
-                                <form method="POST" action="">
-                                    <input type="hidden" name="eliminar_producto" value="<?= $producto['ref'] ?>">
-                                    <button type="submit">❌</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                            </tr>";
+                    }
+                    ?>
+
                 </tbody>
 
             </table>
         </section>
-        <!-- En esta sección se van a mostrar los datos de envio -->
+        <!-- En esta sección se van a mostrar los datos de envio y botones para tramitar pedido o rellenar saldo -->
         <section  id="infoEnvio">
             <div class="dir-envio">
                 <!-- Dirrección de envio -->
@@ -353,60 +380,63 @@ if (!isset($_SESSION['tokenPedido'])) {
             
             </div>
             <div class="dir-facturacion">
-                <!-- Dirreciión de facturación -->
+                <!-- Dirreción de facturación -->
                 <h3>Dirección de Facturación</h3>
                 <p><?php echo $direccionEnvio; ?></p>
             </div>
             <div class="saldo">
+                <!-- Saldo y puntos del cliente -->
                 <h4>Saldo <?php echo $saldo ?>
                 <h4>Puntos <?php echo $puntos ?>
             </div>
             <div class="precioTotal">
-            <h4>Peso del pedido: <?php echo number_format(floatval($sumaPesoProductos), 2, '.', '') ?> kg</h4>
-            <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
-                <h4>Precio Total <?php echo number_format($precioTotal, 2)  ?><!-- Poner precio total aquí --> €</h4>
+                <!-- Datos del pedido(peso, gasto de envio y precio total) -->
+                <h4>Peso del pedido: <?php echo number_format(floatval($sumaPesoProductos), 2, '.', '') ?> kg</h4>
+                <h4>Gastos de Envio: <?php echo $gastosEnvio ?>€</h4>
+                <h4>Precio Total <?php echo number_format($precioTotal, 2) ?> €</h4>
             </div>
             
-            <!-- aqui mostrara los errores al tramitar el pedido -->
+            <!-- muestra botones, tramitar pedido, o recargar slado si no hay suficiente -->
             <div class="contenedorErrorSaldo">
                 <?php
                     //?En caso de que tengamos un error de saldo( se da en caso de que el precio total del pedido sea mayor al saldo disponible)
                     if(isset($_SESSION["error_saldo"]) && $_SESSION["error_saldo"] = TRUE){
 
-                        //* guarda la url actual
+                        //? guarda la url actual
                         $url_actual = $_SERVER['REQUEST_URI'];
 
                         //* En javascript se inserta el mensaje de error
                         echo '
                         <script>
-                            // Seleccionar elementos correctamente
+                            //~ Seleccionar elementos correctamente
                             let mensaje = "Saldo insuficiente";
                             let contenedor = document.querySelector(".contenedorErrorSaldo");
 
-                            // Mostrar mensaja en el contenedor en caso de error
+                            //~ Mostrar mensaja en el contenedor en caso de error
                             contenedor.innerHTML = mensaje;
 
-                            // Crear el botón
+                            //~ Crear el botón
                             let botonRecarga = document.createElement("button"); // Se usa "createElement" en lugar de "create"
                             botonRecarga.textContent = "Recargar Saldo"; // Texto del botón
                             botonRecarga.id = "botonRecargar";
 
-                            // Agregar evento al botón para redirigir a otro script (ejemplo: recarga.php)
+                            //~ Agregar evento al botón para redirigir a otro script (ejemplo: recarga.php)
                             botonRecarga.addEventListener("click", function() {
                                 //* te dirige a cargar saldo
-                                window.location.href = "recargar.php?redirigido=' . $url_actual . '"; // Cambia "recarga.php" por la URL del script al que quieres ir
+                                window.location.href = "recargar.php?redirigido=' . $url_actual . '";
                             });
 
-                            // Agregar el botón al contenedor
+                            //~ Agregar el botón al contenedor
                             contenedor.appendChild(botonRecarga);
                         </script>';
                         
                         
-                        //? Una vez se muestre el error se elimina
+                        //? Una vez se muestre el error se elimina de la variable
                         unset($_SESSION["error_saldo"]); 
+                    
+                    //? En caso de que si tenga saldo suficiente para pagar el pedido se muestar boton de tramitar
                     }else{
-                        //? En caso de que si tenga saldo suficiente para pagar el pedido
-                        //? Y tenga metidos productos en el carrito se va a mostrar el botón de tramitar pedido
+                        //? Si hay productos en el carrito va a salir el boton de tramitar
                         if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
                         echo '
                             <!-- Formulario para tramitar pedido -->

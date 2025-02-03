@@ -226,3 +226,21 @@ table{
     border: solid 1px lightgray;
     border-radius: 20px;
 }
+
+/* volver atras una vez se ha relizado el pedido */
+.volverInicio{
+    width: auto;
+    height: auto;
+
+    position: fixed;
+    top: 5%;
+    left: 5%;
+}
+
+.flechaVolver{
+    width: auto;
+    height: auto;
+
+    background-color: transparent;
+    border: none;
+}

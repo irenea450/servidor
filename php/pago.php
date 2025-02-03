@@ -5,21 +5,33 @@ require 'email/emailConfirmacion.php';
 
 session_start(); // iniciar sesión
 
+//? Si se activa el botón de volver atras redirige a la pagina principal
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
+    header("Location: ../index.php");
+}
+
 //? Verificar si el token no existe, en caso de que ya haya sido eliminado(se ha reliazado el pedido)
 //? aparecerá pantalla en blanco y no se ejecutará una nueva transacción
 if (!isset($_SESSION['tokenPedido'])) {
-    //? Si el token no existe va a lanzar mensaje de error, pues es que el pedido ya ha sido realizado y
-    //? no se puede volver a hacer sin pasar por la cesta
+    //? Si el token no existe, muestra un mensaje de error y un botón para volver al inicio
     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
-            document.body.innerHTML = "<h2>⚠ ERROR: Para volver a realizar el pedido tienes que pasar por la cesta</h2>";
+            document.body.innerHTML = `
+                <h2>⚠ ERROR: Para volver a realizar el pedido tienes que pasar por la cesta</h2>
+                <div class="volverInicio">
+                    <form id="atrasForm" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '" method="post">
+                        <button type="submit" name="atras" class="flechaVolver">
+                            <img src="/img/flecha_atras.png">
+                        </button>
+                    </form>
+                </div>
+            `;
             document.body.style.textAlign = "center";
             document.body.style.paddingTop = "50px";
             document.body.style.color = "red";
         });
-    </script>'
-    ;
-    exit(); //* Detiene el codigo aqui para que no ejecute la transacción de nuevo
+    </script>';
+    exit(); //* Detiene la ejecución para evitar que continúe el proceso del pedido
 }
 
 //? Recuperar las variables de sesión
@@ -116,17 +128,21 @@ try {
     echo "Error en la base de datos: " . $e->getMessage();
 }
 
-//? se añaden losn puntos al usuario
+//? se añaden los puntos al usuario
 puntosTipo($sumaPuntos);
 //? Mandar email de confrimación de pedido
 /* mailPedido($_SESSION['emailUsuario'], $ultimoIdPedido); */
 mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
 
+//? elimina cookie carrito, para vaciar todos los productos que ya han sido comprados
+setcookie("carrito", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
+//? eliminamos sesión matriz
+$_SESSION['matriz'] = [];
+
+
 /* -------------------------------------------------------------------------- */
 /*                             mostrar infromación                            */
 /* -------------------------------------------------------------------------- */
-
-
 ?>
 
 <!DOCTYPE html>
@@ -146,13 +162,21 @@ mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
         <p><strong>Fecha de Facturación:</strong> <?php echo $fechaEnvio ?></p>
         <p><strong>Peso del pedido:</strong> <?php echo $pesoTotal ?></p>
         <p><strong>Gastos de envio:</strong> <?php echo $gastosEnvio ?></p>
-        <p><strong>Precio total del pedido:</strong> <?php echo $precioTotal ?></p>
+        <p><strong>Precio total del pedido:</strong> <?php echo number_format($precioTotal, 2) ?></p>
     </div>
     <div class="datosResumenPersonales">
         <h3>Datos Personales</h3>
         <p><strong>Nombre:</strong> <?php echo $nombreCompleto ?></p>
-        <p><strong>Saldo:</strong> <?php echo $saldoResta ?></p>
+        <p><strong>Saldo:</strong> <?php echo number_format($saldoResta, 2) ?></p>
     </div>
+
+    <div class="volverInicio">
+        <form id="atrasForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario con función de ir atrás -->
+            <button type="submit" name="atras" class="flechaVolver"  >
+                <img src="/img/flecha_atras.png">
+            </button>
+        </form>
     
     
 

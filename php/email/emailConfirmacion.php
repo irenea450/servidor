@@ -87,8 +87,8 @@
             echo "<br><br>Error: " . $mail->ErrorInfo . "<br><br>";
         }else{
             // Si el envío fue exitoso, se muestra un mensaje de éxito.
-            //! Cambiar enviado 
-            echo "Enviado";
+            /* //! mensaje enviado enviado 
+            echo "Enviado"; */
         }
     }
 
