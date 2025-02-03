@@ -25,7 +25,7 @@ require "cookies.php";
     if(isset($_GET['producto'])){
         $ref = $_GET['producto'];
 
-        // Aquí debes conectar a la base de product y obtener la info del producto con la referencia
+        // Aquí debes conectar a la base de datos y obtener la info del producto con la referencia
         $conexion = "mysql:dbname=irjama;host=127.0.0.1";
         $usuario_bd = "root";
         $clave_bd = "";
@@ -70,6 +70,7 @@ require "cookies.php";
         if (!empty($_POST['cantidad']) && !empty($product['ref'])){
             // Agregar una fila con dos columnas "ref" y "cantidad"
             $_SESSION["matriz"][] = ["ref" => $product['ref'], "cantidad" => $_POST['cantidad']];
+            $_SESSION["numCarrito"] ++;
             //darle a la cookie "carrito" el valor de $_SESSION["matriz"]
             cookieCarrito($_SESSION["matriz"]);
 
@@ -107,7 +108,12 @@ require "cookies.php";
             </li>
             <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
-            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
+            <li class="carrito"><?php 
+                    if (isset($_SESSION['numCarrito'])){
+                        echo "<div class='num2'><p>{$_SESSION['numCarrito']}</p></div>";
+                    } ?>
+                <a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a>
+            </li>
         </ul>
     </header>
     <main>
