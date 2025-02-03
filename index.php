@@ -134,7 +134,10 @@ $rutaImagen = "categorias/".$producto['categoria']."/".$producto['ref']."/1.png"
     </header>
 
     <main class="contenedor-imagenes">
-        <img src="<?php echo $rutaImagen; ?>">
+        <div class="contenedor-img">
+            <img src="<?php echo $rutaImagen; ?>">
+        </div>
+        
         <div class="contenedor-info">
                     
                         <?php

@@ -10,7 +10,7 @@
 /* -------------------------------------------------------------------------- */
 header{
     width: 100%;
-    height: auto;
+    height: 10vh;
 
     display: flex;
     flex-direction: row;
@@ -39,7 +39,7 @@ header li{
     width: auto;
     height: auto;
 
-    padding: 20px 30px;
+    padding: 20px 10px;
 
     font-weight: bold;
     font-size: large;
@@ -51,22 +51,19 @@ header img{
 
     margin: 4px 0px 0px 4px; /* para comprensar el margen automaticos que se produce */
 }
-/* En el logo se quita padding para que ajuste tamaño al menu  */
-header ul li:first-child:not(.categorias li:first-child){ /*menos en el submenu */
-    padding: 0px;
-}
+
 /** Para el carrito se cambia el tamaño dle padding y al pasar por encima se cambia el fondo */
 header ul li:last-child{
     padding: 5px 10px ;
 }
-header ul li:last-child:hover:not(.categorias li:last-child){
-    background-color: #d85300;
+
+header ul li img:last-child{
+    height: 35px;
 }
 
-/* header li:nth-child(2){
-    /* Espacio entre logo y opciones del menu 
-    flex-grow: 1; 
-}*/
+/* header ul li:last-child:hover:not(.categorias li:last-child){
+    background-color: #d85300;
+} */
 
 /* ?Enlaces del header */
 header a{
@@ -81,6 +78,8 @@ header a:hover{
 
 .carrito{
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .num{
     border: 1px solid black;
@@ -89,6 +88,8 @@ header a:hover{
     height: 20px;
     text-align: center;
     line-height: 20px;
+    color: white;
+    background-color: #d85300;
 }
 
 .num2{
@@ -155,22 +156,29 @@ ul > li:hover ul.categorias{
 /*                      Contenedor de imagenes aleatorias                     */
 /* -------------------------------------------------------------------------- */
 .contenedor-imagenes{
-    content: " ";
-    width: 100%;
-    height: 80vh;
+    width: 90%;
+    min-height: 85vh;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto;
 }
 
-.contenedor-imagenes img{
-    width: auto;
-    height: 90%;
+.contenedor-img{
+    width: 60%;
+    margin: auto;
+    padding: 10px 0;
+}
+
+.contenedor-img img{
+    width: 70%;
+    max-height: 60%;
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
 }
 
 .contenedor-info{
-    width: 30%;
+    width: 35%;
 }
 
 .contenedor-info h1{
@@ -188,7 +196,7 @@ ul > li:hover ul.categorias{
 /* -------------------------------------------------------------------------- */
 
 footer{
-    position: fixed;
+    /* position: fixed; */
     bottom: 0;
     width: 100%;
     height: 5vh;
@@ -234,7 +242,7 @@ footer{
     border: solid 1px #d85300;
     border-radius: 20px;
     padding: 10px 20px;
-
+    cursor: pointer;
     margin: 10px 20px;
 }
 

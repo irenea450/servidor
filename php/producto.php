@@ -13,7 +13,16 @@ require "cookies.php";
         session_start();
     }
 
+    /** 
+     * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
+     * ? Aparecerá su nombre arriba con un enlace a su area personal */
     $nombreUsuario = ""; // Por defecto, vacío
+    if(isset($_SESSION["nombre"])){
+        $nombreUsuario = $_SESSION["nombre"];
+    }else{
+        // Dejamos "Área Personal" o vacío
+        $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+    }
 
     // Leer parámetros del producto desde la URL e inicializar variables
     if(isset($_GET['categoria'])){
