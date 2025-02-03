@@ -90,7 +90,12 @@ try {
             </li>
             <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
-            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
+            <li class="carrito"><?php 
+                    if (isset($_SESSION['numCarrito'])){
+                        echo "<div class='num2'><p>{$_SESSION['numCarrito']}</p></div>";
+                    } ?>
+                <a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a>
+            </li>
         </ul>
     </header>
 

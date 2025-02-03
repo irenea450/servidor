@@ -3,6 +3,17 @@ require "php/funciones.php";
 require 'php/cookies.php';
 session_start();
 
+//si la cookie carrito esta activa la vuelca en session[matriz] y genera session[numcarrito]
+if(!isset($_SESSION["matriz"])){
+    if (isset($_COOKIE['carrito'])){
+        $cookieCarrito = $_COOKIE['carrito'];
+        $arrayCookie = desmontar1($cookieCarrito);//pasamos de string a array
+        $_SESSION["numCarrito"] = count($arrayCookie);//sacamos las posiciones del array para poner la cantidad de productos en el carrito
+        $_SESSION["matriz"] = desmontar2($arrayCookie);//pasamos de array a matriz e inicializamos la variable de sesion
+    }
+}
+
+
 /** 
  * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
@@ -20,7 +31,7 @@ if (isset($_COOKIE['session_token'])) {
     cookieSesion1();
 }
 
-//!- OPCION ANTERIOR
+//!- OPCION ANTERIOR -BORRAR
 /* if (isset($_COOKIE['session_token'])) {
     // Si hay cookie -> verificamos si es válida y en caso afirmativo generamos las variables de sesion
     cookieSesion1();
@@ -52,7 +63,7 @@ $categories = [
 ];
 
 //Categorias existentes
-$categorias = [
+/* $categorias = [
     1 => 'microcontroladores',
     2 => 'sensores',
     3 => 'servos',
@@ -68,9 +79,25 @@ $categoriaAleatoria = $categorias[$numeroAleatorio];
 $numeroAleatorio2 = rand(1, 8); 
 
 //? Ruta de l aimagen aleatoria
-$rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png";
-echo $rutaImagen; //! hay que sacar una ref al azar pero dependiendo de la categoria que ha salido al azar (HACERLO TODO EN UNA FUNCION A PARTE)
+$rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png"; */
+//echo $rutaImagen; //! hay que sacar una ref al azar pero dependiendo de la categoria que ha salido al azar (HACERLO TODO EN UNA FUNCION A PARTE)
 //echo "<p>Ruta generada: $rutaImagen</p>"; // imprimir ruta para probar que ruta esta sacando
+
+// conectamos a la base de datos y obtenemos la info del producto aleatorio
+$conexion = "mysql:dbname=irjama;host=127.0.0.1";
+$usuario_bd = "root";
+$clave_bd = "";
+$errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
+$bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
+
+// Consulta para obtener un producto aleatorio
+$sql = "SELECT * FROM producto ORDER BY RAND() LIMIT 1";
+$stmt = $bd->query($sql);
+
+// Obtener el producto
+$producto = $stmt->fetch();
+$rutaImagen = "categorias/".$producto['categoria']."/".$producto['ref']."/1.png";
+
 
 ?>
 
@@ -97,15 +124,32 @@ echo $rutaImagen; //! hay que sacar una ref al azar pero dependiendo de la categ
             </li>
             <li><a href="/php/areaPersonal.php">Área <?php echo $nombreUsuario ?></a></li>
             <li><a href="/php/login.php">Registrarse</a></li>
-            <li><a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a></li>
+            <li class="carrito"><?php 
+                    if (isset($_SESSION['numCarrito'])){
+                        echo "<div class='num'><p>{$_SESSION['numCarrito']}</p></div>";
+                    } ?>
+                <a href="/php/carrito.php"><img src="/img/icono_carrito.png"></a>
+            </li>
         </ul>
     </header>
 
     <main class="contenedor-imagenes">
         <img src="<?php echo $rutaImagen; ?>">
+        <div class="contenedor-info">
+                    
+                        <?php
+                            echo "<h1>{$producto['nombre']}</h1>";
+                            echo "<p>{$producto['descripcion']}</p>";
+                        ?>
+                        <button class="botonVerMas" onclick="window.location.href='./php/producto.php?categoria=<?= htmlspecialchars($producto['categoria']) ?>&producto=<?= htmlspecialchars($producto['ref']) ?>'">
+                                    Ver más
+                        </button>
+                    
+                    
+        </div>
     </main>
 
-    <footer>
+    <footer class="footerIndex">
         <p>Calle Instituto, 7, 45593 Bargas, Toledo</p>
         <p>Tlf: 653 985 395</p>
     </footer>
