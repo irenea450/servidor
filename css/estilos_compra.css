@@ -172,10 +172,7 @@ table{
     margin: 70px 0px 0px 0px;
 }
 
-/* ? Contenedor error de carrito vacio */
-.carritoVacio{
-    background-color: red;
-}
+
 
 /*? Contenedor de errores de saldo */
 .contenedorErrorSaldo{
