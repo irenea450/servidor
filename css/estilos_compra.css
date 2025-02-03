@@ -56,6 +56,7 @@ main#carrito{
     grid-area: productos;
     width: auto;
     height: auto;
+    max-width: 75vw;
 
     background-color: #eff1f3;
 
@@ -80,7 +81,8 @@ table{
 /* Segunda fila del nombre dle producto va a tener un tamaño minimo */
 #productos-carrito th:nth-child(2),
 #productos-carrito td:nth-child(2) {
-    min-width: 600px;
+    min-width: 550px; 
+    max-width: 650px;
     border-left: none; /* une con la foto */
 }
 
@@ -105,6 +107,13 @@ table{
 #productos-carrito td:nth-child(3),
 #productos-carrito td:nth-child(4){
     min-width: 70px;
+    max-width: 100px;
+}
+
+/* Precio si hay decsuento */
+.descuentoAplicado {
+    color: green;
+    font-weight: bold;
 }
 
 /* ------------------- imagen del prodducto en el carrito ------------------- */
@@ -160,7 +169,12 @@ table{
     border-radius: 20px;
     padding: 10px 20px;
 
-    margin: 30vh 0px 0px 0px;
+    margin: 70px 0px 0px 0px;
+}
+
+/* ? Contenedor error de carrito vacio */
+.carritoVacio{
+    background-color: red;
 }
 
 /*? Contenedor de errores de saldo */
