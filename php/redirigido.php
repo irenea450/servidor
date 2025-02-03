@@ -7,5 +7,7 @@
             //* Redirigir al usuario a la desde la ha sido redirigido antes
             //Ejemplo: si viene desde carrito.php, va a volver a esa página
             header("Location: " . $redirectUrl);
+            //echo $redirectUrl; //!borrar
+
 
 ?>

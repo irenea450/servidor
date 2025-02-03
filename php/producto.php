@@ -62,8 +62,9 @@ require "cookies.php";
         $category = 'microcontroladores'; // Por defecto, microcontroladores
     }
     
+    
+    
     //? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
-
     if($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)){
         // si no estan vacios $_POST['cantidad'] y $product['ref'] se procedera a introducir los datos en: $_COOKIE["carrito"]     
         if (!empty($_POST['cantidad']) && !empty($product['ref'])){
@@ -74,9 +75,9 @@ require "cookies.php";
 
             //* guarda la url en la que se encuentra actualmente y redirigir a redirigido.php donde nos devolvera a la pagina 
             //*y asi evitar errores del form al refrescar la pagina
-            $url_actual = $_SERVER['REQUEST_URI'];
+            $url_actual = urlencode($_SERVER["REQUEST_URI"]);  //para que PHP interprete el & como parte del código en lugar de como un separador de parámetros en la URL
             //tedirige al redirigido 
-            header("Location: redirigido.php?redirigido=$url_actual");
+            header("Location: ./redirigido.php?redirigido=$url_actual");
         }
     }
 ?>
@@ -100,7 +101,7 @@ require "cookies.php";
                 <ul class="categorias">
                     <!-- Enlaces dinámicos basados en las categorías -->
                     <?php foreach ($categories as $key => $name): ?>
-                        <li><a href="?category=<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($name) ?></a></li>
+                        <li><a href="./categorias.php?= htmlspecialchars($key) ?>"><?= htmlspecialchars($name) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </li>
@@ -189,7 +190,7 @@ require "cookies.php";
                         }
                     ?>
                     <!-- formulario para elegir la cantidad y comprar -->
-                    <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="POST">
+                    <form action = "<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]. '?categoria='.$categoria.'&producto='.$ref); ?>" method="POST">
                         <label for="cantidad">Cantidad:</label>
                         <?php
                             // si tiene stock de sobra se podran elegir hasta 10 unidades
@@ -218,25 +219,8 @@ require "cookies.php";
                                 $url_actual = $_SERVER['REQUEST_URI'];
 
                                 //* En javascript generamos el boton
-                                echo '
-                                <script>
-                                    // Seleccionar elementos correctamente
-                                    let contenedor = document.querySelector("form");
-
-                                    // Crear el botón
-                                    let botonLogueate = document.createElement("button"); // Se usa "createElement" en lugar de "create"
-                                    botonLogueate.textContent = "Logueate"; // Texto del botón
-                                    botonLogueate.id = "botonLogueate";
-
-                                    // Agregar evento al botón para redirigir a otro script (ejemplo: login.php)
-                                    botonLogueate.addEventListener("click", function() {
-                                        //* te dirige a login
-                                        window.location.href = "login.php?redirigido=' . $url_actual . '"; // Cambia "login.php" por la URL del script al que quieres ir
-                                    });
-
-                                    // Agregar el botón al contenedor
-                                    contenedor.appendChild(botonLogueate);
-                                </script>';
+                                echo '<input id="botonLogueate" type="button" value="Logueate" onclick="window.location.href=\'login.php?redirigido='.$url_actual = urlencode($_SERVER["REQUEST_URI"]).'\'">';
+                                
                             }else{
                                 echo '<input class="comprar" type="submit" id="enviar" value="COMPRAR">';
                             }
