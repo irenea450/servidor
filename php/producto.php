@@ -164,22 +164,22 @@ require "cookies.php";
                                         $pvpBefore = $product['neto'] - ($product['neto'] * 0.05); //quitamos descuento 
                                         $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
                                         $pvpBefore = number_format($pvpBefore, 2, '.', ''); //truncamos a dos decimales
-                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        echo "<p class='pvpBefore'>".number_format($pvpBefore, 2)."€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
                                         break;
                                     case "plata":
                                         $pvpBefore = $product['neto'] - ($product['neto'] * 0.08); //quitamos descuento 
                                         $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
-                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        echo "<p class='pvpBefore'>".number_format($pvpBefore, 2)."€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
                                         break;
                                     case "oro":
                                         $pvpBefore = $product['neto'] - ($product['neto'] * 0.11); //quitamos descuento 
                                         $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
-                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        echo "<p class='pvpBefore'>".number_format($pvpBefore, 2)."€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
                                         break;
                                     case "platino":
                                         $pvpBefore = $product['neto'] - ($product['neto'] * 0.15); //quitamos descuento 
                                         $pvpBefore = $pvpBefore + ($pvpBefore * $product['iva'] / 100); //sumamos iva
-                                        echo "<p class='pvpBefore'>{$pvpBefore}€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
+                                        echo "<p class='pvpBefore'>".number_format($pvpBefore, 2)."€ -Desc</p>"; //imprimimos el pvp en verde class(pvpBefore)
                                         break;
                                     default:
                                         echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
