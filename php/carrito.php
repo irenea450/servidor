@@ -210,6 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) 
 
         //? Actualizar la variable de sesión matriz con el nuevo carrito para que no vuelvan a aparecer los elementos eliminados
         $_SESSION['matriz'] = $nuevoCarrito;
+        $_SESSION["numCarrito"] --;
 
         //? Llamamos a la función cookieCarrito para actualizar la cookie con los elementos nuevos de la matriz
         cookieCarrito($_SESSION["matriz"]);

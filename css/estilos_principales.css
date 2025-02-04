@@ -231,11 +231,10 @@ footer{
     flex-direction: row;
     justify-content: space-around;
 }
-.botonRecargarSaldo,
-.botonActualizarDatos,
-.botonCancelar,
+.botonesAreaPersonal,
 .botonVerMas{
     width: auto;
+    min-width: 160px;
     height: auto;
     background-color: #d85300;
     color: white;

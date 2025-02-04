@@ -35,6 +35,10 @@ session_start();
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['recargar'])) {
     header("Location: recargar.php");}
 
+    //? Si se activa el botón de recargar saldo datos se va a redirigir a la pagina de 
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pedidos'])) {
+    header("Location: pedidos.php");}
+
     //? Si se activa el botón de cancelar datos se va a redirigir a la pagina de 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cancelar'])) {
     header("Location: cancelarCuenta.php");}
@@ -89,21 +93,28 @@ session_start();
         <!-- Botón de actualizar datos -->
         <form id="areaPersonalActualizar" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
             <!-- Formulario con función de ir atrás -->
-            <button type="submit" name="actualizar" class="botonActualizarDatos"  >
+            <button type="submit" name="actualizar" class="botonesAreaPersonal"  >
                 Actualizar Datos
             </button>
         </form>
         <!-- Botón de recargar saldo -->
         <form id="areaPersonalRecargar" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
             <!-- Formulario con función de ir atrás -->
-            <button type="submit" name="recargar" class="botonRecargarSaldo"  >
+            <button type="submit" name="recargar" class="botonesAreaPersonal"  >
                 Recargar Saldo
+            </button>
+        </form>
+        <!-- Botón de pedido realaizados -->
+        <form id="areaPersonalPedido" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- Formulario con función de ir atrás -->
+            <button type="submit" name="pedidos" class="botonesAreaPersonal"  >
+                Pedidos
             </button>
         </form>
         <!-- Botón de cancelar cuenta -->
         <form id="areaPersonalCancelar" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">
             <!-- Formulario con función de ir atrás -->
-            <button type="submit" name="cancelar" class="botonCancelar"  >
+            <button type="submit" name="cancelar" class="botonesAreaPersonal"  >
                 Cancelar Cuenta
             </button>
         </form>

@@ -13,7 +13,6 @@
         header("Location: areaPersonal.php");
     }
 
-    //$_SESSION["id"] = 4;//!BORRAR 
 
     // Aquí debes conectar a la base de datos y obtener la info del producto con la referencia
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
@@ -22,8 +21,6 @@
     $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
     $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
 
-    // Consulta para obtener todos los datos del producto con la ref
-    //$preparada = "SELECT * FROM pedido WHERE idCliente = :id";
 
     $preparada = "SELECT p.id, p.fechaCompra, p.estado, p.pvpTotal, 
                     c.idProducto, c.cantidad 

@@ -62,14 +62,14 @@ try {
 
     //? Preparada para insertar un nuevo pedido
     $preparada1 = $bd->prepare("
-        INSERT INTO pedido (idCliente, fechaEnvio, enviado, peso, gastosEnvio, pvpTotal) 
-        VALUES (:idCliente, NOW(), :enviado, :peso, :gastosEnvio, :pvpTotal)
+        INSERT INTO pedido (idCliente, fechaCompra, estado, peso, gastosEnvio, pvpTotal) 
+        VALUES (:idCliente, NOW(), :estado, :peso, :gastosEnvio, :pvpTotal)
     ");
 
     //? Se insertan los datos del usuario y de envio en la preparada de la insercción
     $preparada1->execute([
         'idCliente' => $idUsuario,  // id del cleinte que esta logueado
-        'enviado' => "no" , // por defecto no, una vez la empresa de envio lo prepare cambiara su estado
+        'estado' => "preparacion" , // por defecto no, una vez la empresa de envio lo prepare cambiara su estado
         'peso' => $pesoEnvio,  //peso total dle paquete
         'gastosEnvio' => $gastosEnvio,  //gstos de envio
         'pvpTotal' => $precioTotal //precio total del producto
@@ -107,10 +107,9 @@ try {
 
 
     //? Insertar en la tabla composicion_envio el nº pedido y el id del producto y cantidad
-    //? Usamos la función desmontar1 para obtener los productos en un array simple
+    // Usamos la función desmontar1 para obtener los productos en un array 
     $productos = desmontar1($_COOKIE["carrito"]);
-
-    //? Usamos la función desmontar2 para convertirlo en una matriz con "ref" y "cantidad"
+    // Usamos la función desmontar2 para convertirlo en una matriz de ref - catidad para insertarlo
     $matrizProductos = desmontar2($productos);
 
     //? Preparada para insertar los datos del pedido
@@ -119,10 +118,10 @@ try {
         VALUES (:idPedido, :idProducto, :cantidad)
     ");
 
-    //? Insertar los datos de la matriz en la base de datos
+    //? Insertar los datos de la matriz con los pedidos en la tabla composicion_envio
     foreach ($matrizProductos as $producto) {
         $preparada4->execute([
-            'idPedido'   => $ultimoIdPedido,  // Id del pedido recién creado
+            'idPedido'   => $ultimoIdPedido,  // Id del pedido que se ha realizado
             'idProducto' => $producto['ref'], // Id del producto
             'cantidad'   => $producto['cantidad'] // Cantidad pedida del producto
         ]);
@@ -137,7 +136,7 @@ try {
     unset($_SESSION['tokenPedido']);
 
     //*Extraer los valores de fecha y peso para despues mostrar
-    $fechaEnvio = $ultimoPedido['fechaEnvio'] ?? 'Fecha no disponible';
+    $fechaCompra = $ultimoPedido['fechaCompra'] ?? 'Fecha no disponible';
     $pesoTotal = $ultimoPedido['peso'] ?? 'Peso no disponible';
 
 
@@ -155,7 +154,7 @@ puntosTipo($sumaPuntos);
 /* mailPedido($_SESSION['emailUsuario'], $ultimoIdPedido); */
 $mensajeCorreo = mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
 
-//? eliminamos sesión matriz
+//? eliminamos sesión matriz y el numero de carrito
 $_SESSION['matriz'] = [];
 
 //? guartdamos la matriz vaciua en la cookie carrito
@@ -163,6 +162,7 @@ cookieCarrito($_SESSION["matriz"]);
 
 //? elimina cookie carrito, para vaciar todos los productos que ya han sido comprados
 setcookie("carrito", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
+unset($_SESSION["numCarrito"]);//destruimos numero de carrito
 
 
 /* -------------------------------------------------------------------------- */
@@ -184,7 +184,7 @@ setcookie("carrito", 123, time() - 1000, "/"); // "/" para destruir en todo el p
     <div class="datosResumenEnvio">
         <h3>Datos de Envío</h3>
         <p><strong>Dirección de Envio:</strong> <?php echo $direccionEnvio ?></p>
-        <p><strong>Fecha de Facturación:</strong> <?php echo $fechaEnvio ?></p>
+        <p><strong>Fecha de Compra:</strong> <?php echo $fechaCompra ?></p>
         <p><strong>Peso del pedido:</strong> <?php echo $pesoTotal ?></p>
         <p><strong>Gastos de envio:</strong> <?php echo $gastosEnvio ?></p>
         <p><strong>Precio total del pedido:</strong> <?php echo number_format($precioTotal, 2) ?>€</p>
