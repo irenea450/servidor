@@ -53,26 +53,29 @@
 <body>
     <h1>Pedidos</h1>
     <?php
-        foreach($pedidos as $pedido){
-            //sacamos el nombre y la categoria del producto para montar la ruta de la imagen del producto
-            $idProd = $pedido['idProducto'];
-            $sql = "SELECT categoria, nombre FROM producto WHERE ref = $idProd";
-            $result = $bd->query($sql);
-            $prod = $result->fetch();
-            $cat = $prod['categoria'];
-            $nom = $prod['nombre'];
-            $productPath = "/categorias/$cat/$idProd/1.png";
-
-            echo "<div class='contenedorPedido'>
-                <h2>Pedido: {$pedido['id']}</h2>
-                <img src='{$productPath}'>
-                <h3 class='nombre'>{$nom}</h3>
-                <p>Cantidad: {$pedido['cantidad']}</p>
-                <p>Fecha compra: {$pedido['fechaCompra']}</p>
-                <p>Estado: {$pedido['estado']}</p>
-                <a href='producto.php?categoria={$cat}&producto={$idProd}'>Comprar</a>
-            </div>";
-            
+        if(empty($pedidos)){
+            echo "<h1>¡{$_SESSION["nombre"]}, aun no has realizado ningun pedido!</h1>";
+        }else{
+            foreach($pedidos as $pedido){
+                //sacamos el nombre y la categoria del producto para montar la ruta de la imagen del producto
+                $idProd = $pedido['idProducto'];
+                $sql = "SELECT categoria, nombre FROM producto WHERE ref = $idProd";
+                $result = $bd->query($sql);
+                $prod = $result->fetch();
+                $cat = $prod['categoria'];
+                $nom = $prod['nombre'];
+                $productPath = "/categorias/$cat/$idProd/1.png";
+    
+                echo "<div class='contenedorPedido'>
+                    <h2>Pedido: {$pedido['id']}</h2>
+                    <img src='{$productPath}'>
+                    <h3 class='nombre'>{$nom}</h3>
+                    <p>Cantidad: {$pedido['cantidad']}</p>
+                    <p>Fecha compra: {$pedido['fechaCompra']}</p>
+                    <p>Estado: {$pedido['estado']}</p>
+                    <a href='producto.php?categoria={$cat}&producto={$idProd}'>Comprar</a>
+                </div>";
+            }
         }
     ?>
 
