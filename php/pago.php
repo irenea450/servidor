@@ -1,6 +1,7 @@
 <?php 
 //~ require dle correo madnadndole el email y nuemro de pedido
 require 'funcionesInsUpdDel.php';
+require 'funciones.php';
 require 'email/emailConfirmacion.php';
 require "cookies.php";
 
@@ -103,6 +104,29 @@ try {
     // saldoResta es el saldo descontando el total del pedido
     // $_SESSION['sumaPrecioProductos'] suma del precio de todos los productos, se va a sumar un punto por €
     $resul = $updateSaldo->execute(array($saldoResta, $_SESSION['id']));
+
+
+    //? Insertar en la tabla composicion_envio el nº pedido y el id del producto y cantidad
+    //? Usamos la función desmontar1 para obtener los productos en un array simple
+    $productos = desmontar1($_COOKIE["carrito"]);
+
+    //? Usamos la función desmontar2 para convertirlo en una matriz con "ref" y "cantidad"
+    $matrizProductos = desmontar2($productos);
+
+    //? Preparada para insertar los datos del pedido
+    $preparada4 = $bd->prepare("
+        INSERT INTO composicion_envio (idPedido, idProducto, cantidad) 
+        VALUES (:idPedido, :idProducto, :cantidad)
+    ");
+
+    //? Insertar los datos de la matriz en la base de datos
+    foreach ($matrizProductos as $producto) {
+        $preparada4->execute([
+            'idPedido'   => $ultimoIdPedido,  // Id del pedido recién creado
+            'idProducto' => $producto['ref'], // Id del producto
+            'cantidad'   => $producto['cantidad'] // Cantidad pedida del producto
+        ]);
+    }
 
 
     //* CONFIRMAR TRANSACCIÓN

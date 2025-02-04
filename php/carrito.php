@@ -213,6 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) 
 
         //? Llamamos a la función cookieCarrito para actualizar la cookie con los elementos nuevos de la matriz
         cookieCarrito($_SESSION["matriz"]);
+        
 
         //? Recargamos la página para que se vean los cambios
         header("Location: " . $_SERVER["PHP_SELF"]);
