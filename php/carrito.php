@@ -185,63 +185,41 @@ if($sumaPrecioProductos > 50){
 $precioTotal = $sumaPrecioProductos + $gastosEnvio;
 
 /* --------------- Carrito actualizaciones(eliminar producto) --------------- */
-//! TERMINAR ELIMINAR CARRITO
-
-/* if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
-    $refEliminar = $_POST['eliminar_producto'];
-    
-    // Obtener la cookie del carrito
-    if (isset($_COOKIE["carrito"])) {
-        $productos = explode("*", $_COOKIE["carrito"]);
-        $nuevoCarrito = [];
-
-        foreach ($productos as $producto) {
-            list($ref, $cantidad) = explode(",", $producto);
-            if ($ref !== $refEliminar) {
-                $nuevoCarrito[] = $producto; // Guardamos los que no se eliminan
-            }
-        }
-
-        //! aqui actualizar la cookie 
-        // Actualizar la cookie del carrito sin el producto eliminado
-        setcookie("carrito", implode("*", $nuevoCarrito), time() + 3600, "/");
-
-        // Recargar la página para reflejar los cambios
-        header("Location: " . $_SERVER["PHP_SELF"]);
-        exit;
-    }
-} */
-
+//? Si se pulsa eliminar un producto y se ha enviado la referencia de este, se va a eliminar del carrito
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
-    // Verificamos si la petición es POST y si se ha enviado la referencia del producto a eliminar.
-    
-    $refEliminar = $_POST['eliminar_producto']; // Guardamos la referencia del producto a eliminar.
+    // Guardamos la referencia del producto a eliminar
+    $refEliminar = $_POST['eliminar_producto'];
 
-    // Comprobamos si existe la cookie "carrito".
+    // Comprobamos si existe la cookie "carrito"
     if (isset($_COOKIE["carrito"])) {
-        $productos = explode("*", $_COOKIE["carrito"]); // Dividimos la cadena de la cookie en productos individuales.
-        $nuevoCarrito = []; // Creamos un array para almacenar los productos que no se eliminen.
+        //? Usamos la función desmontar1 para obtener los productos en un array simple
+        $productos = desmontar1($_COOKIE["carrito"]);
 
-        // Recorremos los productos en la cookie.
-        foreach ($productos as $producto) {
-            list($ref, $cantidad) = explode(",", $producto); // Extraemos la referencia y cantidad del producto.
+        //? Usamos la función desmontar2 para convertirlo en una matriz con "ref" y "cantidad"
+        $matrizProductos = desmontar2($productos);
 
-            if ($ref !== $refEliminar) { // Si la referencia no coincide con la que queremos eliminar...
-                $nuevoCarrito[] = $producto; // Mantenemos el producto en el nuevo carrito.
+        $nuevoCarrito = []; // Creamos un array para almacenar los productos que no se eliminen
+
+        // Recorremos la matriz de productos
+        foreach ($matrizProductos as $producto) {
+            if ($producto["ref"] !== intval($refEliminar)) {
+                // Si la referencia no coincide con la eliminada, mantenemos el producto en el nuevo carrito
+                $nuevoCarrito[] = $producto;
             }
         }
 
-/*         // Llamamos a la función cookieCarrito para actualizar la cookie con los productos restantes.
-        cookieCarrito($nuevoCarrito);
+        //? Actualizar la variable de sesión matriz con el nuevo carrito para que no vuelvan a aparecer los elementos eliminados
+        $_SESSION['matriz'] = $nuevoCarrito;
 
-        // También actualizamos la variable global $_COOKIE para que los cambios se reflejen inmediatamente.
-        $_COOKIE["carrito"] = implode("*", $nuevoCarrito);
+        //? Llamamos a la función cookieCarrito para actualizar la cookie con los elementos nuevos de la matriz
+        cookieCarrito($_SESSION["matriz"]);
 
-        // Recargamos la página para que los cambios sean visibles al usuario.
+        //? Recargamos la página para que se vean los cambios
         header("Location: " . $_SERVER["PHP_SELF"]);
-        exit; // Detenemos la ejecución del script después de redirigir. */
+        exit; // Detenemos la ejecución del script después de redirigir
     }
 }
+
 
 /* ---------------------------- Proceder al pago ---------------------------- */
 //? Si se pulsa el botón de tramitar, se va a didigir a la pagina de pago.php 
@@ -267,7 +245,7 @@ $_SESSION['saldoUsuario'] = $saldo;
 $_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos; //para sumar los puntos al cliente (sin los gatos adicionales)
 
 
-//~ token al relaizar el pedido
+//~ token al realizar el pedido
 if (!isset($_SESSION['tokenPedido'])) {
     $_SESSION['tokenPedido'] = bin2hex(random_bytes(32));
 }
@@ -360,7 +338,7 @@ if (!isset($_SESSION['tokenPedido'])) {
                                 <td>
                                     <form method='POST' action=''>
                                         <input type='hidden' name='eliminar_producto' value='{$producto['ref']}'>
-                                        <button type='submit'>❌🗑️</button>
+                                        <button type='submit'>❌</button>
                                     </form>
                                 </td>
                             </tr>";

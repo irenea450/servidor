@@ -85,10 +85,12 @@
         if(!$resul){
             // Si ocurre un error, se muestra un mensaje con la información del error
             echo "<br><br>Error: " . $mail->ErrorInfo . "<br><br>";
+            return FALSE;
         }else{
             // Si el envío fue exitoso, se muestra un mensaje de éxito.
             /* //! mensaje enviado enviado 
             echo "Enviado"; */
+            return TRUE;
         }
     }
 

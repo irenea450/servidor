@@ -2,6 +2,7 @@
 //~ require dle correo madnadndole el email y nuemro de pedido
 require 'funcionesInsUpdDel.php';
 require 'email/emailConfirmacion.php';
+require "cookies.php";
 
 session_start(); // iniciar sesión
 
@@ -116,10 +117,6 @@ try {
     $pesoTotal = $ultimoPedido['peso'] ?? 'Peso no disponible';
 
 
-/*     // Mostrar el ID y los datos del pedido
-    echo "📌 Pedido insertado con éxito. ID del pedido: " . $ultimoIdPedido . "<br>";
-    echo "📌 Datos del pedido: <pre>" . print_r($ultimoPedido, true) . "</pre>"; */
-
 } catch (Exception $e) {
     // En caso de error, deshacer la transacción
     if ($bd->inTransaction()) {
@@ -132,12 +129,16 @@ try {
 puntosTipo($sumaPuntos);
 //? Mandar email de confrimación de pedido
 /* mailPedido($_SESSION['emailUsuario'], $ultimoIdPedido); */
-mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
+$mensajeCorreo = mailPedido("irenedelalamo.alumno@gmail.com", $ultimoIdPedido);
+
+//? eliminamos sesión matriz
+$_SESSION['matriz'] = [];
+
+//? guartdamos la matriz vaciua en la cookie carrito
+cookieCarrito($_SESSION["matriz"]);
 
 //? elimina cookie carrito, para vaciar todos los productos que ya han sido comprados
 setcookie("carrito", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
-//? eliminamos sesión matriz
-$_SESSION['matriz'] = [];
 
 
 /* -------------------------------------------------------------------------- */
@@ -162,7 +163,7 @@ $_SESSION['matriz'] = [];
         <p><strong>Fecha de Facturación:</strong> <?php echo $fechaEnvio ?></p>
         <p><strong>Peso del pedido:</strong> <?php echo $pesoTotal ?></p>
         <p><strong>Gastos de envio:</strong> <?php echo $gastosEnvio ?></p>
-        <p><strong>Precio total del pedido:</strong> <?php echo number_format($precioTotal, 2) ?></p>
+        <p><strong>Precio total del pedido:</strong> <?php echo number_format($precioTotal, 2) ?>€</p>
     </div>
     <div class="datosResumenPersonales">
         <h3>Datos Personales</h3>
@@ -177,7 +178,19 @@ $_SESSION['matriz'] = [];
                 <img src="/img/flecha_atras.png">
             </button>
         </form>
-    
+    </div>
+
+    <!-- Mostrar si se ha enviado bien el correo de confrimación o no -->
+    <?php if ($mensajeCorreo){ 
+            echo '<div style="color: green; font-size: 18px; text-align: center; margin-top: 20px;">
+                ✅ Se ha enviado un correo de confirmación a '. $_SESSION["emailUsuario"] .'
+            </div>';
+        }else{
+            echo '<div style="color: red; font-size: 18px; text-align: center; margin-top: 20px;">
+            ❌ Hubo un problema al enviar el correo.
+            </div>';
+        }
+    ?>
     
 
 </body>
