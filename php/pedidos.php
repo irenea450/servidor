@@ -7,6 +7,14 @@
         session_start();
     }
 
+    //? Si no estas logeuado te redirige a iniciar sesión en en login 
+    if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
+        //* guarda la url en la que se encuentraa actualmente
+        $url_actual = $_SERVER['REQUEST_URI'];
+        //tedirige al login
+        header("Location: login.php");
+    }
+
     //? Botón retorno al área personal
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
         //* Si se pulsa volver atrás, te llevará al area personal del usuario

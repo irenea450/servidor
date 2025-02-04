@@ -12,7 +12,13 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-
+//? Si no estas logeuado te redirige a iniciar sesión en en login 
+if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
+    //* guarda la url en la que se encuentraa actualmente
+    $url_actual = $_SERVER['REQUEST_URI'];
+    //tedirige al login
+    header("Location: login.php");
+}
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos

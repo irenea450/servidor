@@ -75,7 +75,7 @@ main#carrito{
 table{
     width: auto;
     width: auto;
-    margin-left: 5px;
+    margin-left: 10px;
 
     border-collapse: collapse; /* quitar borde doble */
 }

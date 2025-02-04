@@ -44,11 +44,12 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+        
 
-        $productos = explode("*", $_COOKIE["carrito"]); // Separar productos por "*"
-
-        foreach ($productos as $producto) {
-            list($ref, $cantidad) = explode(",", $producto); // Separar referencia y cantidad
+        //? Recorremos la matriz que almacena los productos en la sesión
+        foreach ($_SESSION["matriz"] as $producto) {
+            $ref = $producto["ref"];
+            $cantidad = $producto["cantidad"];
 
             //Consultar datos del producto segun su referencia
             $consultaProducto = $bd->prepare("SELECT nombre, categoria,neto, iva, pvp, peso, descuento FROM producto WHERE ref = :ref");
@@ -192,16 +193,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) 
 
     // Comprobamos si existe la cookie "carrito"
     if (isset($_COOKIE["carrito"])) {
-        //? Usamos la función desmontar1 para obtener los productos en un array simple
+/*         //? Usamos la función desmontar1 para obtener los productos en un array simple
         $productos = desmontar1($_COOKIE["carrito"]);
 
         //? Usamos la función desmontar2 para convertirlo en una matriz con "ref" y "cantidad"
-        $matrizProductos = desmontar2($productos);
+        $matrizProductos = desmontar2($productos); 
+        
+        antes
+                // Recorremos la matriz de productos
+        foreach ($matrizProductos as $producto) {
+            if ($producto["ref"] !== intval($refEliminar)) {
+                // Si la referencia no coincide con la eliminada, mantenemos el producto en el nuevo carrito
+                $nuevoCarrito[] = $producto;
+            }
+        }*/
 
         $nuevoCarrito = []; // Creamos un array para almacenar los productos que no se eliminen
 
-        // Recorremos la matriz de productos
-        foreach ($matrizProductos as $producto) {
+        //? Recorremos la matriz que almacena los productos en la sesión
+        foreach ($_SESSION["matriz"] as $producto) {
             if ($producto["ref"] !== intval($refEliminar)) {
                 // Si la referencia no coincide con la eliminada, mantenemos el producto en el nuevo carrito
                 $nuevoCarrito[] = $producto;

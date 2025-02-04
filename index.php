@@ -5,7 +5,8 @@ session_start();
 
 //si la cookie carrito esta activa la vuelca en session[matriz] y genera session[numcarrito]
 if(!isset($_SESSION["matriz"])){
-    if (isset($_COOKIE['carrito'])){
+    //si exsite la cookie carrito y el usuario esta logueado
+    if (isset($_COOKIE['carrito']) && isset($_SESSION['id'])){
         $cookieCarrito = $_COOKIE['carrito'];
         $arrayCookie = desmontar1($cookieCarrito);//pasamos de string a array
         $_SESSION["numCarrito"] = count($arrayCookie);//sacamos las posiciones del array para poner la cantidad de productos en el carrito
