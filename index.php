@@ -14,7 +14,6 @@ if(!isset($_SESSION["matriz"])){
     }
 }
 
-
 /** 
  * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
  * ? Aparecerá su nombre arriba con un enlace a su area personal */
@@ -25,7 +24,6 @@ if(isset($_SESSION["nombre"])){
     // Dejamos "Área Personal" o vacío
     $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
 }
-
 
 //?- Si la cookie de sesion esta activa 
 if (isset($_COOKIE['session_token'])) {

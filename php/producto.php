@@ -2,8 +2,7 @@
 require "funciones.php";
 require "cookies.php";
 
-//?- Mostrar unico producto con sus img
-
+//?- Script para mostrar un unico producto con su informacion e imagenes , seleccionar cantidad y comprar
 
     /**
      *? comprueba si no hay una sesión activa y si no la hay la inicia
@@ -72,8 +71,8 @@ require "cookies.php";
     }
     
     
-    
-/*     //? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
+    //!BORRAR
+/*//? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
     if($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)){
         // si no estan vacios $_POST['cantidad'] y $product['ref'] se procedera a introducir los datos en: $_COOKIE["carrito"]     
         if (!empty($_POST['cantidad']) && !empty($product['ref'])){
@@ -92,44 +91,42 @@ require "cookies.php";
     } */
 
     //? Se comprueba que se ha enviado el formulario y que la cantidad ingresada es mayor a 0
-if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)) {
-    //? Verificamos que tanto la cantidad como la referencia del producto no estén vacías
-    if (!empty($_POST['cantidad']) && !empty($product['ref'])) {
-        $ref = $product['ref']; // Guardamos la referencia del producto
-        $cantidad = intval($_POST['cantidad']); // Convertimos la cantidad a un número entero
-        $encontrado = false; // Variable para verificar si el producto ya está en la sesión
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)) {
+        //? Verificamos que tanto la cantidad como la referencia del producto no estén vacías
+        if (!empty($_POST['cantidad']) && !empty($product['ref'])) {
+            $ref = $product['ref']; // Guardamos la referencia del producto
+            $cantidad = intval($_POST['cantidad']); // Convertimos la cantidad a un número entero
+            $encontrado = false; // Variable para verificar si el producto ya está en la sesión
 
-        //? Si la sesión "matriz" ya tiene productos, recorremos para verificar si ya existe la referencia
-        if (isset($_SESSION["matriz"]) && !empty($_SESSION["matriz"])) {
-            foreach ($_SESSION["matriz"] as &$producto) { // Usamos referencia (&) para modificar directamente la sesión
-                if ($producto["ref"] == $ref) {
-                    //? Si la referencia ya existe, sumamos la cantidad en vez de añadir una nueva entrada
-                    $producto["cantidad"] += $cantidad;
-                    $encontrado = true; // Marcamos que el producto ya estaba en la lista
-                    break; // Salimos del bucle porque ya encontramos la referencia
+            //? Si la sesión "matriz" ya tiene productos, recorremos para verificar si ya existe la referencia
+            if (isset($_SESSION["matriz"]) && !empty($_SESSION["matriz"])) {
+                foreach ($_SESSION["matriz"] as &$producto) { // Usamos referencia (&) para modificar directamente la sesión
+                    if ($producto["ref"] == $ref) {
+                        //? Si la referencia ya existe, sumamos la cantidad en vez de añadir una nueva entrada
+                        $producto["cantidad"] += $cantidad;
+                        $encontrado = true; // Marcamos que el producto ya estaba en la lista
+                        break; // Salimos del bucle porque ya encontramos la referencia
+                    }
                 }
+                //cookieCarrito($_SESSION["matriz"]);//!BORRAR
             }
+
+            //? Si el producto no estaba en la sesión, lo agregamos como un nuevo elemento
+            if (!$encontrado) {
+                $_SESSION["matriz"][] = ["ref" => $ref, "cantidad" => $cantidad];
+                //cookieCarrito($_SESSION["matriz"]);//!BORRAR
+                $_SESSION["numCarrito"]++; // Incrementamos el contador de productos en el carrito
+            }
+
+            //? Actualizamos la cookie con la nueva información de la sesión
             cookieCarrito($_SESSION["matriz"]);
+
+            //? Redirigimos a la misma página para evitar reenvío del formulario al refrescar
+            $url_actual = urlencode($_SERVER["REQUEST_URI"]); // Codificamos la URL actual
+            header("Location: ./redirigido.php?redirigido=$url_actual");
+            exit(); // Aseguramos que el script se detenga tras la redirección
         }
-
-        //? Si el producto no estaba en la sesión, lo agregamos como un nuevo elemento
-        if (!$encontrado) {
-            $_SESSION["matriz"][] = ["ref" => $ref, "cantidad" => $cantidad];
-            cookieCarrito($_SESSION["matriz"]);
-            $_SESSION["numCarrito"]++; // Incrementamos el contador de productos en el carrito
-        }
-
-        //? Actualizamos la cookie con la nueva información de la sesión
-        /* cookieCarrito($_SESSION["matriz"]); */
-
-
-        //? Redirigimos a la misma página para evitar reenvío del formulario al refrescar
-        $url_actual = urlencode($_SERVER["REQUEST_URI"]); // Codificamos la URL actual
-        header("Location: ./redirigido.php?redirigido=$url_actual");
-        exit(); // Aseguramos que el script se detenga tras la redirección
     }
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -234,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)) {
                                         echo "<p class='pvpAfter'>{$product['pvp']}€</p>"; //imprimimos precio normal en caso de fallo
                                         break;
                                 }
-                            }else{ // si $_SESSION["tipo"] no esta inicializado imprimimos el pvp sin descuento
+                            }else{ // si $_SESSION["tipo"] no esta inicializado o es "normal" imprimimos el pvp sin descuento
                                 echo "<p>{$product['pvp']}€</p>";
                             }
                             

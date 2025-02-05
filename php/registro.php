@@ -1,6 +1,4 @@
 <?php
-
-
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';
 
@@ -11,8 +9,6 @@ if (session_status() == PHP_SESSION_NONE) {
     //? si se cumple la condición de no activa se iniciar la sesión
     session_start();
 }
-
-
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
