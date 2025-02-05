@@ -63,7 +63,7 @@ $rutaImagen = "categorias/".$producto['categoria']."/".$producto['ref']."/1.png"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pagina Principal</title>
     <link rel="stylesheet" href="/css/estilos_principales.css">
 </head>
 <body>
