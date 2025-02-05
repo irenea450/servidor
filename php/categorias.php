@@ -1,67 +1,66 @@
 <?php
-/**
- *? comprueba si no hay una sesión activa y si no la hay la inicia
- *? session_status -> devuelve el estado actual de la sesión  */
-if (session_status() == PHP_SESSION_NONE) {
-    //? si se cumple la condición de no activa se iniciar la sesión
-    session_start();
-}
+    /**
+     *? comprueba si no hay una sesión activa y si no la hay la inicia
+    *? session_status -> devuelve el estado actual de la sesión  */
+    if (session_status() == PHP_SESSION_NONE) {
+        //? si se cumple la condición de no activa se iniciar la sesión
+        session_start();
+    }
 
-//?- descuentos: normal 0%, bronce 5%, plata 8%, oro 11%, platino 15%
+    //?- descuentos: normal 0%, bronce 5%, plata 8%, oro 11%, platino 15%
 
-/** 
- * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
- * ? Aparecerá su nombre arriba con un enlace a su area personal */
-$nombreUsuario = ""; // Por defecto, vacío
-if(isset($_SESSION["nombre"])){
-    $nombreUsuario = $_SESSION["nombre"];
-}else{
-    // Dejamos "Área Personal" o vacío
-    $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
-}
+    /** 
+     * ? si el usuario esta logeado se va a mostrar la opción de ajustar su perfil en el menu
+     * ? Aparecerá su nombre arriba con un enlace a su area personal */
+    $nombreUsuario = ""; // Por defecto, vacío
+    if(isset($_SESSION["nombre"])){
+        $nombreUsuario = $_SESSION["nombre"];
+    }else{
+        // Dejamos "Área Personal" o vacío
+        $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
+    }
 
-// Leer categoría seleccionada desde el método GET
-$category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
+    // Leer categoría seleccionada desde el método GET , de no ser valida cargara microcontroladores por defecto
+    $category = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : 'microcontroladores';
 
-// Definir nombres de categorías según la base de datos (ahora como array asociativo)
-$categories = [
-    'microcontroladores' => 'microcontroladores',
-    'sensores' => 'sensores',
-    'servos' => 'servos',
-    'kits de robots' => 'kits de robots',
-    'libros' => 'libros'
-];
+    // Definir nombres de categorías según la base de datos (ahora como array asociativo)
+    $categories = [
+        'microcontroladores' => 'microcontroladores',
+        'sensores' => 'sensores',
+        'servos' => 'servos',
+        'kits de robots' => 'kits de robots',
+        'libros' => 'libros'
+    ];
 
-// Verificar si la categoría existe en el array asociativo, si no, usar la predeterminada
-if (!array_key_exists($category, $categories)) {
-    $category = 'microcontroladores'; // Por defecto, microcontroladores
-}
+    // Verificar si la categoría existe en el array asociativo, si no, usar la predeterminada
+    if (!array_key_exists($category, $categories)) {
+        $category = 'microcontroladores'; // Por defecto, microcontroladores
+    }
 
-// Conexión a la base de datos
-$conexion = "mysql:dbname=irjama;host=127.0.0.1";
-$usuario = "root";
-$contraseña = "";
+    // Conexión a la base de datos
+    $conexion = "mysql:dbname=irjama;host=127.0.0.1";
+    $usuario = "root";
+    $contraseña = "";
 
-try {
-    // Crear conexión PDO
-    $db = new PDO($conexion, $usuario, $contraseña, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION // Activar excepciones en caso de error
-    ]);
+    try {
+        // Crear conexión PDO
+        $db = new PDO($conexion, $usuario, $contraseña, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION // Activar excepciones en caso de error
+        ]);
 
-    // Buscar productos de la categoría en la base de datos
-    $sql = "SELECT ref, nombre, neto, iva, pvp, stock, descuento FROM producto WHERE categoria = :categoria";
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':categoria', $category, PDO::PARAM_STR); // Pasar como string
-    $stmt->execute();
+        // Buscar productos de la categoría en la base de datos
+        $sql = "SELECT ref, nombre, neto, iva, pvp, stock, descuento FROM producto WHERE categoria = :categoria";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':categoria', $category, PDO::PARAM_STR); // Pasar como string
+        $stmt->execute();
 
-    // Obtener productos
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    // Manejo de errores: mostrar mensaje y asignar un array vacío
-    echo "Error en la base de datos: " . $e->getMessage();
-    $products = [];
-}
-
+        // Obtener productos
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Manejo de errores: mostrar mensaje y asignar un array vacío
+        echo "Error en la base de datos: " . $e->getMessage();
+        $products = [];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -104,6 +103,7 @@ try {
         <h1><?php echo strtoupper($category); ?></h1>
         </div>
         <div class="product-grid">
+            <!-- comprobamos de $products no este vacio y procedemos a recorrerlo con un foreach donde iremos sacando toda la info a mostrar -->
             <?php if (!empty($products)): ?>
                 <?php foreach ($products as $product): ?>
                     <div class="product">
