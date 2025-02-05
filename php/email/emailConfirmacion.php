@@ -4,15 +4,6 @@
     // Usamos el espacio de nombres PHPMailer\PHPMailer\PHPMailer para acceder a la clase PHPMailer.
     use PHPMailer\PHPMailer\PHPMailer;
 
-    //! Pruebas
-    /* echo $_SESSION['emailUsuario']; */
-
-    //!- BORRAR CUANDO ESTE TESTEADO (VARIABLES DE PRUEBA)
-/*     echo "Envio de correo en curso";
-    $email = "culebras.jr@gmail.com";
-    $pedido = "1289";
-    mailPedido($email, $pedido); */
-
 
     function mailPedido($email, $numPedido){
         // Incluimos el autoloader de Composer para cargar automáticamente las clases necesarias.
@@ -88,8 +79,6 @@
             return FALSE;
         }else{
             // Si el envío fue exitoso, se muestra un mensaje de éxito.
-            /* //! mensaje enviado enviado 
-            echo "Enviado"; */
             return TRUE;
         }
     }
