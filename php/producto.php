@@ -69,26 +69,6 @@ require "cookies.php";
     if (!array_key_exists($category, $categories)) {
         $category = 'microcontroladores'; // Por defecto, microcontroladores
     }
-    
-    
-    //!BORRAR
-/*//? Se comprueba que se ha enviado el formulario de registro y que datos se han introducido
-    if($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)){
-        // si no estan vacios $_POST['cantidad'] y $product['ref'] se procedera a introducir los datos en: $_COOKIE["carrito"]     
-        if (!empty($_POST['cantidad']) && !empty($product['ref'])){
-            // Agregar una fila con dos columnas "ref" y "cantidad"
-            $_SESSION["matriz"][] = ["ref" => $product['ref'], "cantidad" => $_POST['cantidad']];
-            $_SESSION["numCarrito"] ++;
-            //darle a la cookie "carrito" el valor de $_SESSION["matriz"]
-            cookieCarrito($_SESSION["matriz"]);
-            
-            //* guarda la url en la que se encuentra actualmente y redirigir a redirigido.php donde nos devolvera a la pagina 
-            //*y asi evitar errores del form al refrescar la pagina
-            $url_actual = urlencode($_SERVER["REQUEST_URI"]);  //para que PHP interprete el & como parte del código en lugar de como un separador de parámetros en la URL
-            //tedirige al redirigido 
-            header("Location: ./redirigido.php?redirigido=$url_actual");
-        }
-    } */
 
     //? Se comprueba que se ha enviado el formulario y que la cantidad ingresada es mayor a 0
     if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['cantidad'] > 0)) {
@@ -108,13 +88,11 @@ require "cookies.php";
                         break; // Salimos del bucle porque ya encontramos la referencia
                     }
                 }
-                //cookieCarrito($_SESSION["matriz"]);//!BORRAR
             }
 
             //? Si el producto no estaba en la sesión, lo agregamos como un nuevo elemento
             if (!$encontrado) {
                 $_SESSION["matriz"][] = ["ref" => $ref, "cantidad" => $cantidad];
-                //cookieCarrito($_SESSION["matriz"]);//!BORRAR
                 $_SESSION["numCarrito"]++; // Incrementamos el contador de productos en el carrito
             }
 
