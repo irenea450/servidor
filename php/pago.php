@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
 }
 
 //? Verificar si el token no existe, en caso de que ya haya sido eliminado(se ha reliazado el pedido)
-//? aparecerá pantalla en blanco y no se ejecutará una nueva transacción
+//? aparecerá pantalla en blanco y no se ejecutará una nueva transacción, de esat forma bloqueamos pedir varias veces lo mismo al refresacar
 if (!isset($_SESSION['tokenPedido'])) {
     //? Si el token no existe, muestra un mensaje de error y un botón para volver al inicio
     echo '<script>
@@ -57,7 +57,7 @@ $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
 try {
     $bd = new PDO($conexion, $usuario_bd, $clave_bd, $errmode);
 
-    //Se inicia la transacción, en caso de error se cancela el pedido
+    //*Se inicia la transacción, en caso de error se cancela el pedido
     $bd->beginTransaction();
 
     //? Preparada para insertar un nuevo pedido
@@ -95,7 +95,7 @@ try {
 
     //? Al saldo actual se le resta el precio del pedido
     $saldoResta = $saldoActual - $precioTotal;
-    //? a los puntos actuales se suma los puntos nuevos de la compra(precioProductos)
+    //? a los puntos actuales se suma los puntos nuevos de la compra(precioProductos pues se suma 1 punto por €)
     $sumaPuntos = $puntosActual + $precioProductos ;
 
 
@@ -107,11 +107,6 @@ try {
 
 
     //? Insertar en la tabla composicion_envio el nº pedido y el id del producto y cantidad
-    // Usamos la función desmontar1 para obtener los productos en un array 
-    $productos = desmontar1($_COOKIE["carrito"]);
-    // Usamos la función desmontar2 para convertirlo en una matriz de ref - catidad para insertarlo
-    $matrizProductos = desmontar2($productos);
-
     //? Preparada para insertar los datos del pedido
     $preparada4 = $bd->prepare("
         INSERT INTO composicion_envio (idPedido, idProducto, cantidad) 
@@ -119,7 +114,7 @@ try {
     ");
 
     //? Insertar los datos de la matriz con los pedidos en la tabla composicion_envio
-    foreach ($matrizProductos as $producto) {
+    foreach ($_SESSION["matriz"]  as $producto) {
         $preparada4->execute([
             'idPedido'   => $ultimoIdPedido,  // Id del pedido que se ha realizado
             'idProducto' => $producto['ref'], // Id del producto
@@ -131,23 +126,23 @@ try {
     //* CONFIRMAR TRANSACCIÓN
     $bd->commit();
 
-    //? Una vez la transacción se ha realizado con exito, se elimina el token , de esta froma no puedes
+    //? Una vez la transacción se ha realizado con exito, se elimina el token , de esta forma no puedes
     //?  volver a pedir lo mismo por duplicado sin pasar por la cesta
     unset($_SESSION['tokenPedido']);
 
-    //*Extraer los valores de fecha y peso para despues mostrar
+    //*Extraer los valores de fecha y peso para despues mostrar en datos del pedido
     $fechaCompra = $ultimoPedido['fechaCompra'] ?? 'Fecha no disponible';
     $pesoTotal = $ultimoPedido['peso'] ?? 'Peso no disponible';
 
 
 } catch (Exception $e) {
-    // En caso de error, deshacer la transacción
+    //? En caso de error, deshacer la transacción
     if ($bd->inTransaction()) {
         $bd->rollBack();
     }
     echo "Error en la base de datos: " . $e->getMessage();
 }
-
+//? Una vez se ha realizado la transacción ya se envia el correo de confirmación, se actualizan los puntos y se borra el carrito
 //? se añaden los puntos al usuario
 puntosTipo($sumaPuntos);
 //? Mandar email de confrimación de pedido
@@ -166,7 +161,7 @@ unset($_SESSION["numCarrito"]);//destruimos numero de carrito
 
 
 /* -------------------------------------------------------------------------- */
-/*                             mostrar infromación                            */
+/*                             mostrar información                            */
 /* -------------------------------------------------------------------------- */
 ?>
 

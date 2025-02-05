@@ -16,7 +16,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
  * ?Voy a extraer los datos del usuario que está logueado para mostrar los datos de la compra
  * ? uso variables para luego mostralo en el html */
 
-//? se llama a la función que saca los datos del usaurio
+//? se llama a la función que saca los datos del cliente
 $datosUsuario = obtenerDatosCliente($_SESSION["id"]);
 
 //? las variables que van a guardar los datos extraidos en las consultas anteriores
@@ -24,39 +24,35 @@ $datosUsuario = obtenerDatosCliente($_SESSION["id"]);
 $nombreUsuario = $datosUsuario['nombre'];
 $apellidoUsuario = $datosUsuario['apellidos'];
 $emailUsuario = $datosUsuario['email'];
-$nombreCompleto = $nombreUsuario . " " . $apellidoUsuario;
+$nombreCompleto = $nombreUsuario . " " . $apellidoUsuario; //concatenamos nombre y apellidos
 $direccionEnvio = $datosUsuario['direccionEnvio'];
 $direccionFacturacion = $datosUsuario['direccionFacturacion'];
 $saldo = $datosUsuario['saldo'];
 $puntos = $datosUsuario['puntos'];
 
 //? extraemos datos de la cookie carrito
-$productosCarrito = [];
+$productosCarrito = []; //inicializamos array de productos
 //? Si la cookie de carrito esta iniciada y tiene productos se extraen datos y se consulta a la base de datos
 if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
     // Conexion a la base de datos
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
     $usuario_bd = "root";
     $clave_bd = "";
-
+    $errmode = [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT];
     try {
-        $bd = new PDO($conexion, $usuario_bd, $clave_bd, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
+        $bd = new PDO($conexion , $usuario_bd, $clave_bd, $errmode);
         
-
-        //? Recorremos la matriz que almacena los productos en la sesión
+        //? Recorremos la matriz que almacena los productos y sacamos sus datos de la base de datos
         foreach ($_SESSION["matriz"] as $producto) {
             $ref = $producto["ref"];
             $cantidad = $producto["cantidad"];
 
-            //Consultar datos del producto segun su referencia
+            //?Consultar datos del producto segun su referencia
             $consultaProducto = $bd->prepare("SELECT nombre, categoria,neto, iva, pvp, peso, descuento FROM producto WHERE ref = :ref");
             $consultaProducto->execute(['ref' => $ref]);
             $producto = $consultaProducto->fetch();
 
-            //se guardan los datos del producto
+            //* se guardan los datos del producto
             if ($producto) {
                 $productosCarrito[] = [
                     "ref" => $ref,
@@ -71,7 +67,7 @@ if (isset($_COOKIE["carrito"]) && !empty($_COOKIE["carrito"])) {
                 ];
             }
         }
-    } catch (PDOException $e) {
+    } catch (PDOException $e) {//error en la base de daos
         echo "Error en la conexión: " . $e->getMessage();
     }
 } else {
@@ -126,15 +122,15 @@ foreach ($productosCarrito as $producto) {
 
 /* --------------------------- Precios del pedido --------------------------- */
 //? Se suman los precio de los productos a la variable de sumaPrecioProductos
-//? se aplican los descuentos , se suma el iva y se multiplica po la cantidad antes de añadirlo
+//? se aplican los descuentos , se suma el iva y se multiplican por la cantidad antes de añadirlo
 
 $sumaPrecioProductos = 0.00; 
 
 foreach ($productosCarrito as $producto) {
-    //? Sacamos el precio del producto
+    //? Con el bucle recorremos el array para ir sacando los precios y sumarlos a la suma de precios
     // inicializamos descuentos aplicados y precio final
     $descuentoAplicado = false;
-    $precioFinal = $producto['neto']; // Precio base
+    $precioFinal = $producto['neto']; // Precio neto
 
     //? aplicamos descuento segun el tipo de cliente 
     if ($producto['descuento'] === "si" && isset($_SESSION["tipo"])) {
@@ -185,35 +181,21 @@ if($sumaPrecioProductos > 50){
 //? Precio total del pedido (sumando el precio de productos + gastos de envio)
 $precioTotal = $sumaPrecioProductos + $gastosEnvio;
 
-/* --------------- Carrito actualizaciones(eliminar producto) --------------- */
+/* --------------- Actualizar Carrito (eliminar producto) --------------- */
 //? Si se pulsa eliminar un producto y se ha enviado la referencia de este, se va a eliminar del carrito
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_producto'])) {
-    // Guardamos la referencia del producto a eliminar
+    // Guardamos la referencia del producto que vamos a eliminar (que se manda a través del post)
     $refEliminar = $_POST['eliminar_producto'];
 
-    // Comprobamos si existe la cookie "carrito"
+    // si existe la cookie carrito
     if (isset($_COOKIE["carrito"])) {
-/*         //? Usamos la función desmontar1 para obtener los productos en un array simple
-        $productos = desmontar1($_COOKIE["carrito"]);
-
-        //? Usamos la función desmontar2 para convertirlo en una matriz con "ref" y "cantidad"
-        $matrizProductos = desmontar2($productos); 
-        
-        antes
-                // Recorremos la matriz de productos
-        foreach ($matrizProductos as $producto) {
-            if ($producto["ref"] !== intval($refEliminar)) {
-                // Si la referencia no coincide con la eliminada, mantenemos el producto en el nuevo carrito
-                $nuevoCarrito[] = $producto;
-            }
-        }*/
-
-        $nuevoCarrito = []; // Creamos un array para almacenar los productos que no se eliminen
+        // Creamos un array para almacenar los productos que no se eliminen
+        $nuevoCarrito = []; 
 
         //? Recorremos la matriz que almacena los productos en la sesión
         foreach ($_SESSION["matriz"] as $producto) {
             if ($producto["ref"] !== intval($refEliminar)) {
-                // Si la referencia no coincide con la eliminada, mantenemos el producto en el nuevo carrito
+                // Si la referencia no coincide con la eliminada, guardamos el producto en el nuevo carrito
                 $nuevoCarrito[] = $producto;
             }
         }
@@ -257,7 +239,7 @@ $_SESSION['saldoUsuario'] = $saldo;
 $_SESSION['sumaPrecioProductos'] = $sumaPrecioProductos; //para sumar los puntos al cliente (sin los gatos adicionales)
 
 
-//~ token al realizar el pedido
+//~ token al realizar el pedido, para que no se pueda hacer el mismo pedido varias veces de seguido al refrescar la pantalla
 if (!isset($_SESSION['tokenPedido'])) {
     $_SESSION['tokenPedido'] = bin2hex(random_bytes(32));
 }
@@ -297,10 +279,11 @@ if (!isset($_SESSION['tokenPedido'])) {
                 </thead>
                 <tbody>
                 <?php 
+                    //? Bucle que va a sacar un producto y va a crearuna fila de la tabla con su nombre, precio, cantidad pedida
                     foreach ($productosCarrito as $producto) {
                         //* Ruta de la imagen
                         $imagePath = "../categorias/" . htmlspecialchars($producto["categoria"]) . "/" . htmlspecialchars($producto["ref"]) . "/1.png";
-
+                        //? sacamos precio del producto, con iva y descuentos aplicados
                         // inicializamos descuentos aplicados y precio final
                         $descuentoAplicado = false;
                         $precioFinal = $producto['neto']; // Precio base
@@ -332,19 +315,20 @@ if (!isset($_SESSION['tokenPedido'])) {
                         $precioFinalConIva = $precioFinal + ($precioFinal * $producto['iva'] / 100);
 
 
-                        // Mostramos en la tabla
+                        //? Mostramos en la fila imagen, nombre del producto , precio , cantidad y botón para eliminar
                         echo "<tr>
                                 <td><img src='{$imagePath}' width='80'></td>
                                 <td>{$producto['nombre']}</td>
                                 <td>";
 
-                        //Si tiene descuento mostrar en verde, si no normal
+                        //* Si tiene descuento mostrar en verde
                         if ($descuentoAplicado) {
                             echo "<div class='descuentoAplicado'>" . number_format($precioFinalConIva, 2) . " € (con IVA)</div>";
                         } else {
                             echo number_format($precioFinalConIva, 2) . " € (con IVA)</div>";
                         }
-
+                        //cantidad y creamos botón de eliminar donde se le da de valor la referencia del producto para
+                        // a la hora de eliminarlo de la matriz eliminarlo segun su referencia
                         echo "  </td>
                                 <td>{$producto['cantidad']}</td>
                                 <td>
@@ -386,7 +370,7 @@ if (!isset($_SESSION['tokenPedido'])) {
                 <h4>Precio Total <?php echo number_format($precioTotal, 2) ?> €</h4>
             </div>
             
-            <!-- muestra botones, tramitar pedido, o recargar slado si no hay suficiente -->
+            <!-- muestra botones, tramitar pedido, o recargar saldo si no hay suficiente -->
             <div class="contenedorErrorSaldo">
                 <?php
                     //?En caso de que tengamos un error de saldo( se da en caso de que el precio total del pedido sea mayor al saldo disponible)
