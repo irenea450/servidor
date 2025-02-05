@@ -44,6 +44,16 @@ if (isset($_SESSION["id"]) && $_SESSION["login"] === true) {
             $_SESSION["tipo"] = obtenerTipoUsuario($comprobarDatos);
             $_SESSION["nombre"]= obtenerNombreUsuario($_SESSION["id"]);
 
+            //si la cookie carrito esta activa la vuelca en session[matriz] y genera session[numcarrito]
+            if(!isset($_SESSION["matriz"])){
+                //si exsite la cookie carrito y el usuario esta logueado
+                if (isset($_COOKIE['carrito']) && isset($_SESSION['id'])){
+                    $cookieCarrito = $_COOKIE['carrito'];
+                    $arrayCookie = desmontar1($cookieCarrito);//pasamos de string a array
+                    $_SESSION["numCarrito"] = count($arrayCookie);//sacamos las posiciones del array para poner la cantidad de productos en el carrito
+                    $_SESSION["matriz"] = desmontar2($arrayCookie);//pasamos de array a matriz e inicializamos la variable de sesion
+                }
+            }
 
             //? Guardar la sesión en la cookie para poder iniciar sesión automaticamente más adelante
             //*Pero solo si se ha marcado la opción de recordar si no esta checked no se inicializa la variable POST
