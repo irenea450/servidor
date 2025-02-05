@@ -30,26 +30,6 @@ if (isset($_COOKIE['session_token'])) {
     cookieSesion1();
 }
 
-//!- OPCION ANTERIOR -BORRAR
-/* if (isset($_COOKIE['session_token'])) {
-    // Si hay cookie -> verificamos si es válida y en caso afirmativo generamos las variables de sesion
-    cookieSesion1();
-    // Si la cookie es valida e inicia las variables de sesion, obtenemos el nombre del usuario
-    if(isset($_SESSION["id"])){
-        $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
-    }
-} else {
-    // Si la cookie de sesión no está iniciada
-    // Si la variable $_SESSION["id"] esta inicializada, obtenemos el nombre del usuario
-    if(isset($_SESSION["id"])){
-        $nombreUsuario = obtenerNombreUsuario($_SESSION["id"]);
-    }else{
-        // Eliminamos todas las variables de sesión para que no generen datos erroneos
-        session_unset();  
-        // Dejamos "Área Personal" o vacío
-        $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
-    }
-} */
 
 /* ------------------------- Sacar imagen aleatoria ------------------------- */
 // Definir nombres de categorías según la base de datos (ahora como array asociativo) //?- para la etiqueta li del menu
@@ -60,27 +40,6 @@ $categories = [
     'kits de robots' => 'kits de robots',
     'libros' => 'libros'
 ];
-
-//Categorias existentes
-/* $categorias = [
-    1 => 'microcontroladores',
-    2 => 'sensores',
-    3 => 'servos',
-    4 => 'kits_de_robots',
-    5 => 'libros'
-];
-
-// Genera un número aleatorio entre 1 y 5
-$numeroAleatorio = rand(1, 5); 
-$categoriaAleatoria = $categorias[$numeroAleatorio];
-
-// Numero aleatorio para el producto de esa categoria
-$numeroAleatorio2 = rand(1, 8); 
-
-//? Ruta de l aimagen aleatoria
-$rutaImagen = "categorias/$categoriaAleatoria/$numeroAleatorio2/1.png"; */
-//echo $rutaImagen; //! hay que sacar una ref al azar pero dependiendo de la categoria que ha salido al azar (HACERLO TODO EN UNA FUNCION A PARTE)
-//echo "<p>Ruta generada: $rutaImagen</p>"; // imprimir ruta para probar que ruta esta sacando
 
 // conectamos a la base de datos y obtenemos la info del producto aleatorio
 $conexion = "mysql:dbname=irjama;host=127.0.0.1";

@@ -5,7 +5,7 @@ session_start();
     if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
         //* guarda la url en la que se encuentraa actualmente
         $url_actual = $_SERVER['REQUEST_URI'];
-        //tedirige al login
+        //te dirige al login
         header("Location: login.php?redirigido=$url_actual");
     }
 
@@ -72,7 +72,7 @@ session_start();
             <p><b>Fecha Nacimiento:</b> <?php echo $fechaNacimiento ?> </p>
             <p><b>Sexo:</b> <?php echo $sexo ?> </p>
         </div>
-        <!-- Infromación de contacto del usuario y direcciones de envio-->
+        <!-- Información de contacto del usuario y direcciones de envio-->
         <div class="infoContactoUsuario">
             <p><b>Email:</b> <?php echo $email?> </p>
             <p><b>Teléfono:</b> <?php echo $tlf?> </p>
@@ -80,7 +80,7 @@ session_start();
             <p><b>Dirección de Facturación:</b> <?php echo $direccionFacturacion?> </p>
         </div>
 
-        <!-- Datos del usuario en l apalicación, tipo de cliente, saldo y puntos -->
+        <!-- Datos del usuario en la aplicación, tipo de cliente, saldo y puntos -->
         <div class="infoUsuarioAplicacion">
             <p><b>Tipo de Cliente:</b> <?php echo $tipo?> </p>
             <p><b>Saldo:</b> <?php echo $saldo?> </p>

@@ -22,12 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
 //? Si se activa el boton log out(name="out") se cierra sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['out'])) {
 
-    //! Destruyo cookies de sesión y carrito de compra
     //? Destruye cookie de sesión
     setcookie("session_token", 123, time() - 1000, "/"); // "/" para destruir en todo el proyecto
-    //? Destruye umero de carrito de compra
-    /* $_SESSION["numCarrito"] ='';
-    unset($_SESSION["numCarrito"]); */
 
     //Para cerrar la sesión es necesario borrar todas las variables de la sesión, para ello se inicializa el array $_SESSION:
     $_SESSION = array();
@@ -55,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['out'])) {
 <body>
     <div class="contenedor">
         <img id="icono-login" src="/img/login_icono.png">
-        <!-- Mnesaje de que el usuario que se indica ya está logueado -->
+        <!-- Mensaje de que el usuario que se indica ya está logueado -->
         <h1>Tu sesión ya está iniciada, <?php echo htmlspecialchars($usuario); ?></h1>
         <!-- Formulario con boton de hacer logout -->
         <form id="logoutForm" action="<?php echo htmlspecialchars( $_SERVER["PHP_SELF"]); ?>" method="post">

@@ -185,7 +185,7 @@ function obtenerSaldo($id){
 }
 
 //TODO ------------------ Consulta general de datos del cliente ----------------- 
-//? Consultamos todos los datos sobre el clinete (excepto contraseña)
+//? Consultamos todos los datos sobre el cliente
 function obtenerDatosCliente($id){
     //? Consulta que extrae los datos del usuario
     $conexion = "mysql:dbname=irjama;host=127.0.0.1";
