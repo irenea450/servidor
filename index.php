@@ -3,6 +3,11 @@ require "php/funciones.php";
 require 'php/cookies.php';
 session_start();
 
+//?- Si la cookie de sesion esta activa 
+if (isset($_COOKIE['session_token'])) {
+    cookieSesion1();
+}
+
 //si la cookie carrito esta activa la vuelca en session[matriz] y genera session[numcarrito]
 if(!isset($_SESSION["matriz"])){
     //si exsite la cookie carrito y el usuario esta logueado
@@ -24,12 +29,6 @@ if(isset($_SESSION["nombre"])){
     // Dejamos "Área Personal" o vacío
     $nombreUsuario = "Personal"; // Puedes cambiar esto a "" si prefieres que esté en blanco
 }
-
-//?- Si la cookie de sesion esta activa 
-if (isset($_COOKIE['session_token'])) {
-    cookieSesion1();
-}
-
 
 /* ------------------------- Sacar imagen aleatoria ------------------------- */
 // Definir nombres de categorías según la base de datos (ahora como array asociativo) //?- para la etiqueta li del menu
