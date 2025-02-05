@@ -12,12 +12,9 @@ if (session_status() == PHP_SESSION_NONE) {
 
 //? Si no estas logeuado te redirige a iniciar sesión en en login 
 if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
-    //* guarda la url en la que se encuentraa actualmente
-    $url_actual = $_SERVER['REQUEST_URI'];
     //tedirige al login
     header("Location: login.php");
 }
-
 
 /**
      * ? Se comprueba que se ha enviado el formulario de borrado
@@ -41,7 +38,6 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
         header("Location: ../index.php");
     }
 ?>
-
 
 <!-- HTML-> Formulario y manejo de errores -->
 <!DOCTYPE html>
@@ -75,7 +71,6 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
                 // Eliminar el error después de mostrarlo
                 unset($_SESSION["error_deleteCuenta"]); 
             }
-                
         ?>
 
         </div>
@@ -101,7 +96,6 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
             
         </form>
     </div>
-
 
     <!-- flecha volver atras -->
     <div class="volverInicio">

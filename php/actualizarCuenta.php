@@ -12,12 +12,9 @@ if (session_status() == PHP_SESSION_NONE) {
 
 //? Si no estas logeuado te redirige a iniciar sesión en en login 
 if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
-    //* guarda la url en la que se encuentraa actualmente
-    $url_actual = $_SERVER['REQUEST_URI'];
     //tedirige al login
     header("Location: login.php");
 }
-
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y quedatos se han introducido
@@ -26,24 +23,24 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         //array_filter($_POST): Filtra los valores vacíos ("", NULL, false) y devuelve un array con los que tienen datos.
         if (!empty(array_filter($_POST))) {
+            //vamos a updateCliente() , donde se actualizaran los datos deseados
             updateCliente();
             //aviso de actualizado correcto
             echo "<script> alert('Datos actualizados correctamente.'); </script>";
         } else {
-            //? En caso de no esten todos los campos rellenos se activa la variable de error 
+            //? En caso de que no este relleno ningun campos se activa la variable de error 
         $_SESSION["error_update6"] = TRUE;
         }
     }
 
     //?- Leyenda de errores de update
-        /* 
-        form1 - 1 <h1>Fallo al actualizar pruebe mas tarde</h1>
-        form2 - 2 <h1>Fallo al actualizar pruebe mas tarde</h1>
-                3 <h1>Email no valido</h1>
-        form3 - 4 <h1>Clave actual erronea</h1>
-                5 <h1>Las nuevas claves no coinciden</h1>
-        html  - 6 <h1>Fallo al actualizar pruebe mas tarde</h1>
-        */
+        //?-form1 - 1 <h1>Fallo al actualizar pruebe mas tarde</h1>
+        //?-form2 - 2 <h1>Fallo al actualizar pruebe mas tarde</h1>
+        //?-        3 <h1>Email no valido</h1>
+        //?-form3 - 4 <h1>Clave actual erronea</h1>
+        //?-        5 <h1>Las nuevas claves no coinciden</h1>
+        //?-html  - 6 <h1>Fallo al actualizar pruebe mas tarde</h1>
+        
 
     //? Botón retorno al área personal
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
