@@ -19,7 +19,7 @@ if (!isset($_SESSION['tokenPedido'])) {
     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
             document.body.innerHTML = `
-                <h2>⚠ ERROR: Para volver a realizar el pedido tienes que pasar por la cesta</h2>
+                <h2>⚠ ERROR: Para realizar el pedido tienes que pasar por la cesta</h2>
                 <div class="volverInicio">
                     <form id="atrasForm" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '" method="post">
                         <button type="submit" name="atras" class="flechaVolver">
