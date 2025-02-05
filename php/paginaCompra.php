@@ -1,4 +1,0 @@
-<!-- Comentario de prueba -->
-<?php
-
-?>
