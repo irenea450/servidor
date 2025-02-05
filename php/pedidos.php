@@ -53,6 +53,7 @@
 <body>
     <h1>Pedidos</h1>
     <?php
+        //si el cliente aun no tiene pedidos $preparada devolvera un array empty, lo cual controlaremos ploteando un mensaje
         if(empty($pedidos)){
             echo "<h1>¡{$_SESSION["nombre"]}, aun no has realizado ningun pedido!</h1>";
         }else{

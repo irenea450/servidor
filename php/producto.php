@@ -82,7 +82,7 @@ require "cookies.php";
             $_SESSION["numCarrito"] ++;
             //darle a la cookie "carrito" el valor de $_SESSION["matriz"]
             cookieCarrito($_SESSION["matriz"]);
-
+            
             //* guarda la url en la que se encuentra actualmente y redirigir a redirigido.php donde nos devolvera a la pagina 
             //*y asi evitar errores del form al refrescar la pagina
             $url_actual = urlencode($_SERVER["REQUEST_URI"]);  //para que PHP interprete el & como parte del código en lugar de como un separador de parámetros en la URL
