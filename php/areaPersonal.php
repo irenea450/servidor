@@ -1,9 +1,10 @@
 <?php
 require "funciones.php";
-session_start();
-    //? Si no estas logeuado te redirige a iniciar sesión en en login y luego te volverá a esta página
+session_start(); //Inicio sesion
+
+    //? Si no estas logeado te redirige a iniciar sesión en en login y luego te volverá a esta página
     if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
-        //* guarda la url en la que se encuentraa actualmente
+        //* guarda la url en la que se encuentra actualmente
         $url_actual = $_SERVER['REQUEST_URI'];
         //te dirige al login
         header("Location: login.php?redirigido=$url_actual");
@@ -68,7 +69,7 @@ session_start();
     <div class="mostrarInformacionUsuario">
         <!-- Información Personal -->
         <div class="infoPersonal">
-            <p><b>Nombre completo:</b> <?php echo $nombre , " " , $apellidos; ?> </p>
+            <p><b>Nombre completo:</b> <?php echo $nombre , " " , $apellidos; ?> </p> <!-- Concatenamos nombre y apellidos -->
             <p><b>Fecha Nacimiento:</b> <?php echo $fechaNacimiento ?> </p>
             <p><b>Sexo:</b> <?php echo $sexo ?> </p>
         </div>

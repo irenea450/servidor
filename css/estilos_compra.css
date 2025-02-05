@@ -1,4 +1,4 @@
-/* Estilos del archivo de carrito,  */
+/* Estilos del archivo de carrito,pago  */
 
 *{
     margin: 0px;
@@ -49,12 +49,10 @@ main#carrito{
     min-height: 90vh;
     max-width: 100vw;
 
-    /*! Poner grid y ordenar columnas */
+    /*? Poner grid y ordenar columnas */
     display: grid;
     grid-template-areas: "productos direcciones";
     grid-template-columns: 2fr 1fr;
-    /* grid-template-rows: 90vh; */
-
 }
 
 /* -------------- contenedor de productos guardados en el carrito -------------- */
@@ -67,8 +65,6 @@ main#carrito{
     background-color: #eff1f3;
 
     table-layout: auto;
-
-    /* padding: 5px; */
 }
 
 /* --------------------------- tabla de productos --------------------------- */
@@ -85,12 +81,12 @@ table{
     border: solid 1px white;
 }
 
-/* Segunda fila del nombre dle producto va a tener un tamaño minimo */
+/* Segunda fila del nombre del producto va a tener un tamaño minimo */
 #productos-carrito th:nth-child(2),
 #productos-carrito td:nth-child(2) {
     min-width: 550px; 
     max-width: 650px;
-    border-left: none; /* une con la foto */
+    border-left: none; /* quitamos borde para unir celda con la foto */
 }
 
 /* Borramos linea que une con la foto */
@@ -104,7 +100,6 @@ table{
 #productos-carrito td:nth-child(4){
     text-align: center;
     background-color: transparent;
-
 
     padding: auto 10px;
 }
@@ -180,7 +175,6 @@ table{
 }
 
 
-
 /*? Contenedor de errores de saldo */
 .contenedorErrorSaldo{
     width: 100%;
@@ -198,8 +192,6 @@ table{
     border: solid 1px red;
     border-radius: 20px;
     padding: 10px 20px;
-
-    /* margin: 35vh 0px 0px 0px; */
 }
 
 /* ------------------------- estilos envio pago.php ------------------------- */
@@ -211,7 +203,6 @@ table{
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    /* align-items: center; */
 
 }
 #contenedor-pago h1{
@@ -225,14 +216,12 @@ table{
     margin: 4%;
     padding: 10px 0px 10px 10px;
 }
-.datosResumenEnvio{
-    border: solid 1px lightgray;
-    border-radius: 20px;
-}
+.datosResumenEnvio,
 .datosResumenPersonales{
     border: solid 1px lightgray;
     border-radius: 20px;
 }
+
 
 /* volver atras una vez se ha relizado el pedido */
 .volverInicio{
