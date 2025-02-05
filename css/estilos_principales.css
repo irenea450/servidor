@@ -52,7 +52,7 @@ header img{
     margin: 4px 0px 0px 4px; /* para comprensar el margen automaticos que se produce */
 }
 
-/** Para el carrito se cambia el tamaño dle padding y al pasar por encima se cambia el fondo */
+/** Para el carrito se cambia el tamaño del padding */
 header ul li:last-child{
     padding: 5px 10px ;
 }
@@ -61,9 +61,6 @@ header ul li img:last-child{
     height: 35px;
 }
 
-/* header ul li:last-child:hover:not(.categorias li:last-child){
-    background-color: #d85300;
-} */
 
 /* ?Enlaces del header */
 header a{
@@ -133,7 +130,7 @@ header a:hover{
 .categorias li a{
     color: white;
 }
-/*? Posicionarnos osbre cada li se cambia el color */
+/*? Posicionarnos sobre cada li se cambia el color */
 .categorias li:hover{
     background-color: white;
     /* Borde que resalte */
@@ -216,7 +213,9 @@ footer{
     color: black;
 }
 
-/* ------------------------- Opciones Area Personal ------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                           Opciones Area Personal                           */
+/* -------------------------------------------------------------------------- */
 #mainAreaPersonal{
     padding: 10px;
 }
@@ -231,6 +230,7 @@ footer{
     flex-direction: row;
     justify-content: space-around;
 }
+/* Botones de recargar, caencelar, pedidos y actualizar */
 .botonesAreaPersonal,
 .botonVerMas{
     width: auto;
