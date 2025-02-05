@@ -1,6 +1,4 @@
 <?php
-
-
 //scripts que vamos a necesitar
 require 'funcionesInsUpdDel.php';
 
@@ -22,7 +20,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
 
 /**
      * ? Se comprueba que se ha enviado el formulario de registro y si se han introducido todos los datos
-     * ? Con los datos introducitos se va a recargarSaldo() donde se realizara el insert de recarga
+     * ? Con los datos introducidos se va a recargarSaldo() donde se realizara el insert de recarga
      * ? En un futuro se cotejaran los datos de la tarjeta de credito
      * ! Actualmete la recarga es simulada
      *  */
@@ -37,14 +35,12 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] === FALSE) {
         }
     }
 
-
     //? Botón retorno al área personal
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atras'])) {
         //* Si se pulsa volver atrás, te llevará al area personal del usuario
         header("Location: areaPersonal.php");
     }
 ?>
-
 
 <!-- HTML-> Formulario y manejo de errores -->
 <!DOCTYPE html>
