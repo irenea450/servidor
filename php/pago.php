@@ -60,6 +60,21 @@ try {
     //*Se inicia la transacción, en caso de error se cancela el pedido
     $bd->beginTransaction();
 
+    //? Quitar stock del producto
+    foreach ($_SESSION['matriz'] as $producto) {
+        // Preparar la consulta para obtener el stock
+        $preparada = $bd->prepare("SELECT stock FROM producto WHERE ref = ?");
+        $preparada->execute(array($producto['ref']));
+        $fila = $preparada->fetch(PDO::FETCH_ASSOC); // Obtener el stock
+    
+        if ($fila && $fila['stock'] >= $producto['cantidad']) { // Verificar que haya suficiente stock
+            // Preparar la consulta de actualización
+            $update = $bd->prepare("UPDATE producto SET stock = stock - ? WHERE ref = ?");
+            $update->execute(array($producto['cantidad'], $producto['ref']));
+        }
+    }
+    
+
     //? Preparada para insertar un nuevo pedido
     $preparada1 = $bd->prepare("
         INSERT INTO pedido (idCliente, fechaCompra, estado, peso, gastosEnvio, pvpTotal) 
