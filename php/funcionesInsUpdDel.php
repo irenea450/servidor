@@ -363,22 +363,27 @@
             case $puntos < 500:
                 $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
                 $preparada3->execute(array("normal", $_SESSION['id']));
+                $_SESSION["tipo"] = "normal";
                 break;
             case $puntos >= 500 && $puntos <1200:
                 $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
                 $preparada3->execute(array("bronce", $_SESSION['id']));
+                $_SESSION["tipo"] = "bronce";
                 break;
             case $puntos >= 1200 && $puntos <2000:
                 $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
                 $preparada3->execute(array("plata", $_SESSION['id']));
+                $_SESSION["tipo"] = "plata";
                 break;
             case $puntos >= 2000 && $puntos <3000:
                 $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
                 $preparada3->execute(array("oro", $_SESSION['id']));
+                $_SESSION["tipo"] = "oro";
                 break;
             case $puntos >= 3000:
                 $preparada3 = $db ->prepare("UPDATE cliente SET tipo = ? WHERE id = ?");
                 $preparada3->execute(array("platino", $_SESSION['id']));
+                $_SESSION["tipo"] = "platino";
                 break;
             default:
                 //en este caso se lanzara error (futuro control de errores mediante cookie)
